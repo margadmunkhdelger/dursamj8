@@ -37,30 +37,125 @@ interface ProfilePickerContentProps {
   embedded?: boolean
 }
 
+// Realistic tape decoration component
+function RealisticTape({ variant = "top" }: { variant?: "top" | "corner" }) {
+  if (variant === "top") {
+    return (
+      <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
+        {/* Tape body - frosted/matte appearance */}
+        <div 
+          className="w-8 sm:w-10 h-3 sm:h-3.5 relative"
+          style={{
+            background: "linear-gradient(180deg, rgba(215,205,190,0.85) 0%, rgba(200,190,175,0.9) 50%, rgba(185,175,160,0.85) 100%)",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.3)",
+            borderRadius: "1px",
+          }}
+        >
+          {/* Subtle texture lines */}
+          <div className="absolute inset-0 opacity-20" style={{
+            background: "repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 3px)"
+          }} />
+          {/* Edge highlights */}
+          <div className="absolute inset-x-0 top-0 h-px bg-white/40" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-black/10" />
+        </div>
+      </div>
+    )
+  }
+  return null
+}
+
+// Realistic metallic paper clip component
+function PaperClip({ position = "left" }: { position?: "left" | "right" }) {
+  return (
+    <div className={cn(
+      "absolute top-1 z-20",
+      position === "left" ? "-left-1" : "-right-1"
+    )}>
+      <svg 
+        width="12" 
+        height="28" 
+        viewBox="0 0 12 28" 
+        fill="none" 
+        className="drop-shadow-sm"
+      >
+        {/* Paper clip wire - metallic silver gradient */}
+        <path 
+          d="M6 2C3.5 2 2 4 2 6.5V21C2 23.5 3.5 26 6 26C8.5 26 10 23.5 10 21V8C10 6 8.5 4.5 6 4.5C4 4.5 3 6 3 8V19" 
+          stroke="url(#clipGradient)" 
+          strokeWidth="1.5" 
+          strokeLinecap="round"
+          fill="none"
+        />
+        <defs>
+          <linearGradient id="clipGradient" x1="2" y1="2" x2="10" y2="26">
+            <stop offset="0%" stopColor="#C0C0C0" />
+            <stop offset="30%" stopColor="#E8E8E8" />
+            <stop offset="50%" stopColor="#A8A8A8" />
+            <stop offset="70%" stopColor="#D0D0D0" />
+            <stop offset="100%" stopColor="#909090" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  )
+}
+
+// Get consistent random-looking values based on member id
+function getCardDecoration(memberId: string, index: number) {
+  // Use character codes to generate pseudo-random but consistent values
+  const hash = memberId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  const rotation = ((hash % 7) - 3) * 0.8 // -2.4 to 2.4 degrees
+  const hasTape = (hash + index) % 3 === 0 // ~33% have tape
+  const hasClip = (hash + index) % 5 === 0 && !hasTape // ~20% have clip (but not if has tape)
+  const clipPosition = hash % 2 === 0 ? "left" : "right"
+  
+  return { rotation, hasTape, hasClip, clipPosition: clipPosition as "left" | "right" }
+}
+
 // Polaroid card matching the reference image design
 function PolaroidCard({ 
   member, 
   onSelect, 
   isTeacher = false,
-  delay = 0
+  delay = 0,
+  index = 0
 }: { 
   member: Member
   onSelect: (member: Member) => void
   isTeacher?: boolean
   delay?: number
+  index?: number
 }) {
+  const { rotation, hasTape, hasClip, clipPosition } = getCardDecoration(member.id, index)
+  
   return (
     <motion.button
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 20, rotate: 0 }}
+      animate={{ opacity: 1, y: 0, rotate: isTeacher ? 0 : rotation }}
       transition={{ delay, duration: 0.4, ease: "easeOut" }}
-      whileHover={{ scale: 1.05, y: -4, zIndex: 20 }}
+      whileHover={{ scale: 1.05, y: -4, rotate: 0, zIndex: 20 }}
       whileTap={{ scale: 0.97 }}
       onClick={() => onSelect(member)}
       className="relative flex flex-col items-center group z-10"
     >
-      {/* White polaroid card with shadow */}
-      <div className="bg-[#fdfdfd] p-1 sm:p-1.5 pb-2 sm:pb-2.5 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-all group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.15)] flex flex-col items-center border border-white/50">
+      {/* Tape decoration - selective application */}
+      {(hasTape || isTeacher) && <RealisticTape variant="top" />}
+      
+      {/* Paper clip decoration - selective application */}
+      {hasClip && !isTeacher && <PaperClip position={clipPosition} />}
+      
+      {/* White polaroid card with enhanced shadow */}
+      <div className={cn(
+        "bg-[#fdfdfd] p-1 sm:p-1.5 pb-2 sm:pb-2.5 rounded-sm transition-all flex flex-col items-center border border-white/50",
+        "shadow-[0_4px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.08)]",
+        "group-hover:shadow-[0_12px_28px_rgba(0,0,0,0.18),0_4px_8px_rgba(0,0,0,0.1)]"
+      )}>
+        {/* Subtle paper texture overlay */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none rounded-sm" style={{
+          backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E\")"
+        }} />
+        
         {/* Photo container with gray background */}
         <div className={cn(
           "relative overflow-hidden bg-gray-200",
@@ -73,7 +168,10 @@ function PolaroidCard({
             className="object-cover" 
             sizes={isTeacher ? "80px" : "68px"} 
           />
+          {/* Subtle photo edge vignette */}
+          <div className="absolute inset-0 shadow-[inset_0_0_8px_rgba(0,0,0,0.1)]" />
         </div>
+        
         {/* Name label - now inside the white frame */}
         <p className={cn(
           "mt-2 sm:mt-3 font-bold text-amber-900 uppercase tracking-widest text-center leading-tight font-serif",
@@ -85,7 +183,7 @@ function PolaroidCard({
       
       {/* Teacher badge */}
       {isTeacher && (
-        <div className="absolute -top-1.5 -right-1.5 bg-primary text-primary-foreground text-[7px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tight shadow-md z-10">
+        <div className="absolute -top-1.5 -right-1.5 bg-primary text-primary-foreground text-[7px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tight shadow-md z-30">
           Багш
         </div>
       )}
@@ -257,6 +355,7 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
                   member={member} 
                   onSelect={onSelect} 
                   delay={0.15 + idx * 0.03}
+                  index={idx}
                 />
               ))}
             </div>
