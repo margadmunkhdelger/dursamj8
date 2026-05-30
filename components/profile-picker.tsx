@@ -37,27 +37,31 @@ interface ProfilePickerContentProps {
   embedded?: boolean
 }
 
-// Realistic tape decoration component
+// Realistic tape decoration component - more visible cream/tan color
 function RealisticTape({ variant = "top" }: { variant?: "top" | "corner" }) {
   if (variant === "top") {
     return (
-      <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
-        {/* Tape body - frosted/matte appearance */}
+      <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-20">
+        {/* Tape body - semi-transparent frosted masking tape look */}
         <div 
-          className="w-8 sm:w-10 h-3 sm:h-3.5 relative"
+          className="w-10 sm:w-12 h-4 sm:h-5 relative"
           style={{
-            background: "linear-gradient(180deg, rgba(215,205,190,0.85) 0%, rgba(200,190,175,0.9) 50%, rgba(185,175,160,0.85) 100%)",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.3)",
+            background: "linear-gradient(180deg, rgba(220,210,185,0.92) 0%, rgba(205,195,165,0.95) 40%, rgba(195,185,155,0.92) 100%)",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.4)",
             borderRadius: "1px",
           }}
         >
-          {/* Subtle texture lines */}
-          <div className="absolute inset-0 opacity-20" style={{
-            background: "repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 3px)"
+          {/* Subtle horizontal fiber texture */}
+          <div className="absolute inset-0 opacity-30" style={{
+            background: "repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(180,170,140,0.3) 1px, rgba(180,170,140,0.3) 2px)"
           }} />
-          {/* Edge highlights */}
-          <div className="absolute inset-x-0 top-0 h-px bg-white/40" />
-          <div className="absolute inset-x-0 bottom-0 h-px bg-black/10" />
+          {/* Top edge highlight */}
+          <div className="absolute inset-x-0 top-0 h-[1px] bg-white/50" />
+          {/* Bottom edge shadow */}
+          <div className="absolute inset-x-0 bottom-0 h-[1px] bg-black/15" />
+          {/* Torn edge effect on sides */}
+          <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-white/30 via-transparent to-black/10" />
+          <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-white/30 via-transparent to-black/10" />
         </div>
       </div>
     )
@@ -65,35 +69,47 @@ function RealisticTape({ variant = "top" }: { variant?: "top" | "corner" }) {
   return null
 }
 
-// Realistic metallic paper clip component
+// Realistic metallic paper clip component - larger and more detailed
 function PaperClip({ position = "left" }: { position?: "left" | "right" }) {
+  const clipId = `clipGradient_${position}_${Math.random().toString(36).substr(2, 9)}`
   return (
     <div className={cn(
-      "absolute top-1 z-20",
-      position === "left" ? "-left-1" : "-right-1"
+      "absolute -top-1 z-20",
+      position === "left" ? "-left-2.5 sm:-left-3" : "-right-2.5 sm:-right-3"
     )}>
       <svg 
-        width="12" 
-        height="28" 
-        viewBox="0 0 12 28" 
+        width="16" 
+        height="36" 
+        viewBox="0 0 16 36" 
         fill="none" 
-        className="drop-shadow-sm"
+        className="drop-shadow-md"
+        style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.2))" }}
       >
-        {/* Paper clip wire - metallic silver gradient */}
+        {/* Paper clip wire - realistic metallic silver with shine */}
         <path 
-          d="M6 2C3.5 2 2 4 2 6.5V21C2 23.5 3.5 26 6 26C8.5 26 10 23.5 10 21V8C10 6 8.5 4.5 6 4.5C4 4.5 3 6 3 8V19" 
-          stroke="url(#clipGradient)" 
-          strokeWidth="1.5" 
+          d="M8 2C4.5 2 2.5 5 2.5 8V27C2.5 30.5 5 34 8 34C11 34 13.5 30.5 13.5 27V10C13.5 7.5 11.5 5.5 8 5.5C5 5.5 3.5 7.5 3.5 10V25" 
+          stroke={`url(#${clipId})`}
+          strokeWidth="2" 
+          strokeLinecap="round"
+          fill="none"
+        />
+        {/* Inner highlight for 3D effect */}
+        <path 
+          d="M8 3C5 3 3.5 5.5 3.5 8V27C3.5 30 5.5 33 8 33" 
+          stroke="rgba(255,255,255,0.4)"
+          strokeWidth="0.5" 
           strokeLinecap="round"
           fill="none"
         />
         <defs>
-          <linearGradient id="clipGradient" x1="2" y1="2" x2="10" y2="26">
-            <stop offset="0%" stopColor="#C0C0C0" />
-            <stop offset="30%" stopColor="#E8E8E8" />
-            <stop offset="50%" stopColor="#A8A8A8" />
-            <stop offset="70%" stopColor="#D0D0D0" />
-            <stop offset="100%" stopColor="#909090" />
+          <linearGradient id={clipId} x1="2" y1="2" x2="14" y2="34" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#D8D8D8" />
+            <stop offset="15%" stopColor="#F5F5F5" />
+            <stop offset="30%" stopColor="#C0C0C0" />
+            <stop offset="50%" stopColor="#E8E8E8" />
+            <stop offset="70%" stopColor="#A0A0A0" />
+            <stop offset="85%" stopColor="#D0D0D0" />
+            <stop offset="100%" stopColor="#888888" />
           </linearGradient>
         </defs>
       </svg>
@@ -105,9 +121,10 @@ function PaperClip({ position = "left" }: { position?: "left" | "right" }) {
 function getCardDecoration(memberId: string, index: number) {
   // Use character codes to generate pseudo-random but consistent values
   const hash = memberId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-  const rotation = ((hash % 7) - 3) * 0.8 // -2.4 to 2.4 degrees
+  const rotation = ((hash % 7) - 3) * 0.6 // -1.8 to 1.8 degrees - subtle rotation
+  const clipPosition = hash % 2 === 0 ? "left" : "right" // Alternate clip position
   
-  return { rotation }
+  return { rotation, clipPosition: clipPosition as "left" | "right" }
 }
 
 // Polaroid card matching the reference image design
