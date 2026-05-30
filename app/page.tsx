@@ -321,7 +321,7 @@ export default function MemoriaApp() {
               > 
                 <h1 className="font-bold font-serif text-foreground">
                   <span 
-                    className="text-[clamp(2.5rem,12vw,3.75rem)] text-[#D4AF37] block mb-2 leading-tight"
+                    className="text-[clamp(2.5rem,12vw,3.75rem)] text-foreground block mb-2 leading-tight"
                     style={{ fontFamily: 'var(--font-great-vibes), cursive' }}
                   >
                     Dursamj
