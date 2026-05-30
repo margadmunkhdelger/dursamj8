@@ -279,9 +279,9 @@ export function AlbumFlow({
             <motion.div className={cn(PAGE_CONTENT_CLASS, "pt-4")}>
               <AlbumPanel
                 variant="cover"
-                className="relative p-6 sm:p-8 border-l-[8px] sm:border-l-[12px] border-l-[#84A3BE]/60 bg-card shadow-[10px_20px_40px_-15px_rgba(0,0,0,0.2)] max-h-[calc(100dvh-4rem)] min-h-0 flex flex-col overflow-hidden"
+                className="relative p-5 sm:p-8 border-l-[8px] sm:border-l-[12px] border-l-amber-900/60 bg-[#f4f1ea] shadow-[10px_20px_40px_-15px_rgba(0,0,0,0.3)] max-h-[calc(100dvh-4rem)] min-h-0 flex flex-col overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-foreground/5 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-900/5 via-transparent to-stone-900/5 pointer-events-none" />
                 <div className="absolute left-0 top-0 bottom-0 w-px bg-black/5" />
 
                 {/* Bottom Right Decoration: Gold Ribbon Seal - smaller */}

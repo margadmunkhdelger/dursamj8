@@ -308,7 +308,7 @@ export default function MemoriaApp() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            className="min-h-[100dvh] flex flex-col justify-center px-4 sm:px-6 py-12 relative overflow-x-hidden"
+            className="min-h-[100dvh] flex flex-col justify-center px-3 sm:px-6 py-8 sm:py-12 relative overflow-x-hidden w-full"
           >
             <FloatingParticles count={20} />
             
@@ -319,14 +319,14 @@ export default function MemoriaApp() {
                 transition={{ delay: 0.2 }}
                 className="text-center mb-8"
               > 
-                <h1 className="text-4xl font-bold font-serif text-foreground">
+                <h1 className="font-bold font-serif text-foreground">
                   <span 
-                    className="text-5xl sm:text-6xl text-[#D4AF37] block mb-2"
+                    className="text-[clamp(2.5rem,12vw,3.75rem)] text-[#D4AF37] block mb-2 leading-tight"
                     style={{ fontFamily: 'var(--font-great-vibes), cursive' }}
                   >
                     Dursamj
                   </span>
-                  <span className="text-2xl sm:text-3xl font-medium">
+                  <span className="text-[clamp(1.1rem,5vw,1.75rem)] font-medium">
                     -д тавтай морил
                   </span>
                 </h1>
@@ -370,7 +370,7 @@ export default function MemoriaApp() {
             )}
 
             <div className="flex-1 overflow-y-auto scroll-smooth overscroll-none">
-              <div className="relative z-10 pt-16 px-4 pb-24 max-w-md mx-auto">
+              <div className="relative z-10 pt-16 px-3 sm:px-4 pb-24 max-w-md mx-auto w-full overflow-x-hidden">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}

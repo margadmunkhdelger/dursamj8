@@ -60,11 +60,11 @@ function PolaroidCard({
       className="relative flex flex-col items-center group z-10"
     >
       {/* White polaroid card with shadow */}
-      <div className="bg-[#fdfdfd] p-1.5 pb-2.5 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-all group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.15)] flex flex-col items-center border border-white/50">
+      <div className="bg-[#fdfdfd] p-1 sm:p-1.5 pb-2 sm:pb-2.5 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-all group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.15)] flex flex-col items-center border border-white/50">
         {/* Photo container with gray background */}
         <div className={cn(
           "relative overflow-hidden bg-gray-200",
-          isTeacher ? "w-20 h-24" : "w-[68px] h-[82px]"
+          isTeacher ? "w-16 h-20 sm:w-20 sm:h-24" : "w-[58px] h-[70px] sm:w-[68px] sm:h-[82px]"
         )}>
           <Image 
             src={member.avatar} 
@@ -76,8 +76,8 @@ function PolaroidCard({
         </div>
         {/* Name label - now inside the white frame */}
         <p className={cn(
-          "mt-3 font-bold text-[#1f2d5a] uppercase tracking-widest text-center leading-tight font-serif",
-          isTeacher ? "text-[9px] w-20" : "text-[8px] w-[68px]"
+          "mt-2 sm:mt-3 font-bold text-amber-900 uppercase tracking-widest text-center leading-tight font-serif",
+          isTeacher ? "text-[8px] sm:text-[9px] w-16 sm:w-20" : "text-[7px] sm:text-[8px] w-[58px] sm:w-[68px]"
         )}>
           {member.name.toUpperCase()}
         </p>
@@ -224,9 +224,9 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
             </h2>
           </motion.div>
 
-          {/* Scrapbook style container with beige background like reference */}
+            {/* Scrapbook style container with warm paper background matching Album Cover */}
           <div 
-            className="flex-1 overflow-y-auto min-h-0 px-3 py-4 rounded-lg scrollbar-hide"
+            className="flex-1 overflow-y-auto min-h-0 px-3 py-4 rounded-lg scrollbar-hide bg-[#f4f1ea]/40"
           >
             {/* Teacher at top - centered prominently */}
             {teacher && (
@@ -243,14 +243,14 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
             {/* Divider with decorative elements */}
             {teacher && students.length > 0 && (
               <div className="flex items-center justify-center gap-2 mb-3 px-2">
-                <div className="flex-1 h-px bg-[#1f2d5a]/20" />
-                <span className="text-[8px] uppercase tracking-[0.15em] text-[#1f2d5a]/50 font-bold">Сурагчид</span>
-                <div className="flex-1 h-px bg-[#1f2d5a]/20" />
+                <div className="flex-1 h-px bg-amber-900/20" />
+                <span className="text-[8px] uppercase tracking-[0.15em] text-amber-900/50 font-bold">Сурагчид</span>
+                <div className="flex-1 h-px bg-amber-900/20" />
               </div>
             )}
 
             {/* Students grid - 3 columns matching reference image */}
-            <div className="grid grid-cols-3 gap-3 pb-2 place-items-center">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-3 pb-2 place-items-center w-full">
               {students.map((member, idx) => (
                 <PolaroidCard 
                   key={member.id}

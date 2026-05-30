@@ -133,19 +133,26 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    min-width: 0;
   }
   html {
     /* Prevent iOS Safari bounce/pull-to-refresh */
     overscroll-behavior: none;
     -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+    max-width: 100%;
   }
   body {
     @apply bg-background text-foreground;
     perspective: 2000px;
     overflow-x: hidden;
+    max-width: 100%;
     /* Ensure full viewport height on mobile */
     min-height: 100dvh;
     min-height: -webkit-fill-available;
+  }
+  img, video, canvas, svg {
+    max-width: 100%;
   }
 }
 

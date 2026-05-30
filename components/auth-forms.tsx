@@ -94,7 +94,7 @@ export function AuthForms({ onSuccess }: AuthFormsProps) {
   }
 
   return (
-    <motion.div className="w-full max-w-md mx-auto pointer-events-auto touch-manipulation">
+    <motion.div className="w-full max-w-md mx-auto pointer-events-auto touch-manipulation overflow-x-hidden">
       {/* Mode Selector */}
       <div className="flex gap-2 mb-6 p-1.5 bg-[#fcfaf2] border border-amber-900/10 rounded-2xl shadow-sm">
         {[
