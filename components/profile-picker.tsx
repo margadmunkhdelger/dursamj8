@@ -106,11 +106,8 @@ function getCardDecoration(memberId: string, index: number) {
   // Use character codes to generate pseudo-random but consistent values
   const hash = memberId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
   const rotation = ((hash % 7) - 3) * 0.8 // -2.4 to 2.4 degrees
-  const hasTape = (hash + index) % 3 === 0 // ~33% have tape
-  const hasClip = (hash + index) % 5 === 0 && !hasTape // ~20% have clip (but not if has tape)
-  const clipPosition = hash % 2 === 0 ? "left" : "right"
   
-  return { rotation, hasTape, hasClip, clipPosition: clipPosition as "left" | "right" }
+  return { rotation }
 }
 
 // Polaroid card matching the reference image design
@@ -127,7 +124,7 @@ function PolaroidCard({
   delay?: number
   index?: number
 }) {
-  const { rotation, hasTape, hasClip, clipPosition } = getCardDecoration(member.id, index)
+  const { rotation } = getCardDecoration(member.id, index)
   
   return (
     <motion.button
@@ -139,11 +136,11 @@ function PolaroidCard({
       onClick={() => onSelect(member)}
       className="relative flex flex-col items-center group z-10"
     >
-      {/* Tape decoration - selective application */}
-      {(hasTape || isTeacher) && <RealisticTape variant="top" />}
+      {/* Tape decoration - on all student cards and teacher */}
+      <RealisticTape variant="top" />
       
-      {/* Paper clip decoration - selective application */}
-      {hasClip && !isTeacher && <PaperClip position={clipPosition} />}
+      {/* Paper clip decoration - on all student cards */}
+      {!isTeacher && <PaperClip position="left" />}
       
       {/* White polaroid card with enhanced shadow */}
       <div className={cn(
