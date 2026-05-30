@@ -320,7 +320,15 @@ export default function MemoriaApp() {
                 className="text-center mb-8"
               > 
                 <h1 className="text-4xl font-bold font-serif text-foreground">
-                  Дурсамж-д тавтай морил
+                  <span 
+                    className="text-5xl sm:text-6xl text-[#D4AF37] block mb-2"
+                    style={{ fontFamily: 'var(--font-great-vibes), cursive' }}
+                  >
+                    Dursamj
+                  </span>
+                  <span className="text-2xl sm:text-3xl font-medium">
+                    -д тавтай морил
+                  </span>
                 </h1>
               </motion.div>
 

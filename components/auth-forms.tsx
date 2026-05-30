@@ -416,12 +416,15 @@ export function AuthForms({ onSuccess }: AuthFormsProps) {
 
       {/* Mongolian slogan */}
       <motion.div
-        className="mt-6 p-4 glass-card rounded-xl text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
+        className="mt-8 p-6 glass-card rounded-2xl text-center"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.6 }}
       >
-        <p className="text-xs text-muted-foreground font-serif italic leading-relaxed">
+        <p 
+          className="text-lg sm:text-xl text-foreground/80 leading-relaxed tracking-wide"
+          style={{ fontFamily: 'var(--font-cormorant-garamond), serif', fontWeight: 500, fontStyle: 'italic' }}
+        >
           &ldquo;Нэг анги. Нэг дурсамж. Үүрд хадгалагдах мөчүүд.&rdquo;
         </p>
       </motion.div>
