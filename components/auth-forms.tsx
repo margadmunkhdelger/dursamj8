@@ -31,10 +31,8 @@ export function AuthForms({ onSuccess }: AuthFormsProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [schoolCode, setSchoolCode] = useState("")
-  const [schoolAbbr, setSchoolAbbr] = useState("")
   const [graduationYear, setGraduationYear] = useState("")
   const [className, setClassName] = useState("")
-  const [classNameLatin, setClassNameLatin] = useState("")
   const [copied, setCopied] = useState(false)
   const [institutionType, setInstitutionType] = useState<InstitutionType>("ЕБС")
   const [promoCode, setPromoCode] = useState("")
@@ -47,8 +45,8 @@ export function AuthForms({ onSuccess }: AuthFormsProps) {
   const [grade, setGrade] = useState("")
 
   const accessCode = useMemo(
-    () => buildAccessCode(schoolAbbr, graduationYear, classNameLatin),
-    [schoolAbbr, graduationYear, classNameLatin]
+    () => buildAccessCode(schoolCode, graduationYear, className),
+    [schoolCode, graduationYear, className]
   )
 
   const handleCopyCode = async () => {
@@ -74,7 +72,7 @@ export function AuthForms({ onSuccess }: AuthFormsProps) {
     if (mode === "signup" && !promoValid) return
     setIsLoading(true)
     if (mode === "signup" && accessCode) {
-      const identity = buildGroupIdentity(schoolAbbr, graduationYear, classNameLatin)
+      const identity = buildGroupIdentity(schoolCode, graduationYear, className)
       if (identity) saveGroupIdentity(identity)
       localStorage.setItem("memoria-group-access-code", accessCode)
     }
@@ -200,71 +198,23 @@ export function AuthForms({ onSuccess }: AuthFormsProps) {
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-3"
                 >
-                  {/* 1. Сургуулийн нэр */}
                   <div className="space-y-1.5">
                     <Label htmlFor="school-name-ebs" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">Сургуулийн нэр</Label>
-                    <Input
-                      id="school-name-ebs"
-                      value={schoolCode}
-                      onChange={(e) => setSchoolCode(e.target.value)}
-                      placeholder="Жишээ: 1-р сургууль"
-                      className="bg-input border-border h-11 font-sans text-foreground placeholder:text-muted-foreground"
-                      required
-                    />
+                    <Input id="school-name-ebs" value={schoolCode} onChange={(e) => setSchoolCode(e.target.value)} placeholder="Жишээ: NMCT" className="bg-input border-border h-11 font-sans text-foreground placeholder:text-muted-foreground" required />
                   </div>
-
-                  {/* 2. Төгсөх он */}
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">Төгсөх он</Label>
-                    <Input
-                      type="number"
-                      value={graduationYear}
-                      onChange={(e) => setGraduationYear(e.target.value)}
-                      placeholder="2025"
-                      min="2020"
-                      max="2035"
-                      className="bg-input border-border h-11 font-sans text-foreground placeholder:text-muted-foreground"
-                      required
-                    />
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">Анги</Label>
+                      <Input value={className} onChange={(e) => setClassName(e.target.value)} placeholder="12A" className="bg-input border-border h-11 font-sans text-foreground placeholder:text-muted-foreground" required />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">Төгсөх он</Label>
+                      <Input type="number" value={graduationYear} onChange={(e) => setGraduationYear(e.target.value)} placeholder="2025" min="2020" max="2035" className="bg-input border-border h-11 font-sans text-foreground placeholder:text-muted-foreground" required />
+                    </div>
                   </div>
-
-                  {/* 3. Группийн нэр */}
                   <div className="space-y-1.5">
                     <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">Группийн нэр</Label>
-                    <Input
-                      value={className}
-                      onChange={(e) => setClassName(e.target.value)}
-                      placeholder="2024 оны төгсөлт"
-                      className="bg-input border-border h-11 font-sans text-foreground placeholder:text-muted-foreground"
-                    />
-                  </div>
-
-                  {/* 4. Сургуулийн нэрийн товчлол */}
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">
-                      Сургуулийн нэрийн товчлол
-                    </Label>
-                    <Input
-                      value={schoolAbbr}
-                      onChange={(e) => setSchoolAbbr(e.target.value.toUpperCase().replace(/\s/g, ""))}
-                      placeholder="Жишээ: NMCT, 84, ORCHLON"
-                      className="bg-input border-border h-11 font-sans text-foreground placeholder:text-muted-foreground font-mono tracking-wide uppercase"
-                      required
-                    />
-                  </div>
-
-                  {/* 5. Ангийн нэр (латин үсгээр) */}
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">
-                      Ангийн нэр (латин үсгээр)
-                    </Label>
-                    <Input
-                      value={classNameLatin}
-                      onChange={(e) => setClassNameLatin(e.target.value.toUpperCase().replace(/\s/g, ""))}
-                      placeholder="Жишээ: 12A, 12B, 12G, 12E"
-                      className="bg-input border-border h-11 font-sans text-foreground placeholder:text-muted-foreground font-mono tracking-wide uppercase"
-                      required
-                    />
+                    <Input placeholder="2024 оны төгсөлт" className="bg-input border-border h-11 font-sans text-foreground placeholder:text-muted-foreground" />
                   </div>
                 </motion.div>
               )}
@@ -342,7 +292,7 @@ export function AuthForms({ onSuccess }: AuthFormsProps) {
               {/* Access code preview */}
               {accessCode && (
                 <div className="rounded-xl bg-muted border border-border p-3">
-                  <p className="text-xs text-muted-foreground mb-1 font-sans">Үүсэх группийн код</p>
+                  <p className="text-xs text-muted-foreground mb-1 font-sans">Хандах код</p>
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-mono text-lg font-bold text-primary tracking-wide">
                       {accessCode}
