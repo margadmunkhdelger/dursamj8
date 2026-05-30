@@ -2,12 +2,13 @@
 
 import { motion } from "framer-motion"
 import { CountdownTimer } from "./countdown-timer"
-import { Users, Image as ImageIcon, Clock, Music2, MessageCircle, Plus, ArrowRight, MapPin, Pencil, Save } from "lucide-react"
+import { Users, Image as ImageIcon, Clock, Award, MessageCircle, Plus, ArrowRight, MapPin, Pencil, Save } from "lucide-react"
 import Image from "next/image"
 import { TeacherMessageCard } from "./teacher-message-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
+import { cn } from "@/lib/utils"
 
 interface HomeDashboardProps {
   groupName: string
@@ -169,7 +170,7 @@ export function HomeDashboard({
           { label: "Гишүүд", value: memberCount, icon: Users, tab: "members" },
           { label: "Дурсамж", value: memoryCount, icon: ImageIcon, tab: "gallery" },
           { label: "Капсул", value: 12, icon: Clock, tab: "capsule" },
-          { label: "Дуу", value: 24, icon: Music2, tab: "music" },
+          { label: "Батламж", value: 1, icon: Award, tab: "music" },
         ].map((stat, index) => (
           <motion.button
             key={stat.label}
@@ -179,11 +180,20 @@ export function HomeDashboard({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => onNavigate(stat.tab)}
-            className="bg-card border border-border rounded-xl p-3 text-left shadow-sm hover:border-primary/30 transition-colors"
+            className="bg-card border border-border rounded-2xl p-4 text-left shadow-md hover:border-[#c9a45c] transition-all group relative overflow-hidden"
           >
-            <stat.icon className="w-4 h-4 mb-1 text-primary" />
-            <p className="text-xl font-bold text-foreground">{stat.value}</p>
-            <p className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground">{stat.label}</p>
+            {/* Decorative background icon - Aligned straight and centered for a cleaner look */}
+            <stat.icon className="absolute -right-2 top-1/2 -translate-y-1/2 w-16 h-16 text-[#1f2d5a] opacity-[0.05] group-hover:opacity-10 transition-opacity" />
+
+            <div className="relative z-10">
+              <div className="w-8 h-8 rounded-full bg-[#c9a45c]/10 flex items-center justify-center mb-3 group-hover:bg-[#c9a45c]/20 transition-colors border border-[#c9a45c]">
+                <stat.icon className="w-4 h-4 text-[#1f2d5a]" />
+              </div>
+              {stat.value !== null && (
+                <p className="text-2xl font-bold text-[#1f2d5a] leading-none font-mono tabular-nums">{stat.value}</p>
+              )}
+              <p className={cn("text-[10px] uppercase font-bold tracking-widest text-[#8a7a6a]/70 font-sans", stat.value !== null ? "mt-1" : "mt-2")}>{stat.label}</p>
+            </div>
           </motion.button>
         ))}
       </div>
@@ -193,18 +203,20 @@ export function HomeDashboard({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-card rounded-xl p-3 border border-border shadow-sm"
+        className="bg-card rounded-2xl p-4 border border-border shadow-md"
       >
         <div className="flex items-center justify-between mb-3 px-1">
-          <h2 className="font-serif font-bold flex items-center gap-2 text-foreground">
-            <Users className="w-4 h-4 text-primary" />
-            Манай Ангийнхан
-          </h2>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-[#c9a45c]/10 flex items-center justify-center border border-[#c9a45c]">
+              <Users className="w-4 h-4 text-[#1f2d5a]" />
+            </div>
+            <h2 className="font-serif font-bold text-[#1f2d5a]">Манай Ангийнхан</h2>
+          </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onNavigate("members")}
-            className="text-primary hover:text-primary/80 hover:bg-primary/10 gap-1 font-semibold text-xs uppercase tracking-tight"
+            className="text-[#c9a45c] hover:text-[#c9a45c]/80 hover:bg-[#c9a45c]/10 gap-1 font-bold text-xs uppercase tracking-tight"
           >
             Бүгдийг харах
             <ArrowRight className="w-3 h-3" />
@@ -249,12 +261,12 @@ export function HomeDashboard({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }} 
           onClick={() => onNavigate("gallery")}
-          className="bg-card border border-border rounded-xl p-3 flex flex-col items-center gap-1.5 hover:bg-muted transition-colors shadow-sm"
+          className="bg-card border border-border rounded-2xl p-4 flex flex-col items-center gap-3 hover:bg-muted transition-all shadow-md group"
         >
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <Plus className="w-4 h-4 text-primary" />
+          <div className="w-10 h-10 rounded-full bg-[#c9a45c]/10 flex items-center justify-center border border-[#c9a45c] group-hover:scale-110 transition-transform">
+            <Plus className="w-5 h-5 text-[#1f2d5a]" />
           </div>
-          <span className="text-xs font-semibold text-foreground">Дурсамж нэмэх</span>
+          <span className="text-xs font-bold text-[#1f2d5a] uppercase tracking-wider font-sans">Дурсамж нэмэх</span>
         </motion.button>
         <motion.button
           initial={{ opacity: 0, y: 20 }}
@@ -263,12 +275,12 @@ export function HomeDashboard({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }} 
           onClick={() => onNavigate("capsule")}
-          className="bg-card border border-border rounded-xl p-3 flex flex-col items-center gap-1.5 hover:bg-muted transition-colors shadow-sm"
+          className="bg-card border border-border rounded-2xl p-4 flex flex-col items-center gap-3 hover:bg-muted transition-all shadow-md group"
         >
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <MessageCircle className="w-4 h-4 text-primary" />
+          <div className="w-10 h-10 rounded-full bg-[#c9a45c]/10 flex items-center justify-center border border-[#c9a45c] group-hover:scale-110 transition-transform">
+            <MessageCircle className="w-5 h-5 text-[#1f2d5a]" />
           </div>
-          <span className="text-xs font-semibold text-foreground">Захидал бичих</span>
+          <span className="text-xs font-bold text-[#1f2d5a] uppercase tracking-wider font-sans">Захидал бичих</span>
         </motion.button>
       </div>
 
