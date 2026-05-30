@@ -12,6 +12,9 @@ interface TimeCapsuleProps {
   reunionDate: Date
   onWrite: (content: string, type: string) => void
   reunionLocation?: string
+  schoolName?: string
+  groupName?: string
+  graduationYear?: number
 }
 
 interface CapsuleLetter {
@@ -85,7 +88,7 @@ function FlyingEnvelope({ targetId, onComplete }: { targetId: string; onComplete
   )
 }
 
-export function TimeCapsule({ reunionDate, onWrite, reunionLocation }: TimeCapsuleProps) {
+export function TimeCapsule({ reunionDate, onWrite, reunionLocation, schoolName, groupName, graduationYear }: TimeCapsuleProps) {
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [content, setContent] = useState("")
   const [author, setAuthor] = useState("")
@@ -152,32 +155,66 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocation }: TimeCapsu
         )}
       </AnimatePresence>
 
-      {/* Countdown Header */}
+      {/* Countdown Header - Restyled to match Home Page Hero */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card border border-border rounded-2xl p-5 text-center shadow-sm"
+        className="bg-card rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden border border-border shadow-lg"
       >
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <Lock className="w-4 h-4 text-[#c9a45c]" />
-          <h2 className="text-base font-bold text-foreground font-serif">Цаг хугацааны капсул</h2>
+        {/* Decorative Background */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-primary blur-[80px]" />
+          <div className="absolute -bottom-10 -right-10 w-32 h-32 rounded-full bg-accent blur-[60px]" />
         </div>
-        <p className="text-xs font-semibold text-foreground/70 font-sans mb-3">
-          10 жилийн дараа энд уулзацгаая
-        </p>
-        <CountdownTimer targetDate={reunionDate} title="Бидний дахин уулзах цаг ойртсоор" />
-        <p className="text-[10px] text-muted-foreground mt-3 font-sans">
-          Нээгдэх өдөр: {reunionDate.toLocaleDateString("mn-MN", { year: "numeric", month: "long", day: "numeric" })}
-        </p>
-        {reunionLocation && (
-          <p className="text-[10px] text-[#c9a45c] mt-1 font-sans flex items-center justify-center gap-1">
-            <MapPin className="w-3 h-3" />
-            Уулзах газар: {reunionLocation}
-          </p>
-        )}
-        <p className="text-[10px] text-muted-foreground mt-2 font-sans italic">
-          Өнөөдрийн захидал, мөрөөдөл, дурсамжууд товлосон өдөр нээгдэнэ.
-        </p>
+
+        <div className="relative z-10">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="mb-8 space-y-3"
+          >
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <Lock className="w-3.5 h-3.5 text-[#c9a45c]" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-[#c9a45c] font-bold">
+                Цаг хугацааны капсул
+              </span>
+            </div>
+
+            {groupName && (
+              <p className="text-[10px] uppercase tracking-[0.4em] text-[#c9a45c] font-bold">
+                {groupName}
+              </p>
+            )}
+            <h1 className="text-3xl sm:text-5xl font-script text-foreground leading-[1.1] px-2">
+              {schoolName || "Шинэ Монгол Технологийн Коллеж"}
+            </h1>
+            <div className="flex items-center justify-center gap-3">
+              <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent to-[#c9a45c] max-w-[60px]" />
+              <p className="text-xs sm:text-sm font-sans font-bold text-[#1f2d5a] uppercase tracking-[0.2em] whitespace-nowrap lining-nums tabular-nums">
+                {graduationYear} ОНЫ ТӨГСӨЛТ
+              </p>
+              <div className="h-0.5 flex-1 bg-gradient-to-l from-transparent to-[#c9a45c] max-w-[60px]" />
+            </div>
+          </motion.div>
+
+          <CountdownTimer targetDate={reunionDate} title="Бидний дахин уулзах цаг ойртсоор" />
+
+          <div className="mt-4 pt-4 border-t border-border/50 space-y-1">
+            <p className="text-[10px] text-muted-foreground font-sans">
+              Нээгдэх өдөр: {reunionDate.toLocaleDateString("mn-MN", { year: "numeric", month: "long", day: "numeric" })}
+            </p>
+            {reunionLocation && (
+              <p className="text-[10px] text-[#c9a45c] font-sans flex items-center justify-center gap-1">
+                <MapPin className="w-3 h-3" />
+                Уулзах газар: {reunionLocation}
+              </p>
+            )}
+            <p className="text-[9px] text-muted-foreground mt-2 font-sans italic opacity-70">
+              Өнөөдрийн захидал, мөрөөдөл, дурсамжууд товлосон өдөр нээгдэнэ.
+            </p>
+          </div>
+        </div>
       </motion.div>
 
       {/* 4 Capsule Type Boxes */}

@@ -2,7 +2,6 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect } from "react"
-import { Lock } from "lucide-react"
 
 interface TimeLeft {
   years: number
@@ -141,63 +140,32 @@ export function CountdownTimer({
   if (!mounted) return null
 
   if (variant === "album") {
-    const totalSeconds = Math.max(
-      1,
-      timeLeft.years * 365 * 24 * 3600 +
-        timeLeft.days * 24 * 3600 +
-        timeLeft.hours * 3600 +
-        timeLeft.minutes * 60 +
-        timeLeft.seconds
-    )
-    const reunionSpan = Math.max(1, targetDate.getTime() - new Date("2024-01-01").getTime())
-    const progress = Math.min(100, Math.max(0, 100 - (totalSeconds / (reunionSpan / 1000)) * 100))
-
     return (
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card rounded-xl px-3 py-2.5 relative overflow-hidden border border-border shadow-sm"
+        className="flex flex-col items-center gap-4"
       >
-        <motion.div
-          className="absolute inset-0 rounded-xl opacity-40"
-          style={{
-            background: "radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.15), transparent 70%)",
-          }}
-          animate={{ opacity: [0.4, 0.7, 0.4] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          aria-hidden
-        />
-        <div className="relative flex items-center justify-center gap-1.5 mb-2">
-          <motion.div
-            animate={{ scale: [1, 1.08, 1] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-            className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center border border-primary/30"
-          >
-            <Lock className="w-3 h-3 text-primary/80" />
-          </motion.div>
-          <span className="text-[9px] uppercase tracking-[0.22em] text-primary/90 font-medium">
-            {title}
-          </span>
+        <div className="relative flex items-start justify-center flex-wrap gap-y-2">
+          <FlipDigit value={timeLeft.years} label="Жил" compact />
+          <Separator />
+          <FlipDigit value={timeLeft.days} label="Өдөр" compact />
+          <Separator />
+          <FlipDigit value={timeLeft.hours} label="Цаг" compact />
+          <Separator />
+          <FlipDigit value={timeLeft.minutes} label="Мин" compact />
+          <Separator />
+          <FlipDigit value={timeLeft.seconds} label="Сек" compact />
         </div>
-        <div className="relative flex items-center justify-center flex-wrap gap-y-1">
-          <AlbumUnit value={timeLeft.years} label="Жил" />
-          <Separator album />
-          <AlbumUnit value={timeLeft.days} label="Өдөр" />
-          <Separator album />
-          <AlbumUnit value={timeLeft.hours} label="Цаг" />
-          <Separator album />
-          <AlbumUnit value={timeLeft.minutes} label="Мин" />
-          <Separator album />
-          <AlbumUnit value={timeLeft.seconds} label="Сек" />
-        </div>
-        <div className="relative mt-2.5 h-1 rounded-full bg-white/5 overflow-hidden">
-          <motion.div
-            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary/60 via-primary to-accent/70"
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%`, background: "linear-gradient(to right, var(--primary)/60, var(--primary), var(--accent)/70)" }}
-            transition={{ duration: 0.8, ease: [0.33, 1, 0.32, 1] }}
-          />
-        </div>
+
+        <motion.h3
+          className="text-xs sm:text-sm text-[#1f2d5a] font-serif font-bold italic tracking-wide"
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          {title}
+        </motion.h3>
       </motion.div>
     )
   }

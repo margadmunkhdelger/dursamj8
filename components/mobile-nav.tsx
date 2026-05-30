@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Home, Users, Clock, Image, Award } from "lucide-react"
+import { Home, Users, Clock, Image, Award, Bell, Palette, Lock, HelpCircle, LogOut, X } from "lucide-react"
 import { useState } from "react"
 
 interface MobileNavProps {

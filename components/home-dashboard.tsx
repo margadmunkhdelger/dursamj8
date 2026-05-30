@@ -74,24 +74,84 @@ export function HomeDashboard({
 
         <div className="relative z-10">
           <motion.div
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2 }}
+            className="mb-8 space-y-3"
           >
-            {schoolName && (
-              <p className="text-[10px] uppercase tracking-[0.3em] text-[#c9a45c] font-bold mb-1 font-sans">
-                {schoolName}
+            {groupName && (
+              <p className="text-[10px] uppercase tracking-[0.4em] text-[#c9a45c] font-bold">
+                {groupName}
               </p>
             )}
-            <h1 className="text-2xl sm:text-4xl font-serif font-bold mt-1 mb-1 tracking-tight text-foreground">
-              {groupName} ангийн дурсамжийн орон зай
+            <h1 className="text-3xl sm:text-5xl font-script text-foreground leading-[1.1] px-2">
+              {schoolName || "Шинэ Монгол Технологийн Коллеж"}
             </h1>
-            <p className="text-xs text-muted-foreground font-sans mb-3">
-              {schoolName && `${schoolName} · `}{groupName} · {graduationYear} оны төгсөлт
-            </p>
+            <div className="flex items-center justify-center gap-3">
+              <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent to-[#c9a45c] max-w-[60px]" />
+              <p className="text-xs sm:text-sm font-sans font-bold text-[#1f2d5a] uppercase tracking-[0.2em] whitespace-nowrap lining-nums tabular-nums">
+                {graduationYear} ОНЫ ТӨГСӨЛТ
+              </p>
+              <div className="h-0.5 flex-1 bg-gradient-to-l from-transparent to-[#c9a45c] max-w-[60px]" />
+            </div>
           </motion.div>
 
           <CountdownTimer targetDate={reunionDate} title="Бидний дахин уулзах цаг ойртсоор" />
+        </div>
+      </motion.div>
+
+      {/* Reunion Location Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="bg-card border border-border rounded-2xl p-6 shadow-lg text-center relative overflow-hidden"
+      >
+        <div className="flex flex-col items-center justify-center gap-2 mb-2">
+          <div className="bg-[#14213d] p-3 rounded-full text-[#f5d17a] shadow-sm mb-1">
+            <MapPin className="w-6 h-6" />
+          </div>
+          <div className="flex items-center justify-center w-full relative">
+            <h3 className="text-xl font-bold text-[#14213d] font-serif tracking-wide uppercase">Дахин уулзах газар</h3>
+            {isTeacher && !editingLocation && (
+              <button
+                onClick={() => { setEditingLocation(true); setLocationInput(savedLocation) }}
+                className="absolute right-0 p-2 rounded-full bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
+                title="Засах"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="border-t border-border pt-4 mt-2">
+          {isTeacher && editingLocation ? (
+            <div className="space-y-3 text-left">
+              <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold ml-1">Байршлын мэдээлэл</label>
+              <Input
+                value={locationInput}
+                onChange={(e) => setLocationInput(e.target.value)}
+                placeholder="Жишээ: Сургуулийн урд талбай, 2034.06.01"
+                className="bg-input border-border h-12 text-sm font-sans text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-primary/20"
+              />
+              <Button onClick={handleSaveLocation} className="w-full h-12 bg-primary hover:bg-primary/90 font-bold rounded-xl shadow-lg shadow-primary/20">
+                <Save className="w-4 h-4 mr-2" />
+                Мэдээллийг хадгалах
+              </Button>
+            </div>
+          ) : savedLocation ? (
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground font-sans font-medium">Бид countdown дуусахад энд уулзана:</p>
+              <p className="text-lg font-bold text-foreground font-sans flex items-center justify-center gap-2">
+                {savedLocation}
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">
+              Багш уулзах газрын мэдээллийг удахгүй нэмнэ.
+            </p>
+          )}
         </div>
       </motion.div>
 
@@ -102,57 +162,6 @@ export function HomeDashboard({
         isTeacher={isTeacher}
         onUpdate={onUpdateTeacherMessage}
       />
-
-      {/* Reunion Location Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="bg-card rounded-2xl p-4 border border-border shadow-sm"
-      >
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-full bg-[#c9a45c]/10 flex items-center justify-center border border-[#c9a45c]/20">
-            <MapPin className="w-4 h-4 text-[#c9a45c]" />
-          </div>
-          <h3 className="font-serif font-bold text-foreground">Дахин уулзах газар</h3>
-          {isTeacher && !editingLocation && (
-            <button
-              onClick={() => { setEditingLocation(true); setLocationInput(savedLocation) }}
-              className="ml-auto p-1.5 rounded-full bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
-            >
-              <Pencil className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
-
-        {isTeacher && editingLocation ? (
-          <div className="space-y-2">
-            <label className="text-xs text-muted-foreground font-sans">Уулзах газрын мэдээлэл</label>
-            <Input
-              value={locationInput}
-              onChange={(e) => setLocationInput(e.target.value)}
-              placeholder="Жишээ: Сургуулийн урд талбай, 2034.06.01"
-              className="bg-input border-border h-10 text-sm font-sans text-foreground placeholder:text-muted-foreground"
-            />
-            <Button onClick={handleSaveLocation} size="sm" className="w-full h-9 font-sans font-semibold">
-              <Save className="w-3.5 h-3.5 mr-1.5" />
-              Хадгалах
-            </Button>
-          </div>
-        ) : savedLocation ? (
-          <div className="space-y-1">
-            <p className="text-xs text-muted-foreground font-sans">Бид countdown дуусахад энд уулзана:</p>
-            <p className="text-sm font-semibold text-foreground font-sans flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-[#c9a45c] shrink-0" />
-              {savedLocation}
-            </p>
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground italic font-sans">
-            Багш уулзах газрын мэдээллийг удахгүй нэмнэ.
-          </p>
-        )}
-      </motion.div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-2">

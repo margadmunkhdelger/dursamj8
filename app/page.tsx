@@ -16,8 +16,8 @@ import { ProfilePicker, PendingMembers, CurrentUserBadge, type Member } from "@/
 
 // Demo data
 const demoGroup = {
-  schoolName: "NMCT", // Сургуулийн нэрийг нэмэв
-  name: "12G", // Ангийн нэрийг жишээ болгон өөрчлөв
+  schoolName: "Шинэ Монгол Технологийн Коллеж", // Сургуулийн нэрийг нэмэв
+  name: "Механик Инженер", // Ангийн нэрийг жишээ болгон өөрчлөв
   graduationYear: 2024,
   reunionDate: new Date("2034-05-28"),
   quote: "Бид дурсамж бүтээж буйгаа мэдээгүй, зүгээр л хөгжилдөж байна гэж бодсон.",
@@ -237,7 +237,7 @@ export default function MemoriaApp() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6"
+              className="mb-4"
             >
               <h2 className="text-xl font-semibold mb-1">Манай Ангийнхан</h2>
               <p className="text-sm text-muted-foreground">
@@ -270,6 +270,9 @@ export default function MemoriaApp() {
           <div className="pb-24">
             <TimeCapsule
               reunionDate={demoGroup.reunionDate}
+              schoolName={demoGroup.schoolName}
+              groupName={demoGroup.name}
+              graduationYear={demoGroup.graduationYear}
               onWrite={(content, type) => {
                 console.log("[v0] Time capsule written:", { content, type, author: currentUser?.name })
               }}
@@ -308,7 +311,7 @@ export default function MemoriaApp() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            className="min-h-[100dvh] flex flex-col justify-center px-4 sm:px-6 py-12 relative overflow-x-hidden"
+            className="min-h-[100dvh] flex flex-col justify-center px-4 sm:px-6 py-12 relative overflow-x-hidden bg-[#F5F0E8]"
           >
             <FloatingParticles count={20} />
             
@@ -318,10 +321,15 @@ export default function MemoriaApp() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
                 className="text-center mb-8"
-              > 
-                <h1 className="text-4xl font-bold font-serif text-foreground">
-                  Дурсамж-д тавтай морил
-                </h1>
+              >
+                <h1 className="text-6xl sm:text-7xl font-script text-[#0F1B3D] mb-2">Дурсамж</h1>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent to-[#C9A45C] max-w-[40px]" />
+                  <p className="text-sm font-serif font-bold text-[#C9A45C] uppercase tracking-[0.2em]">
+                    Тавтай морил
+                  </p>
+                  <div className="h-0.5 flex-1 bg-gradient-to-l from-transparent to-[#C9A45C] max-w-[40px]" />
+                </div>
               </motion.div>
 
               <AuthForms onSuccess={handleAuthSuccess} />
@@ -362,7 +370,7 @@ export default function MemoriaApp() {
             )}
 
             <div className="flex-1 overflow-y-auto scroll-smooth overscroll-none">
-              <div className="relative z-10 pt-16 px-4 pb-24 max-w-md mx-auto">
+              <div className="relative z-10 pt-4 px-4 pb-24 max-w-md mx-auto">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}

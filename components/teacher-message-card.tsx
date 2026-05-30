@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { Mail, X, Pencil, Save, GraduationCap } from "lucide-react"
+import { X, Pencil, Save, GraduationCap } from "lucide-react"
 import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -55,15 +55,10 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
     setAnimationPhase('opening')
     createParticles()
     
-    // Envelope opens, seal breaks
-    setTimeout(() => {
-      setAnimationPhase('letter-rising')
-    }, 500)
-    
-    // Letter rises and envelope fades - then show final state
+    // Дугтуйн таг нээгдсэний дараа шууд захианы агуулгыг харуулна
     setTimeout(() => {
       setAnimationPhase('open')
-    }, 1200)
+    }, 800)
   }
 
   const handleClose = () => {
@@ -86,7 +81,7 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }} 
-      className="bg-[#f6f1eb] rounded-[28px] p-6 py-8 relative overflow-x-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] mx-auto w-full max-w-md"
+      className="bg-card rounded-2xl min-h-[280px] flex items-center justify-center relative overflow-hidden shadow-lg mx-auto w-full max-w-lg border border-border p-4 py-4 sm:py-6"
     >
       {/* Celebration Particles - Fireworks Burst Effect */}
       <AnimatePresence>
@@ -142,72 +137,66 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
             <motion.button
               onClick={handleOpen}
               disabled={animationPhase !== 'closed'}
-              className="w-full flex flex-col items-center justify-center text-center space-y-8 cursor-pointer text-foreground group disabled:cursor-wait"
+              className="w-full h-full flex items-center justify-center cursor-pointer group disabled:cursor-wait outline-none"
             >
-              {/* Envelope Container */}
+              {/* Envelope Body */}
               <motion.div
-                className="w-full aspect-[5/3.6] relative envelope-container px-2"
+                className="relative w-full max-w-[380px] h-[240px] bg-[#14213d] rounded-sm shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5),inset_0_-2px_10px_rgba(0,0,0,0.3)] overflow-hidden border border-white/5"
                 whileHover={animationPhase === 'closed' ? { y: -8, scale: 1.02 } : {}}
                 animate={{ 
                   scale: animationPhase !== 'closed' ? 1.03 : 1,
-                  opacity: animationPhase === 'letter-rising' ? 0 : 1,
-                  y: animationPhase === 'letter-rising' ? 40 : 0
+                  opacity: 1,
+                  y: 0
                 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
-                {/* Physical Depth Shadows */}
-                <div className="absolute inset-x-4 bottom-0 h-4 bg-black/40 blur-xl translate-y-4 scale-95 rounded-[50%]" />
-                
-                {/* Envelope Body with Fold Layers */}
-                <div className="absolute inset-0 luxury-envelope-texture rounded-lg overflow-hidden shadow-2xl border border-white/5">
-                  {/* Side Flaps (Triangular) */}
-                  <div 
-                    className="absolute inset-0 opacity-40" 
-                    style={{ 
-                      clipPath: "polygon(0% 0%, 50% 50%, 0% 100%)", 
-                      background: "linear-gradient(to right, rgba(0,0,0,0.3), transparent)" 
-                    }} 
-                  />
-                  <div 
-                    className="absolute inset-0 opacity-40" 
-                    style={{ 
-                      clipPath: "polygon(100% 0%, 50% 50%, 100% 100%)", 
-                      background: "linear-gradient(to left, rgba(0,0,0,0.3), transparent)" 
-                    }} 
-                  />
+                {/* 3D Fold Effects with Seam Definition */}
+                <div className="absolute inset-0 pointer-events-none">
+                  {/* Bottom Part */}
+                  <div className="absolute inset-0 z-10" style={{ 
+                    clipPath: "polygon(0 100%, 50% 50%, 100% 100%)",
+                    background: "linear-gradient(to top, #0f1a2e, #14213d)"
+                  }} />
                   
-                  {/* Bottom Flap (Triangular) */}
-                  <div 
-                    className="absolute inset-0 opacity-60" 
-                    style={{ 
-                      clipPath: "polygon(0% 100%, 50% 50%, 100% 100%)", 
-                      background: "linear-gradient(to top, rgba(0,0,0,0.4), transparent)",
-                      borderTop: "0.5px solid rgba(255,255,255,0.05)" 
-                    }} 
-                  />
+                  {/* Left Flap */}
+                  <div className="absolute inset-0 z-10" style={{ 
+                    clipPath: "polygon(0 0, 50% 50%, 0 100%)",
+                    background: "#182640"
+                  }} />
+                  
+                  {/* Right Flap */}
+                  <div className="absolute inset-0 z-10" style={{ 
+                    clipPath: "polygon(100% 0, 50% 50%, 100% 100%)",
+                    background: "#182640"
+                  }} />
 
                   {/* Top Flap (Opening Animation) */}
                   <motion.div 
-                    className="absolute inset-0 z-10 origin-top" 
+                    className="absolute inset-0 z-30 origin-top shadow-xl" 
                     initial={{ rotateX: 0 }}
                     animate={animationPhase !== 'closed' ? { 
                       rotateX: -180,
                       transition: { duration: 0.7, ease: "easeInOut" }
                     } : {}}
                     style={{ 
-                      clipPath: "polygon(0% 0%, 50% 50%, 100% 0%)", 
-                      background: "linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(0,0,0,0.25))", 
-                      filter: "brightness(1.1)", 
-                      borderBottom: "1px solid rgba(0,0,0,0.4)",
+                      clipPath: "polygon(0 0, 100% 0, 50% 50%)", 
+                      background: "linear-gradient(to bottom, #223147, #1c2a43)", 
                       transformStyle: "preserve-3d",
-                      backfaceVisibility: "hidden"
+                      backfaceVisibility: "hidden",
+                      borderBottom: "1px solid rgba(0,0,0,0.2)"
                     }} 
                   />
+                  
+                  {/* Soft Internal Shadow for 3D feel */}
+                  <div className="absolute inset-0 z-[15] shadow-[inset_0_0_100px_rgba(0,0,0,0.4)]" />
+                </div>
 
-                  {/* Realistic Gold Wax Seal with Break Animation */}
+                {/* Content Overlay (Seal and Label) */}
+                <div className="absolute inset-0 z-40 flex items-center justify-center">
+                  {/* Wax Seal */}
                   <motion.div 
-                    className="absolute w-16 h-16 rounded-full wax-seal top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 shadow-2xl flex items-center justify-center border border-white/20"
-                    initial={{ scale: 1.1 }}
+                    className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 z-50"
+                    initial={{ scale: 1 }}
                     animate={animationPhase !== 'closed' ? {
                       scale: 0,
                       opacity: 0,
@@ -215,44 +204,24 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
                     } : { scale: 1.1, opacity: 1, rotate: 0 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
                   >
-                     <GraduationCap className="w-8 h-8 text-[#1f2d5a]/30 fill-current opacity-70" strokeWidth={1.5} />
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#f8e4b3] via-[#d4af37] to-[#8b6914] shadow-[0_12px_25px_rgba(0,0,0,0.4),inset_0_2px_5px_rgba(255,255,255,0.6)]" />
+                    <div className="absolute inset-2 rounded-full border border-amber-900/30" />
+                    <GraduationCap className="w-8 h-8 text-[#1a2b4c] relative z-10 drop-shadow-sm" />
                   </motion.div>
 
-                  {/* Elegant Handwritten Label */}
+                  {/* Label */}
                   <motion.div 
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-12 z-30 pointer-events-none"
+                    className="absolute bottom-6 left-0 right-0 pointer-events-none flex justify-center"
                     animate={animationPhase !== 'closed' ? { opacity: 0, y: 20 } : {}}
                     transition={{ duration: 0.3 }}
                   >
-                     <p className="font-serif font-bold text-[#c9a45c] text-xl sm:text-2xl drop-shadow-sm select-none uppercase tracking-tight">
+                     <p className="font-script text-[#f5d17a] text-2xl sm:text-3xl drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] select-none tracking-wider whitespace-nowrap">
                        Багшийн захиас
                      </p>
                   </motion.div>
                 </div>
               </motion.div>
             </motion.button>
-
-            {/* Letter Rising - positioned outside envelope, stays visible */}
-            <AnimatePresence>
-              {animationPhase === 'letter-rising' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-x-6 top-8 bottom-8 z-50 pointer-events-none"
-                >
-                  <div className="w-full h-full bg-gradient-to-b from-[#fffef9] to-[#f5f3ed] rounded-lg shadow-2xl border border-stone-200/60 relative overflow-hidden">
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
-                      <p className="text-stone-600 text-base italic leading-relaxed font-serif text-center px-2">
-                        &ldquo;{message.slice(0, 120)}{message.length > 120 ? '...' : ''}&rdquo;
-                      </p>
-                      <p className="text-sm text-stone-400 mt-4 font-medium">- {teacherName}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.div>
         ) : (
           <motion.div
@@ -261,46 +230,49 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="relative z-10 space-y-3 text-center"
+            className="relative z-10 w-full flex flex-col text-left"
           > 
-            <motion.div 
-              className="flex items-center justify-between mb-2"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <div className="flex items-center gap-2 text-left">
-                <motion.div 
-                  className="w-10 h-10 rounded-full bg-[#1f2d5a]/10 flex items-center justify-center border border-[#1f2d5a]/20"
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.3, type: "spring" }}
-                >
-                  <Mail className="w-5 h-5 text-primary" />
-                </motion.div>
-                <div>
-                  <h3 className="text-lg font-bold text-foreground font-serif">Багшийн захиас</h3>
-                  <p className="text-[10px] text-stone-500 uppercase tracking-widest">{teacherName}</p>
+            {/* Decorative Corner Ribbon */}
+            <div className="absolute -top-8 -right-8 w-24 h-24 z-0 opacity-20 pointer-events-none rotate-12">
+              <svg viewBox="0 0 100 100" className="w-full h-full fill-[#c9a45c]">
+                <path d="M0 0 L100 100 L100 0 Z" />
+              </svg>
+            </div>
+
+            {/* Subtle Watermark Decoration */}
+            <div className="absolute bottom-0 left-0 opacity-[0.03] pointer-events-none">
+              <GraduationCap className="w-32 h-32 text-[#1a2b4c]" />
+            </div>
+
+            <div className="relative flex items-center justify-between mb-6 border-b border-stone-200 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e4b3] to-[#d4af37] flex items-center justify-center shadow-sm">
+                  <GraduationCap className="w-5 h-5 text-[#1a2b4c]" />
                 </div>
+                <h3 className="text-2xl sm:text-3xl text-[#1a2b4c] font-script leading-none pt-1">Багшийн захиас</h3>
               </div>
+
               <div className="flex items-center gap-2">
                 {isTeacher && !isEditing && (
                   <button 
                     onClick={() => setIsEditing(true)}
-                    className="p-1.5 rounded-full bg-[#1f2d5a]/5 text-[#1f2d5a]/60 hover:bg-[#1f2d5a]/10 transition-colors"
+                    className="p-2 rounded-full bg-stone-100 text-stone-600 hover:bg-stone-200 transition-colors shadow-sm"
+                    title="Засах"
                   >
-                    <Pencil className="w-3.5 h-3.5" />
+                    <Pencil className="w-4 h-4" />
                   </button>
                 )}
                 <button
                   onClick={handleClose} 
-                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-stone-200/50 text-stone-500 transition-colors"
+                  className="w-9 h-9 rounded-full flex items-center justify-center bg-stone-100 hover:bg-stone-200 text-stone-500 transition-colors shadow-sm"
+                  title="Хаах"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
-            </motion.div>
+            </div>
             
+            <div className="relative z-10 flex-1 flex flex-col">
             {isEditing ? (
               <motion.div 
                 className="space-y-4"
@@ -319,7 +291,7 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
               </motion.div>
             ) : (
               <motion.div 
-                className="py-6 border-y border-stone-200/60 px-2"
+                className="py-4 border-y border-stone-200/60 px-2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
@@ -331,7 +303,7 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
             )}
             {!isEditing && (
               <motion.p 
-                className="text-sm font-bold text-[#1f2d5a] uppercase tracking-widest pt-2"
+                className="text-sm font-bold text-[#1f2d5a] uppercase tracking-widest pt-1"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
@@ -339,6 +311,7 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
                 - {teacherName} -
               </motion.p>
             )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
