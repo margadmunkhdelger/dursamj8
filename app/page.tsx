@@ -341,7 +341,7 @@ export default function MemoriaApp() {
   ]);
 
   return (
-    <main className="min-h-screen relative">
+    <main className="h-[100dvh] w-full overflow-hidden relative bg-[#F5F0E8]">
       <AnimatePresence mode="wait">
 
         {/* Auth Page */}
@@ -351,7 +351,7 @@ export default function MemoriaApp() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            className="min-h-svh w-full flex flex-col justify-center px-4 sm:px-6 py-12 relative overflow-hidden bg-[#F5F0E8]"
+            className="h-[100dvh] w-full flex flex-col justify-center px-4 sm:px-6 py-12 relative overflow-hidden"
           >
             <FloatingParticles count={20} />
             
@@ -400,7 +400,7 @@ export default function MemoriaApp() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 flex flex-col overflow-hidden h-svh w-full pt-[max(1rem,env(safe-area-inset-top))]"
+            className="fixed inset-0 flex flex-col overflow-hidden h-[100dvh] w-full pt-[max(1rem,env(safe-area-inset-top))]"
           >
             <FloatingParticles count={15} />
             
@@ -409,8 +409,8 @@ export default function MemoriaApp() {
               <CurrentUserBadge user={currentUser} onSwitch={handleSwitchProfile} />
             )}
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth overscroll-none w-full outline-none">
-              <div className="relative z-10 pt-4 px-4 pb-[calc(7rem+env(safe-area-inset-bottom,0px))] max-w-md mx-auto">
+            <main className="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth w-full outline-none touch-pan-y overscroll-contain">
+              <div className="relative z-10 pt-4 px-4 pb-[calc(7rem+env(safe-area-inset-bottom,0px))] max-w-md mx-auto min-h-full">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}
@@ -423,7 +423,7 @@ export default function MemoriaApp() {
                   </motion.div>
                 </AnimatePresence>
               </div>
-            </div>
+            </main>
 
             <MobileNav activeTab={activeTab} onTabChange={setActiveTab} />
           </motion.div>

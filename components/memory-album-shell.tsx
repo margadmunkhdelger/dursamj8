@@ -18,7 +18,7 @@ export function AlbumMobileFrame({ children }: AlbumMobileFrameProps) {
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -50 }}
-      className="h-svh w-full flex flex-col justify-center items-center px-4 py-6 relative overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+      className="h-[100dvh] w-full flex flex-col justify-center items-center px-4 py-6 relative overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
     >
       <FloatingParticles count={80} />
       <motion.div
