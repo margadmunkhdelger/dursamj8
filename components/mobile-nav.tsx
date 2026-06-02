@@ -20,9 +20,9 @@ const tabs = [
 export function MobileNav({ activeTab, onTabChange }: MobileNavProps) {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-[70]"
+      className="fixed bottom-0 left-0 right-0 z-[70] safe-area-bottom"
       style={{
-        paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))",
+        paddingBottom: "max(0.75rem, env(safe-area-inset-bottom, 24px))",
         background: "linear-gradient(to top, rgba(246,241,235,0.98) 60%, rgba(246,241,235,0.85) 100%)",
         WebkitBackdropFilter: "blur(20px) saturate(1.4)",
         backdropFilter: "blur(20px) saturate(1.4)",

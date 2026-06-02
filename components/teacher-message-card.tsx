@@ -106,7 +106,7 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
             >
               {/* Envelope Body */}
               <motion.div
-                className="relative w-full max-w-[380px] h-[240px] bg-[#14213d] rounded-sm shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5),inset_0_-2px_10px_rgba(0,0,0,0.3)] overflow-hidden border border-white/5"
+                className="relative w-full max-w-[calc(100vw-3rem)] sm:max-w-[380px] h-[240px] bg-[#14213d] rounded-sm shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5),inset_0_-2px_10px_rgba(0,0,0,0.3)] overflow-hidden border border-white/5"
                 whileHover={animationPhase === 'closed' ? { y: -8, scale: 1.02 } : {}}
                 animate={{ 
                   scale: animationPhase !== 'closed' ? 1.03 : 1,
@@ -180,7 +180,7 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
                     animate={animationPhase !== 'closed' ? { opacity: 0, y: 20 } : {}}
                     transition={{ duration: 0.3 }}
                   >
-                     <p className="font-script text-[#f5d17a] text-2xl sm:text-3xl drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] select-none tracking-wider whitespace-nowrap">
+                     <p className="font-script text-[#f5d17a] text-xl sm:text-3xl drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] select-none tracking-wider whitespace-nowrap">
                        Багшийн захиас
                      </p>
                   </motion.div>

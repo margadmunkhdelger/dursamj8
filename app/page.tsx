@@ -351,11 +351,11 @@ export default function MemoriaApp() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            className="min-h-dvh flex flex-col justify-center px-4 sm:px-6 py-12 relative overflow-x-hidden bg-[#F5F0E8]"
+            className="min-h-dvh w-full flex flex-col justify-center px-4 sm:px-6 py-12 relative overflow-hidden bg-[#F5F0E8]"
           >
             <FloatingParticles count={20} />
             
-            <motion.div className="relative z-10 pointer-events-auto touch-manipulation">
+            <motion.div className="relative z-10 pointer-events-auto touch-manipulation w-full max-w-md mx-auto">
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -400,7 +400,7 @@ export default function MemoriaApp() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 flex flex-col overflow-x-hidden h-dvh pt-[max(1rem,env(safe-area-inset-top))]"
+            className="fixed inset-0 flex flex-col overflow-hidden h-dvh w-full pt-[max(1rem,env(safe-area-inset-top))]"
           >
             <FloatingParticles count={15} />
             
@@ -409,7 +409,7 @@ export default function MemoriaApp() {
               <CurrentUserBadge user={currentUser} onSwitch={handleSwitchProfile} />
             )}
 
-            <div className="flex-1 overflow-y-auto scroll-smooth overscroll-none">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth overscroll-none w-full">
               <div className="relative z-10 pt-4 px-4 pb-[calc(6.5rem+env(safe-area-inset-bottom,0px))] max-w-md mx-auto">
                 <AnimatePresence mode="wait">
                   <motion.div
