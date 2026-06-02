@@ -341,7 +341,7 @@ export default function MemoriaApp() {
   ]);
 
   return (
-    <main className="h-[100dvh] w-full overflow-hidden relative bg-[#F5F0E8]">
+    <main className="h-[100dvh] w-screen overflow-hidden flex flex-col relative bg-[#F5F0E8]">
       <AnimatePresence mode="wait">
 
         {/* Auth Page */}
@@ -351,7 +351,7 @@ export default function MemoriaApp() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            className="h-[100dvh] w-full flex flex-col justify-center px-4 sm:px-6 py-12 relative overflow-hidden"
+            className="flex-1 w-full flex flex-col justify-center px-4 sm:px-6 py-12 relative overflow-hidden"
           >
             <FloatingParticles count={20} />
             
@@ -408,9 +408,10 @@ export default function MemoriaApp() {
             {currentUser && (
               <CurrentUserBadge user={currentUser} onSwitch={handleSwitchProfile} />
             )}
-
-            <main className="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth w-full outline-none touch-pan-y overscroll-contain">
-              <div className="relative z-10 pt-4 px-4 pb-[calc(7rem+env(safe-area-inset-bottom,0px))] max-w-md mx-auto min-h-full">
+            
+            {/* Main scrollable area */}
+            <main className="flex-1 overflow-y-auto w-full outline-none touch-pan-y overscroll-contain pb-[90px]">
+              <div className="relative z-10 pt-4 px-4 max-w-md mx-auto">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}

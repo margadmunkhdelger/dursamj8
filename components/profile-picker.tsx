@@ -281,7 +281,7 @@ interface ProfilePickerProps {
 export function ProfilePicker({ isOpen, members, onSelect, onRequestJoin }: ProfilePickerProps) {
   if (!isOpen) return null
   return (
-    <div className="min-h-screen flex flex-col justify-center px-4 py-8 relative">
+    <div className="h-full flex flex-col justify-center px-4 py-8 relative">
       <div className="w-full max-w-md mx-auto">
         <ProfilePickerContent members={members} onSelect={onSelect} onRequestJoin={onRequestJoin} />
       </div>
