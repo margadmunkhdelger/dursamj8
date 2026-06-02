@@ -15,7 +15,6 @@ export interface Member {
   avatar: string
   tags: string[]
   quote: string
-  dreamJob?: string
   likes: number
   comments: Comment[]
   voiceNotes: number
@@ -99,7 +98,6 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
     name: "",
     nickname: "",
     quote: "",
-    dreamJob: "",
     tags: "",
   })
 
@@ -119,10 +117,9 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
       avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${newMember.nickname}`,
       tags: newMember.tags.split(",").map((t) => t.trim()).filter(Boolean).slice(0, 3),
       quote: newMember.quote || "Энэхүү дурсамжийн цомогт нэгдэж байгаадаа баяртай байна!",
-      dreamJob: newMember.dreamJob,
     })
     setShowJoinForm(false)
-    setNewMember({ name: "", nickname: "", quote: "", dreamJob: "", tags: "" })
+    setNewMember({ name: "", nickname: "", quote: "", tags: "" })
   }
 
   if (showJoinForm) {
@@ -156,15 +153,9 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
             <label className="text-[9px] uppercase tracking-wider text-muted-foreground ml-1">Ишлэл</label>
             <Input value={newMember.quote} onChange={(e) => setNewMember((p) => ({ ...p, quote: e.target.value }))} placeholder="Дурсамж бол мөнх..." className="bg-input border-border h-10 text-sm rounded-xl text-foreground placeholder:text-muted-foreground" />
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="space-y-1">
-              <label className="text-[9px] uppercase tracking-wider text-muted-foreground ml-1">Мэргэжил</label>
-              <Input value={newMember.dreamJob} onChange={(e) => setNewMember((p) => ({ ...p, dreamJob: e.target.value }))} placeholder="Инженер" className="bg-input border-border h-10 text-sm rounded-xl text-foreground placeholder:text-muted-foreground" />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[9px] uppercase tracking-wider text-muted-foreground ml-1">Тагууд</label>
-              <Input value={newMember.tags} onChange={(e) => setNewMember((p) => ({ ...p, tags: e.target.value }))} placeholder="Сагс, Хөгжим" className="bg-input border-border h-10 text-sm rounded-xl text-foreground placeholder:text-muted-foreground" />
-            </div>
+          <div className="space-y-1">
+            <label className="text-[9px] uppercase tracking-wider text-muted-foreground ml-1">Тагууд</label>
+            <Input value={newMember.tags} onChange={(e) => setNewMember((p) => ({ ...p, tags: e.target.value }))} placeholder="Сагс, Хөгжим" className="bg-input border-border h-10 text-sm rounded-xl text-foreground placeholder:text-muted-foreground" />
           </div>
         </div>
         <div className="mt-4 space-y-2 shrink-0 relative z-10">
@@ -243,9 +234,9 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
             {/* Divider with decorative elements */}
             {teacher && students.length > 0 && (
               <div className="flex items-center justify-center gap-2 mb-3 px-2">
-                <div className="flex-1 h-px bg-[#1f2d5a]/20" />
-                <span className="text-[8px] uppercase tracking-[0.15em] text-[#1f2d5a]/50 font-bold">Сурагчид</span>
-                <div className="flex-1 h-px bg-[#1f2d5a]/20" />
+                <div className="flex-1 h-px bg-[#c9a45c]/60" />
+                <span className="text-[9px] uppercase tracking-[0.2em] text-[#1f2d5a] font-black">Сурагчид</span>
+                <div className="flex-1 h-px bg-[#c9a45c]/60" />
               </div>
             )}
 
@@ -265,7 +256,11 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
           {/* Join button */}
           <div className="mt-3 pt-2 border-t border-border/50 text-center shrink-0">
             <p className="text-[10px] text-muted-foreground font-sans mb-1.5">Жагсаалтад байхгүй юу?</p>
-            <Button onClick={() => setShowJoinForm(true)} variant="outline" size="sm" className="gap-1.5 h-8 border-border/50 bg-card/50 text-xs">
+            <Button 
+              onClick={() => setShowJoinForm(true)} 
+              size="sm" 
+              className="gap-2 h-9 px-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 font-bold text-xs rounded-full transition-all active:scale-95 border-none"
+            >
               <UserPlus className="w-3 h-3" />
               Нэгдэх хүсэлт
             </Button>

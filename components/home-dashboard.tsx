@@ -7,7 +7,7 @@ import Image from "next/image"
 import { TeacherMessageCard } from "./teacher-message-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 
 interface HomeDashboardProps {
@@ -21,6 +21,15 @@ interface HomeDashboardProps {
   onUpdateTeacherMessage: (message: string) => void
   isTeacher: boolean
   schoolName?: string
+  reunionLocationDetails: ReunionLocationDetails | null; // New prop
+  onUpdateReunionDetails: (details: ReunionLocationDetails) => void; // New prop
+}
+
+interface ReunionLocationDetails {
+  name: string;
+  address: string;
+  mapsUrl: string;
+  dateTime: string; // ISO string for datetime-local input
 }
 
 const recentActivities = [
@@ -48,17 +57,36 @@ export function HomeDashboard({
   onUpdateTeacherMessage,
   isTeacher,
   schoolName,
+  reunionLocationDetails, // New prop
+  onUpdateReunionDetails, // New prop
 }: HomeDashboardProps) {
-  const [reunionLocation, setReunionLocation] = useState("")
   const [editingLocation, setEditingLocation] = useState(false)
-  const [locationInput, setLocationInput] = useState("")
-  const [savedLocation, setSavedLocation] = useState("")
+  const [locationInput, setLocationInput] = useState<ReunionLocationDetails>(
+    reunionLocationDetails || { name: "", address: "", mapsUrl: "", dateTime: "" }
+  );
+
+  useEffect(() => {
+    // Update local state if prop changes (e.g., after initial load or external update)
+    if (reunionLocationDetails) {
+      setLocationInput(reunionLocationDetails);
+    }
+  }, [reunionLocationDetails]);
 
   const handleSaveLocation = () => {
-    setSavedLocation(locationInput)
-    setReunionLocation(locationInput)
-    setEditingLocation(false)
-  }
+    onUpdateReunionDetails(locationInput);
+    setEditingLocation(false);
+  };
+
+  // Format reunionDate for datetime-local input
+  const formatDateTimeLocal = (date: Date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   return (
     <div className="space-y-4 pb-4">
       {/* Hero Section with Countdown */}
@@ -97,7 +125,7 @@ export function HomeDashboard({
             </div>
           </motion.div>
 
-          <CountdownTimer targetDate={reunionDate} title="Бидний дахин уулзах цаг ойртсоор" />
+          <CountdownTimer targetDate={reunionDate} />
         </div>
       </motion.div>
 
@@ -106,7 +134,10 @@ export function HomeDashboard({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="bg-card border border-border rounded-2xl p-6 shadow-lg text-center relative overflow-hidden"
+        className={cn(
+          "bg-card border rounded-2xl p-6 shadow-lg text-center relative overflow-hidden",
+          !reunionLocationDetails && "border-dashed border-2 border-muted-foreground/30" // Dashed border for empty state
+        )}
       >
         <div className="flex flex-col items-center justify-center gap-2 mb-2">
           <div className="bg-[#14213d] p-3 rounded-full text-[#f5d17a] shadow-sm mb-1">
@@ -114,9 +145,18 @@ export function HomeDashboard({
           </div>
           <div className="flex items-center justify-center w-full relative">
             <h3 className="text-xl font-bold text-[#14213d] font-serif tracking-wide uppercase">Дахин уулзах газар</h3>
-            {isTeacher && !editingLocation && (
+            {isTeacher && !editingLocation && ( // Only show edit button if not editing and is teacher
               <button
-                onClick={() => { setEditingLocation(true); setLocationInput(savedLocation) }}
+                onClick={() => {
+                  setEditingLocation(true);
+                  // Initialize form with current reunion details or empty
+                  setLocationInput(reunionLocationDetails || {
+                    name: "",
+                    address: "",
+                    mapsUrl: "",
+                    dateTime: formatDateTimeLocal(reunionDate), // Use reunionDate prop for initial datetime
+                  });
+                }}
                 className="absolute right-0 p-2 rounded-full bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
                 title="Засах"
               >
@@ -129,24 +169,67 @@ export function HomeDashboard({
         <div className="border-t border-border pt-4 mt-2">
           {isTeacher && editingLocation ? (
             <div className="space-y-3 text-left">
-              <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold ml-1">Байршлын мэдээлэл</label>
-              <Input
-                value={locationInput}
-                onChange={(e) => setLocationInput(e.target.value)}
-                placeholder="Жишээ: Сургуулийн урд талбай, 2034.06.01"
-                className="bg-input border-border h-12 text-sm font-sans text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-primary/20"
-              />
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold ml-1">Байршлын нэр</label>
+                <Input
+                  value={locationInput.name}
+                  onChange={(e) => setLocationInput(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Жишээ: Сургуулийн урд талбай"
+                  className="bg-input border-border h-12 text-sm font-sans text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-primary/20"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold ml-1">Хаяг</label>
+                <Input
+                  value={locationInput.address}
+                  onChange={(e) => setLocationInput(prev => ({ ...prev, address: e.target.value }))}
+                  placeholder="Жишээ: Сүхбаатарын талбай, Улаанбаатар"
+                  className="bg-input border-border h-12 text-sm font-sans text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-primary/20"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold ml-1">Google Maps Линк</label>
+                <Input
+                  value={locationInput.mapsUrl}
+                  onChange={(e) => setLocationInput(prev => ({ ...prev, mapsUrl: e.target.value }))}
+                  placeholder="https://maps.app.goo.gl/..."
+                  className="bg-input border-border h-12 text-sm font-sans text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-primary/20"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold ml-1">Огноо & Цаг</label>
+                <Input
+                  type="datetime-local"
+                  value={locationInput.dateTime}
+                  onChange={(e) => setLocationInput(prev => ({ ...prev, dateTime: e.target.value }))}
+                  className="bg-input border-border h-12 text-sm font-sans text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-primary/20"
+                />
+              </div>
               <Button onClick={handleSaveLocation} className="w-full h-12 bg-primary hover:bg-primary/90 font-bold rounded-xl shadow-lg shadow-primary/20">
                 <Save className="w-4 h-4 mr-2" />
                 Мэдээллийг хадгалах
               </Button>
             </div>
-          ) : savedLocation ? (
+          ) : reunionLocationDetails ? (
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground font-sans font-medium">Бид countdown дуусахад энд уулзана:</p>
-              <p className="text-lg font-bold text-foreground font-sans flex items-center justify-center gap-2">
-                {savedLocation}
+              <p className="text-lg font-bold text-[#1f2d5a] uppercase tracking-wide font-sans">
+                {reunionLocationDetails.name}
               </p>
+              <p className="text-sm text-muted-foreground italic font-sans">
+                {reunionLocationDetails.address}
+              </p>
+              <p className="text-xs text-muted-foreground font-sans mt-1">
+                {new Date(reunionLocationDetails.dateTime).toLocaleDateString("mn-MN", { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+              </p>
+              {reunionLocationDetails.mapsUrl && (
+                <Button
+                  onClick={() => window.open(reunionLocationDetails.mapsUrl, "_blank")}
+                  className="mt-4 gap-2 h-10 px-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 font-bold text-sm rounded-full transition-all active:scale-95"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Google Maps-д нээх
+                </Button>
+              )}
             </div>
           ) : (
             <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">

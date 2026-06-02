@@ -7,7 +7,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { CountdownTimer } from "./countdown-timer"
-
+interface ReunionLocationDetails {
+  name: string;
+  address: string;
+  mapsUrl: string;
+  dateTime: string; // ISO string for datetime-local input
+}
+ 
 interface TimeCapsuleProps {
   reunionDate: Date
   onWrite: (content: string, type: string) => void
@@ -15,6 +21,7 @@ interface TimeCapsuleProps {
   schoolName?: string
   groupName?: string
   graduationYear?: number
+  reunionLocationDetails?: ReunionLocationDetails; // Updated prop
 }
 
 interface CapsuleLetter {
@@ -88,7 +95,7 @@ function FlyingEnvelope({ targetId, onComplete }: { targetId: string; onComplete
   )
 }
 
-export function TimeCapsule({ reunionDate, onWrite, reunionLocation, schoolName, groupName, graduationYear }: TimeCapsuleProps) {
+export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, schoolName, groupName, graduationYear }: TimeCapsuleProps) {
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [content, setContent] = useState("")
   const [author, setAuthor] = useState("")
@@ -198,16 +205,21 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocation, schoolName,
             </div>
           </motion.div>
 
-          <CountdownTimer targetDate={reunionDate} title="Бидний дахин уулзах цаг ойртсоор" />
+          <CountdownTimer targetDate={reunionDate} />
 
           <div className="mt-4 pt-4 border-t border-border/50 space-y-1">
             <p className="text-[10px] text-muted-foreground font-sans">
               Нээгдэх өдөр: {reunionDate.toLocaleDateString("mn-MN", { year: "numeric", month: "long", day: "numeric" })}
             </p>
-            {reunionLocation && (
+            {reunionLocationDetails && (
               <p className="text-[10px] text-[#c9a45c] font-sans flex items-center justify-center gap-1">
                 <MapPin className="w-3 h-3" />
-                Уулзах газар: {reunionLocation}
+                Уулзах газар: <span className="font-bold">{reunionLocationDetails.name}</span>
+              </p>
+            )}
+            {reunionLocationDetails && (
+              <p className="text-[9px] text-muted-foreground font-sans italic">
+                {reunionLocationDetails.address}
               </p>
             )}
             <p className="text-[9px] text-muted-foreground mt-2 font-sans italic opacity-70">

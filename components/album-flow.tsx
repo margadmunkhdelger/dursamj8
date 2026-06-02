@@ -199,7 +199,7 @@ export function AlbumFlow({
                             <h2 className="text-3xl sm:text-6xl font-black text-foreground tracking-tighter leading-tight font-sans drop-shadow-sm">
                               Дурсамжийн <br className="sm:hidden"/> хайрцаг
                             </h2>
-                            <p className="text-xs sm:text-sm text-stone-700 italic max-w-xs mx-auto px-4 sm:px-6 font-serif leading-relaxed">
+                            <p className="text-xs sm:text-sm text-stone-700 italic max-w-xs mx-auto px-4 sm:px-6 font-serif leading-relaxed text-justify">
                               &quot;{quote}&quot;
                             </p>
                           </div>
@@ -255,8 +255,6 @@ export function AlbumFlow({
                       >
                         <CountdownTimer
                           targetDate={reunionDate}
-                          title="Бид эргэн уулзахад"
-                          variant="album"
                         />
                         <p className="text-[9px] sm:text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] mt-3 sm:mt-6 text-center leading-snug break-words px-4 max-w-[92%] mx-auto">
                           Төгсөгчдөд зориулсан дурсамжийн цуглуулга

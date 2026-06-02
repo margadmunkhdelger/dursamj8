@@ -103,7 +103,7 @@ const Separator = ({ album = false }: { album?: boolean }) => (
 
 export function CountdownTimer({
   targetDate,
-  title = "Бидний дахин уулзах цаг ойртсоор",
+  title = "",
   compact = false,
   variant = "default",
 }: CountdownTimerProps) {
@@ -231,14 +231,16 @@ export function CountdownTimer({
         <Separator />
         <FlipDigit value={timeLeft.seconds} label="Сек" />
       </div>
-      <motion.h3
-        className="text-sm sm:text-base text-[#1f2d5a] font-serif font-bold italic tracking-wide"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      > 
-        {title}
-      </motion.h3>
+      {title && (
+        <motion.h3
+          className="text-sm sm:text-base text-[#1f2d5a] font-serif font-bold italic tracking-wide"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        > 
+          {title}
+        </motion.h3>
+      )}
     </motion.div>
   )
 }

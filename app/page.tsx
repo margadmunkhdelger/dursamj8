@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { FloatingParticles } from "@/components/floating-particles"
 import { AuthForms } from "@/components/auth-forms"
@@ -10,9 +10,16 @@ import { HomeDashboard } from "@/components/home-dashboard"
 import { MemberGrid } from "@/components/member-card"
 import { TimeCapsule } from "@/components/time-capsule"
 import { MemoryGallery } from "@/components/memory-gallery"
-import { MusicSection } from "@/components/music-section"
+import { MusicSection } from "@/components/music-section" // Removed MusicSection as it's not used
 import { SongCertificate } from "@/components/song-certificate"
 import { ProfilePicker, PendingMembers, CurrentUserBadge, type Member } from "@/components/profile-picker"
+
+interface ReunionLocationDetails {
+  name: string;
+  address: string;
+  mapsUrl: string;
+  dateTime: string;
+}
 
 // Demo data
 const demoGroup = {
@@ -20,7 +27,7 @@ const demoGroup = {
   name: "Механик Инженер", // Ангийн нэрийг жишээ болгон өөрчлөв
   graduationYear: 2024,
   reunionDate: new Date("2034-05-28"),
-  quote: "Бид дурсамж бүтээж буйгаа мэдээгүй, зүгээр л хөгжилдөж байна гэж бодсон.",
+  quote: "Дурсамж бүтээх хамгийн тохиромжтой үе бол одоо.",
   memberCount: 28,
   memoryCount: 156,
 }
@@ -127,6 +134,13 @@ export default function MemoriaApp() {
   const [members, setMembers] = useState<Member[]>(initialMembers)
   const [currentUser, setCurrentUser] = useState<Member | null>(null)
   const [userLikes, setUserLikes] = useState<Record<string, Set<string>>>({})
+  const [reunionLocationDetails, setReunionLocationDetails] = useState<ReunionLocationDetails | null>({
+    name: "Шинэ Монгол Технологийн Коллеж - Төв байр",
+    address: "Улаанбаатар хот, Баянзүрх дүүрэг, 25-р хороо",
+    mapsUrl: "https://maps.app.goo.gl/4jJzZ1rDk1mB1m1m1",
+    dateTime: "2034-05-28T12:00"
+  })
+  const [reunionDate, setReunionDate] = useState(demoGroup.reunionDate)
   const [teacherMessage, setTeacherMessage] = useState({
     name: "Багш Д. Оюун",
     message: "Хайрт шавь нар минь, та бүхний ирээдүйн амьдралд аз жаргал, амжилт хүсье. Дурсамжуудаа үргэлж нандигнаж яваарай. Та нарыг үргэлж дэмжиж байх болно.",
@@ -215,7 +229,12 @@ export default function MemoriaApp() {
     setAppState("profile-picker")
   }
 
-  const renderDashboardContent = () => {
+  const handleUpdateReunionDetails = useCallback((details: ReunionLocationDetails) => {
+    setReunionLocationDetails(details)
+    setReunionDate(new Date(details.dateTime))
+  }, [])
+
+  const renderDashboardContent = useCallback(() => {
     switch (activeTab) {
       case "home":
         return (
@@ -229,6 +248,8 @@ export default function MemoriaApp() {
             teacherMessage={teacherMessage}
             onUpdateTeacherMessage={(msg) => setTeacherMessage(prev => ({ ...prev, message: msg }))}
             isTeacher={currentUser?.id === "teacher_1"}
+            reunionLocationDetails={reunionLocationDetails}
+            onUpdateReunionDetails={handleUpdateReunionDetails}
           />
         )
       case "members":
@@ -269,13 +290,14 @@ export default function MemoriaApp() {
         return (
           <div className="pb-24">
             <TimeCapsule
-              reunionDate={demoGroup.reunionDate}
+              reunionDate={reunionDate}
               schoolName={demoGroup.schoolName}
               groupName={demoGroup.name}
               graduationYear={demoGroup.graduationYear}
               onWrite={(content, type) => {
                 console.log("[v0] Time capsule written:", { content, type, author: currentUser?.name })
               }}
+              reunionLocationDetails={reunionLocationDetails}
             />
           </div>
         )
@@ -298,7 +320,24 @@ export default function MemoriaApp() {
       default:
         return null
     }
-  }
+  }, [
+    activeTab,
+    reunionLocationDetails,
+    handleUpdateReunionDetails,
+    currentUser,
+    teacherMessage,
+    reunionDate,
+    approvedMembers,
+    pendingMembers,
+    userLikes,
+    handleMemberLike,
+    handleMemberComment,
+    handleUpdateMember,
+    handleApproveMember,
+    handleRejectMember,
+    setActiveTab,
+    setTeacherMessage,
+  ]);
 
   return (
     <main className="min-h-screen relative">
@@ -344,7 +383,7 @@ export default function MemoriaApp() {
             schoolName={demoGroup.schoolName} // schoolName-ийг AlbumFlow руу дамжуулав
             initialStage={appState === "profile-picker" ? "profiles" : "cover"}
             groupName={demoGroup.name}
-            graduationYear={demoGroup.graduationYear}
+            graduationYear={demoGroup.graduationYear} // Use demoGroup.graduationYear
             reunionDate={demoGroup.reunionDate}
             quote={demoGroup.quote}
             members={approvedMembers}

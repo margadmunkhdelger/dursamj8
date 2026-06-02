@@ -81,7 +81,11 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }} 
-      className="bg-card rounded-2xl min-h-[280px] flex items-center justify-center relative overflow-hidden shadow-lg mx-auto w-full max-w-lg border border-border p-4 py-4 sm:py-6"
+      className={`bg-card rounded-2xl flex relative overflow-hidden shadow-lg mx-auto w-full max-w-lg border border-border px-4 sm:px-6 transition-all duration-500 ${
+        animationPhase === 'open' 
+          ? "items-start pt-3 sm:pt-4 pb-3 sm:pb-4 min-h-[220px]" 
+          : "items-center justify-center py-4 sm:py-6 min-h-[280px]"
+      }`}
     >
       {/* Celebration Particles - Fireworks Burst Effect */}
       <AnimatePresence>
@@ -244,7 +248,7 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
               <GraduationCap className="w-32 h-32 text-[#1a2b4c]" />
             </div>
 
-            <div className="relative flex items-center justify-between mb-6 border-b border-stone-200 pb-3">
+            <div className="relative flex items-center justify-between mb-2 pb-2">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e4b3] to-[#d4af37] flex items-center justify-center shadow-sm">
                   <GraduationCap className="w-5 h-5 text-[#1a2b4c]" />
@@ -291,12 +295,12 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
               </motion.div>
             ) : (
               <motion.div 
-                className="py-4 border-y border-stone-200/60 px-2"
+                className="py-2 px-2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <p className="text-lg text-stone-700 italic leading-relaxed font-serif">
+                <p className="text-lg text-stone-700 italic leading-relaxed font-serif text-justify">
                   &ldquo;{message}&rdquo;
                 </p>
               </motion.div>

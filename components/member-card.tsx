@@ -1,12 +1,13 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { Heart, MessageCircle, X, Send, Pencil, Save, Camera, Upload, Instagram, Mail, Plus, PenLine, GraduationCap } from "lucide-react"
+import { Heart, MessageCircle, X, Send, Pencil, Save, Camera, Upload, Instagram, Mail, Plus, PenLine, GraduationCap, Quote, ChevronLeft, ChevronRight, MailOpen } from "lucide-react"
 import Image from "next/image"
-import { useState, useRef, memo, useCallback } from "react"
+import { useState, useRef, memo, useCallback, useMemo, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { cn } from "@/lib/utils"
 
 interface Member {
   id: string
@@ -15,7 +16,6 @@ interface Member {
   avatar: string
   tags: string[]
   quote: string
-  dreamJob?: string
   likes: number
   comments: Comment[]
   voiceNotes: number
@@ -57,7 +57,6 @@ const EditProfileModal = memo(({
     nickname: member.nickname,
     quote: member.quote,
     avatar: member.avatar,
-    dreamJob: member.dreamJob || "",
     tags: (member.tags || []).join(", "),
   })
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -136,11 +135,6 @@ const EditProfileModal = memo(({
               <div className="space-y-1">
                 <label className="text-[10px] uppercase tracking-wider text-muted-foreground ml-1">Ишлэл</label>
                 <Input value={editedMember.quote} onChange={(e) => setEditedMember(p => ({ ...p, quote: e.target.value }))} className="bg-input border-border h-10 text-sm rounded-xl text-foreground placeholder:text-muted-foreground" />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-wider text-muted-foreground ml-1">Мөрөөдлийн мэргэжил</label>
-                <Input value={editedMember.dreamJob} onChange={(e) => setEditedMember(p => ({ ...p, dreamJob: e.target.value }))} className="bg-input border-border h-10 text-sm rounded-xl text-foreground placeholder:text-muted-foreground" />
               </div>
 
               <div className="space-y-1">
@@ -254,8 +248,41 @@ const InvitationEnvelope = ({ comment, onClose }: { comment: Comment, onClose: (
 export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked, currentUser, isCurrentUser }: MemberCardProps) {
   const [showComments, setShowComments] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
-  const [selectedComment, setSelectedComment] = useState<Comment | null>(null)
+  const [currentCommentIndex, setCurrentCommentIndex] = useState<number | null>(null)
   const [newComment, setNewComment] = useState("")
+  const [animationPhase, setAnimationPhase] = useState<'closed' | 'open'>('closed')
+  const [particles, setParticles] = useState<any[]>([])
+
+  const createParticles = useCallback(() => {
+    const newParticles: any[] = []
+    const emojis = ["❤️", "⭐", "✨", "🎉", "🎓", "💫", "🌟", "💖"]
+    for (let i = 0; i < 28; i++) {
+      const angle = (i / 28) * Math.PI * 2 + Math.random() * 0.5
+      newParticles.push({
+        id: i,
+        emoji: emojis[Math.floor(Math.random() * emojis.length)],
+        angle: angle,
+        distance: 120 + Math.random() * 180,
+        rotation: Math.random() * 720 - 360,
+        scale: 0.8 + Math.random() * 1.5,
+        delay: Math.random() * 0.1,
+      })
+    }
+    setParticles(newParticles)
+  }, [])
+
+  useEffect(() => {
+    if (currentCommentIndex !== null && animationPhase === 'closed') {
+      const timer = setTimeout(() => {
+        createParticles()
+        setAnimationPhase('open')
+      }, 500)
+      return () => clearTimeout(timer)
+    } else if (currentCommentIndex === null) {
+      setAnimationPhase('closed')
+      setParticles([])
+    }
+  }, [currentCommentIndex, animationPhase, createParticles])
 
   const handleComment = () => {
     if (!newComment.trim()) return
@@ -263,184 +290,318 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
     setNewComment("")
   }
 
+  // Subtle rotation only for a small organic feel, not to break layout
+  const rotation = useMemo(() => (index % 2 === 0 ? -0.5 : 0.5), [index])
+
   return (
     <>
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.1, duration: 0.5 }}
-        whileHover={{ y: -4 }}
-        className="bg-card border border-border rounded-2xl p-4 cursor-pointer group relative shadow-sm"
+        className="relative mb-6"
+        style={{ rotate: `${rotation}deg` }}
       >
-        <div className="flex items-start gap-3 sm:gap-5">
-          {/* Avatar */}
-          <motion.div
-            className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-[1.2rem] sm:rounded-[1.5rem] overflow-hidden flex-shrink-0"
-            transition={{ duration: 0.5 }}
-          >
-            <div className="absolute inset-0 bg-muted" />
-            <Image
-              src={member.avatar}
-              alt={member.name}
-              fill
-              className="object-cover"
-            />
-            {/* <div className="vintage-overlay" /> */}
-            <div className="absolute inset-0 ring-1 ring-black/5 rounded-[1.5rem]" />
-          </motion.div>
+        {/* Ornate Picture Frame (Jaaz) - Deep Blue and Gold */}
+        <div className="absolute -inset-[8px] pointer-events-none z-0 rounded-[25px] overflow-hidden shadow-2xl">
+          {/* Frame Base: Deep Blue */}
+          <div className="absolute inset-0 bg-[#1f2d5a]" />
+          
+          {/* Frame Depth/Shadow for realistic look */}
+          <div className="absolute inset-0 shadow-[inset_0_2px_10px_rgba(255,255,255,0.1),inset_0_-2px_10px_rgba(0,0,0,0.5)]" />
 
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-foreground truncate">{member.name}</h3>
-                  {isCurrentUser && (
-                    <button
-                      onClick={(e) => { 
-                        e.stopPropagation()
-                        setShowEditModal(true)
-                      }}
-                      aria-label="Edit profile"
-                      className="p-2 rounded-[1.5rem] bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div> 
-                <div className="flex items-center gap-1 text-amber-700/80 mt-1">
-                  <Instagram className="w-3 h-3" />
-                  <p className="text-sm truncate">@{member.nickname}</p>
-                </div>
-              </div>
+          {/* Golden Edging (Altan Emjeer) */}
+          <div className="absolute inset-[5px] border-2 border-[#c9a45c]/60 rounded-[22px]" />
+          <div className="absolute inset-[9px] border-[1px] border-[#c9a45c]/40 rounded-[19px]" />
 
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onLike(member.id)
-                }}
-                className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full hover:bg-muted transition-colors ${isLiked ? 'text-accent' : 'text-muted-foreground hover:text-accent'}`}
-              >
-                <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isLiked ? 'fill-current' : ''}`} />
-                <span className="text-xs sm:text-sm font-bold">{member.likes + (isLiked ? 1 : 0)}</span>
-              </button>
-            </div>
-
-            <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-stone-600 italic line-clamp-3 text-justify font-serif">
-              &ldquo;{member.quote}&rdquo; 
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2 mt-3">
-          {(member.tags || []).slice(0, 3).map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex flex-shrink-0 items-center whitespace-nowrap text-[10px] px-3 py-1 rounded-full bg-muted border border-border text-muted-foreground font-medium"
+          {/* Decorative Corner Ornaments */}
+          {[0, 90, 180, 270].map((rot, i) => (
+            <svg 
+              key={i}
+              className={cn(
+                "absolute w-14 h-14 text-[#c9a45c]",
+                rot === 0 && "top-0 left-0",
+                rot === 90 && "top-0 right-0 rotate-90",
+                rot === 180 && "bottom-0 right-0 rotate-180",
+                rot === 270 && "bottom-0 left-0 -rotate-90"
+              )} 
+              viewBox="0 0 50 50" fill="currentColor"
             >
-              {tag}
-            </span>
+               <path d="M2 2 L2 35 Q2 2 35 2 L2 2 Z" opacity="0.8" />
+               <path d="M6 6 Q6 18 18 6 L6 6 Z" fill="#f8e4b3" opacity="0.6" />
+               <circle cx="8" cy="8" r="2" fill="#f8e4b3" />
+            </svg>
           ))}
         </div>
 
-        {/* Letters Section */}
-        <div className="mt-4 pt-3 border-t border-border">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-[9px] uppercase tracking-wider text-muted-foreground font-bold ml-1">Захидлууд</p>
-            <motion.button 
-              onClick={(e) => { 
-                e.stopPropagation()
-                setShowComments(true)
-              }}
-              whileHover={{ scale: 1.05 }} 
-              whileTap={{ scale: 0.95 }} 
-              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/5 text-primary hover:bg-primary/10 transition-all border border-primary/10 group/write"
+        <div className="bg-card rounded-xl shadow-md border border-stone-200/60 p-5 flex flex-col gap-4 transition-all hover:shadow-lg relative overflow-hidden group z-10">
+          
+          {/* Subtle Notebook Texture Overlay */}
+          <div 
+            className="absolute inset-0 pointer-events-none opacity-[0.03]" 
+            style={{ backgroundImage: `linear-gradient(#000 1px, transparent 1px)`, backgroundSize: '100% 24px' }}
+          />
+
+          <div className="flex items-center gap-4 relative z-20">
+            {/* Profile Photo Section (Compact Polaroid) */}
+            <div className="flex-shrink-0">
+              <div 
+                className="bg-white p-3 pb-8 shadow-md border border-stone-100 relative w-32 sm:w-40 transition-all duration-300 group-hover:rotate-0"
+                style={{ rotate: '-2deg' }}
+              >
+                <div className="relative aspect-[1/1] overflow-hidden bg-stone-100">
+                  <Image
+                    src={member.avatar}
+                    alt={member.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                
+                {/* Heart Stamp (Floating on Photo) */}
+                <motion.button
+                  onClick={(e) => { e.stopPropagation(); onLike(member.id); }}
+                  whileTap={{ scale: 0.9 }}
+                  key={member.id + (isLiked ? "-liked-floating" : "-unliked-floating")} // Add key to force re-animation
+                  initial={isLiked ? { scale: 0.8 } : { scale: 1 }} // Start smaller if liked
+                  animate={{ scale: 1 }} // Always animate to normal size
+                  transition={{ type: "spring", stiffness: 400, damping: 12 }} // Apply spring transition
+                  className={cn(
+                    "absolute -top-2.5 -right-2.5 w-8 h-8 rounded-full flex items-center justify-center border shadow-md transition-all z-20 group/heart",
+                    isLiked 
+                      ? "bg-[#ff2d55] border-[#ff2d55] text-white" 
+                      : "bg-white border-stone-200 text-stone-300 hover:text-[#ff2d55] hover:border-[#ff2d55]/30"
+                  )}
+                >
+                  <Heart className={cn("w-4 h-4", isLiked && "fill-current")} />
+                </motion.button>
+              </div>
+            </div>
+
+            {/* Student Info - Centered Column */}
+            <div className="flex-1 min-w-0 flex flex-col justify-center items-center text-center relative py-1">
+              <div className="flex items-center justify-center gap-2 w-full">
+                <h3 className="text-xl sm:text-2xl font-serif font-black text-[#1f2d5a] leading-tight tracking-tight">
+                  {member.name}
+                </h3>
+                {isCurrentUser && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setShowEditModal(true); }}
+                    className="p-1 rounded-full bg-stone-100/50 text-stone-400 hover:bg-primary hover:text-white transition-all shrink-0"
+                    title="Засах"
+                  >
+                    <Pencil className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center justify-center gap-1.5 text-[#c9a45c] mt-1 font-sans font-bold uppercase tracking-[0.15em] text-[10px] sm:text-xs w-full">
+                <Instagram className="w-3 h-3 shrink-0" />
+                <span className="truncate">@{member.nickname}</span>
+              </div>
+
+              {/* Separator Line */}
+              <div className="flex items-center justify-center gap-2 my-2 w-full">
+                <div className="flex-1 h-px bg-[#c9a45c]/60" />
+                <div className="flex-1 h-px bg-[#c9a45c]/60" />
+              </div>
+
+              {/* Tags (Interests) - Styled like dashboard pills */}
+              <div className="flex flex-wrap justify-center gap-1.5 mt-0 w-full">
+                {(member.tags || []).map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2.5 py-1 text-[9px] font-sans font-black uppercase tracking-widest bg-[#c9a45c]/10 text-[#1f2d5a] rounded-full border border-[#c9a45c]/30"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+              </div>
+            </div>
+
+          {/* Compact Quote & Content */}
+          <div className="space-y-3 relative z-10">
+            <p 
+              className="text-base sm:text-lg text-stone-700 leading-relaxed line-clamp-2 italic text-justify font-serif"
+              style={{ fontFamily: 'var(--font-lora), serif' }}
             >
-              <PenLine className="w-2.5 h-2.5 group-hover/write:rotate-12 transition-transform" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Захидал бичих</span>
+              &ldquo;{member.quote}&rdquo;
+            </p>
+          </div>
+
+          {/* Footer - Actions (Aligned horizontally) */}
+          <div className="flex items-center justify-between pt-3 border-t border-stone-100 relative z-10">
+            <div className={cn(
+              "flex items-center gap-2 font-sans font-bold text-base uppercase tracking-[0.2em] lining-nums tabular-nums transition-colors duration-300",
+              isLiked ? "text-[#ff2d55]" : "text-stone-500"
+            )}>
+              <motion.div
+                key={isLiked ? "liked" : "unliked"}
+                initial={isLiked ? { scale: 0.8 } : { scale: 1 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 15 }}
+              >
+                <Heart className={cn("w-5 h-5", isLiked && "fill-current")} />
+              </motion.div>
+              <span>{member.likes + (isLiked ? 1 : 0)}</span>
+            </div>
+
+            {/* Read Letters - Mini Envelope Icon */}
+            {member.comments && member.comments.length > 0 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setCurrentCommentIndex(0); }}
+                className="relative w-11 h-8 bg-[#14213d] rounded-sm shadow-md group/env border border-white/10 overflow-visible"
+                title="Захидал унших"
+              >
+                {/* Envelope Visual - Inner container to fix pointy corners while allowing count badge to overflow */}
+                <div className="absolute inset-0 rounded-sm overflow-hidden pointer-events-none">
+                  <div className="absolute inset-0 z-10" style={{ clipPath: "polygon(0 0, 100% 0, 50% 50%)", background: "#1c2a43", borderBottom: "1px solid rgba(0,0,0,0.1)" }} />
+                </div>
+                {/* Wax Seal - Absolutely centered using percentages and transforms to guarantee alignment across all cards */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-3.5 h-3.5 rounded-full bg-gradient-to-br from-[#f8e4b3] to-[#c9a45c] shadow-sm ring-1 ring-black/10 flex items-center justify-center pointer-events-none">
+                  <GraduationCap size={8} className="text-[#14213d]" strokeWidth={2.5} />
+                </div>
+                {/* Count badge */}
+                <span className="absolute -top-2.5 -right-2.5 bg-[#ff2d55] text-white text-[8px] font-sans font-black w-5 h-5 rounded-full flex items-center justify-center border border-white z-30 shadow-sm">
+                  {member.comments.length}
+                </span>
+              </button>
+            )}
+
+            <motion.button
+              onClick={(e) => { e.stopPropagation(); setShowComments(true); }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#1f2d5a] text-white shadow-md text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-[#2a4178]"
+            >
+              <PenLine className="w-3 h-3" />
+              Захидал бичих
             </motion.button>
           </div>
-          
-          <div className="flex flex-wrap gap-3">
-            {member.comments.length === 0 ? (
-              <p className="text-[10px] text-stone-400 italic ml-1 font-serif">Одоогоор захидал ирээгүй байна...</p>
-            ) : (
-              member.comments.map((comment) => (
-                <motion.button
-                  key={comment.id}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setSelectedComment(comment)
-                  }}
-                  className="relative group" 
-                >
-                  <div className="w-9 h-9 rounded-md bg-[#1D3763] flex items-center justify-center border border-white/10 group-hover:border-[#d4af37]/50 transition-all shadow-sm relative overflow-hidden">
-                    <div className="absolute top-0 inset-x-0 h-px bg-white/10" />
-                    <Mail className="w-4 h-4 text-white/50" />
-                    <div className="absolute w-1.5 h-1.5 rounded-full bg-[#d4af37] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-[0_0_5px_rgba(212,175,55,0.5)]" />
-                  </div>
-                  <div className="absolute -top-1.5 -left-1 px-1.5 py-0.5 rounded-md bg-primary border border-border text-[7px] font-bold text-primary-foreground shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                    {comment.author}
-                  </div>
-                </motion.button>
-              ))
-            )}
-          </div>
         </div>
-
-        {/* Hover Glow */}
-        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" style={{ boxShadow: "0 0 20px rgba(var(--primary-rgb), 0.2)" }}>
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-accent/5" />
-        </div>
-
       </motion.div>
 
       {/* Letter View Modal (Similar to Teacher Message style) */}
       <AnimatePresence>
-        {selectedComment && (
+        {currentCommentIndex !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
-            onClick={() => setSelectedComment(null)}
+            className="fixed inset-0 z-[110] bg-white/5 backdrop-blur-md flex items-center justify-center p-4"
+            onClick={() => setCurrentCommentIndex(null)}
           >
+            {/* Celebration Particles - Fireworks burst effect */}
+            <AnimatePresence>
+              {particles.map((particle) => (
+                <motion.div
+                  key={particle.id}
+                  initial={{ opacity: 1, x: 0, y: 0, scale: 0, rotate: 0 }}
+                  animate={{ 
+                    opacity: 0, 
+                    x: Math.cos(particle.angle) * particle.distance, 
+                    y: Math.sin(particle.angle) * particle.distance, 
+                    scale: particle.scale, 
+                    rotate: particle.rotation 
+                  }}
+                  transition={{ duration: 1.5, delay: particle.delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="absolute left-1/2 top-1/2 text-3xl pointer-events-none z-[130]"
+                >
+                  {particle.emoji}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
             <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              onClick={(e) => e.stopPropagation()} 
-              className="w-full max-w-sm bg-card rounded-3xl p-8 text-center relative overflow-hidden border border-border shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className={cn(
+                "w-full max-w-sm flex relative overflow-hidden transition-all duration-700",
+                animationPhase === 'open' 
+                  ? "bg-card rounded-3xl p-8 text-center shadow-2xl border border-border min-h-[320px]" 
+                  : "bg-transparent items-center justify-center"
+              )}
             >
-              {/* Decorative Background - Keep for visual effect */}
-              <div className="absolute inset-0 opacity-20 pointer-events-none">
-                <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-primary blur-[80px]" />
-                <div className="absolute -bottom-10 -right-10 w-32 h-32 rounded-full bg-accent blur-[60px]" />
-              </div>
+              {animationPhase === 'closed' ? (
+                <motion.div
+                  className="relative w-full max-w-[320px] h-[200px] bg-[#14213d] rounded-sm shadow-2xl overflow-hidden border border-white/5"
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  {/* Envelope Visuals */}
+                  <div className="absolute inset-0 z-10" style={{ clipPath: "polygon(0 100%, 50% 50%, 100% 100%)", background: "linear-gradient(to top, #0f1a2e, #14213d)" }} />
+                  <div className="absolute inset-0 z-10" style={{ clipPath: "polygon(0 0, 50% 50%, 0 100%)", background: "#182640" }} />
+                  <div className="absolute inset-0 z-10" style={{ clipPath: "polygon(100% 0, 50% 50%, 100% 100%)", background: "#182640" }} />
+                  <motion.div 
+                    className="absolute inset-0 z-30 origin-top shadow-xl" 
+                    animate={{ rotateX: -180 }}
+                    transition={{ duration: 0.7, delay: 0.3, ease: "easeInOut" }}
+                    style={{ clipPath: "polygon(0 0, 100% 0, 50% 50%)", background: "linear-gradient(to bottom, #223147, #1c2a43)", transformStyle: "preserve-3d", backfaceVisibility: "hidden" }} 
+                  />
+                  <div className="absolute inset-0 z-40 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#f8e4b3] to-[#d4af37] shadow-lg flex items-center justify-center relative ring-1 ring-white/20">
+                      <GraduationCap className="w-6 h-6 text-[#1a2b4c]" />
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative z-10 w-full space-y-6"
+                >
+                  {/* Navigation Controls */}
+                  {member.comments.length > 1 && (
+                <>
+                  <button
+                    disabled={currentCommentIndex === 0}
+                    onClick={(e) => { e.stopPropagation(); setCurrentCommentIndex(prev => prev! - 1); }}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-stone-100/50 text-[#1f2d5a] hover:bg-[#c9a45c]/20 transition-all disabled:opacity-20 z-30"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <button
+                    disabled={currentCommentIndex === member.comments.length - 1}
+                    onClick={(e) => { e.stopPropagation(); setCurrentCommentIndex(prev => prev! + 1); }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-stone-100/50 text-[#1f2d5a] hover:bg-[#c9a45c]/20 transition-all disabled:opacity-20 z-30"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                </>
+              )}
+
+                  {/* Decorative Background */}
+                  <div className="absolute inset-0 opacity-20 pointer-events-none">
+                    <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-primary blur-[80px]" />
+                    <div className="absolute -bottom-10 -right-10 w-32 h-32 rounded-full bg-accent blur-[60px]" />
+                  </div>
 
               <button
-                onClick={() => setSelectedComment(null)}
+                onClick={(e) => { e.stopPropagation(); setCurrentCommentIndex(null); }}
                 aria-label="Close letter"
                 className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors z-20 text-muted-foreground"
               >
                 <X className="w-4 h-4" />
               </button>
 
-              <div className="relative z-10 space-y-6">
+                <div className="text-[10px] font-sans font-bold text-[#c9a45c] uppercase tracking-[0.2em]">
+                  Захидал {currentCommentIndex + 1} / {member.comments.length}
+                </div>
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 mx-auto">
                   <Mail className="w-8 h-8 text-primary" />
                 </div>
                 
                 <p className="text-lg text-foreground italic leading-relaxed font-serif px-2">
-                  &ldquo;{selectedComment.text}&rdquo; 
+                  &ldquo;{member.comments[currentCommentIndex].text}&rdquo; 
                 </p>
                 
                 <div className="pt-4 border-t border-border">
-                  <p className="text-sm font-bold text-foreground">-{selectedComment.author}-</p>
-                  <p className="text-[10px] text-muted-foreground mt-1">{selectedComment.time}</p>
+                  <p className="text-sm font-bold text-foreground">-{member.comments[currentCommentIndex].author}-</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">{member.comments[currentCommentIndex].time}</p>
                 </div>
-              </div>
+                </motion.div>
+              )}
             </motion.div>
           </motion.div>
         )}
@@ -453,7 +614,7 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+            className="fixed inset-0 z-[110] bg-white/5 backdrop-blur-md flex items-center justify-center p-4"
             onClick={() => setShowComments(false)}
           >
             <motion.div
@@ -461,9 +622,12 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()} 
-              className="w-full max-w-md bg-card rounded-3xl p-6 relative overflow-hidden border border-border shadow-lg"
+              className="w-full max-w-md bg-card rounded-3xl p-6 relative overflow-hidden border border-border shadow-2xl"
             >
-              {/* Decorative Background - Keep for visual effect */}
+              {/* Luxury Cream Paper Texture */}
+              <div className="absolute inset-0 opacity-[0.06] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
+
+              {/* Decorative Background Spots - Matches Home Page Hero */}
               <div className="absolute inset-0 opacity-20 pointer-events-none">
                 <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-primary blur-[80px]" />
                 <div className="absolute -bottom-10 -right-10 w-32 h-32 rounded-full bg-accent blur-[60px]" />
@@ -472,20 +636,21 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
               <div className="relative z-10 space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 text-left">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
-                      <Mail className="w-6 h-6 text-primary" />
+                    {/* Golden Graduation Cap Icon - Matches Teacher Message style */}
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#f8e4b3] to-[#d4af37] flex items-center justify-center shadow-md border border-amber-900/10">
+                      <GraduationCap className="w-6 h-6 text-[#14213d]" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-foreground font-serif">Захидал бичих</h3>
-                      <p className="text-xs text-muted-foreground font-sans">{member.name}-д зориулж</p>
+                      <h3 className="text-xl font-bold text-[#1f2d5a] font-serif tracking-tight">Захидал бичих</h3>
+                      <p className="text-xs text-muted-foreground font-sans"><span className="font-bold text-primary">{member.name}</span>-д зориулж</p>
                     </div>
                   </div>
                   <button
                     onClick={() => setShowComments(false)}
                     aria-label="Close write letter" 
-                    className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted text-muted-foreground"
+                    className="w-9 h-9 rounded-full flex items-center justify-center bg-stone-100 hover:bg-stone-200 text-stone-500 transition-colors shadow-sm"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
 
@@ -494,7 +659,7 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     placeholder="Сэтгэлийн үгээ энд бичнэ үү..."
-                    className="bg-input border-border min-h-[180px] text-sm resize-none rounded-2xl focus:ring-primary/30 text-foreground placeholder:text-muted-foreground"
+                    className="bg-white/50 border-stone-200 min-h-[200px] text-base resize-none rounded-2xl focus:ring-primary/20 text-stone-800 placeholder:text-stone-400 font-serif italic p-5 shadow-inner"
                   />
                   
                   <Button 
@@ -503,9 +668,9 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
                       setShowComments(false);
                     }}
                     disabled={!newComment.trim()}
-                    className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/20" 
+                    className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-2xl shadow-xl shadow-primary/20 text-lg transition-all active:scale-[0.98]" 
                   >
-                    <Send className="w-4 h-4 mr-2" />
+                    <Send className="w-5 h-5 mr-2" />
                     Захидал илгээх
                   </Button>
                 </div>
@@ -536,7 +701,7 @@ interface MemberGridProps {
 
 export function MemberGrid({ members, likedMembers, onLike, onComment, onUpdate, currentUser }: MemberGridProps) {
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="flex flex-col gap-4 max-w-xl mx-auto pt-4">
       {members.map((member, index) => (
         <MemberCard 
           key={member.id} 
