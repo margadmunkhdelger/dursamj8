@@ -293,7 +293,7 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.1, duration: 0.5 }}
-        className="relative mb-6"
+        className="relative mb-6 mx-2"
         style={{ rotate: `${rotation}deg` }}
       >
         {/* Ornate Picture Frame (Jaaz) - Deep Blue and Gold */}
@@ -490,7 +490,7 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-full flex relative overflow-hidden bg-card rounded-3xl px-4 sm:px-6 py-4 text-center shadow-2xl border border-border min-h-[220px]"
+                className="w-[calc(100%-2rem)] max-w-sm flex relative overflow-hidden bg-card rounded-3xl px-4 sm:px-6 py-4 text-center shadow-2xl border border-border min-h-[220px]"
               >
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
@@ -609,7 +609,7 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()} 
-              className="w-full max-w-md bg-card rounded-3xl p-6 relative overflow-hidden border border-border shadow-2xl"
+              className="w-[calc(100%-2rem)] max-w-md bg-card rounded-3xl p-6 relative overflow-hidden border border-border shadow-2xl"
             >
               {/* Luxury Cream Paper Texture */}
               <div className="absolute inset-0 opacity-[0.06] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />

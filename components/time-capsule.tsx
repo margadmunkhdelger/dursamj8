@@ -1,11 +1,11 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { Lock, Unlock, Clock, Send, PenLine, Target, Heart, Sparkles, Mail, X, MapPin } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Lock, Clock, Send, PenLine, Target, Heart, Mail, X, MapPin, Users, Award, User, Sparkles } from "lucide-react"
+import { Button } from "@/components/ui/button" // Keep Button
 import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import { Input } from "@/components/ui/input" // Keep Input
+import { useState, useRef, useEffect, useCallback } from "react"
 import { CountdownTimer } from "./countdown-timer"
 interface ReunionLocationDetails {
   name: string;
@@ -22,6 +22,7 @@ interface TimeCapsuleProps {
   groupName?: string
   graduationYear?: number
   reunionLocationDetails?: ReunionLocationDetails; // Updated prop
+  currentUser?: { name: string } | null;
 }
 
 interface CapsuleLetter {
@@ -34,78 +35,100 @@ interface CapsuleLetter {
   createdAt: string
 }
 
+// Updated Capsule Types with the 4 categories requested
 const capsuleTypes = [
   {
     id: "self",
-    icon: PenLine,
+    icon: User,
     label: "Ирээдүйн өөртөө",
-    subtitle: "Өөртөө бичих захидал",
-    color: "amber",
-    bgClass: "bg-amber-50 border-amber-200",
-    iconClass: "text-amber-700",
-    sealColor: "#c9a45c",
+    subtitle: "Захидал",
   },
   {
-    id: "class",
-    icon: Heart,
-    label: "Ангийнхандаа",
-    subtitle: "Найзууддаа үлдээх үг",
-    color: "rose",
-    bgClass: "bg-rose-50 border-rose-200",
-    iconClass: "text-rose-700",
-    sealColor: "#d4697a",
-  },
-  {
-    id: "teacher",
-    icon: Sparkles,
-    label: "Багшдаа",
-    subtitle: "Багшдаа зориулсан захидал",
-    color: "blue",
-    bgClass: "bg-blue-50 border-blue-200",
-    iconClass: "text-blue-700",
-    sealColor: "#4a7cb5",
-  },
-  {
-    id: "dream",
+    id: "goals",
     icon: Target,
-    label: "10 жилийн дараах мөрөөдөл",
-    subtitle: "Ирээдүйд биелүүлэх хүсэл",
-    color: "emerald",
-    bgClass: "bg-emerald-50 border-emerald-200",
-    iconClass: "text-emerald-700",
-    sealColor: "#2d8a6e",
+    label: "Ирээдүйн зорилго",
+    subtitle: "Зорилго",
+  },
+  {
+    id: "prediction",
+    icon: Sparkles,
+    label: "Таамаглал",
+    subtitle: "Ирээдүйгээр",
+  },
+  {
+    id: "promise",
+    icon: Heart,
+    label: "Амлалт",
+    subtitle: "Амлалт өгөх",
   },
 ]
 
-// Letter flying into box animation
-function FlyingEnvelope({ targetId, onComplete }: { targetId: string; onComplete: () => void }) {
+// Raining letters animation
+interface RainingLetterParticle {
+  id: string;
+  x: number; // percentage from left
+  delay: number;
+  duration: number;
+  rotate: number;
+  emoji: string;
+  containerHeight: number; // Height of the parent container for animation target
+}
+
+const RAINING_EMOJIS = ["✉️", "📝", "📜", "🖋️", "🔐", "❤️", "⭐", "✨", "🎉", "🎓"];
+
+function RainingLetter({ id, x, delay, duration, rotate, emoji }: RainingLetterParticle) {
   return (
     <motion.div
-      className="fixed z-[200] pointer-events-none"
-      initial={{ opacity: 1, scale: 1, x: "50vw", y: "50vh", rotate: 0 }}
-      animate={{ opacity: 0, scale: 0.2, x: "50vw", y: "30vh", rotate: -15 }}
-      transition={{ duration: 0.7, ease: [0.32, 0, 0.67, 0] }}
-      onAnimationComplete={onComplete}
+      className="absolute z-20 pointer-events-none"
+      initial={{ opacity: 0, y: -20, left: `${x}%`, rotate: 0, scale: 0.8 }}
+      animate={{
+        opacity: [0, 1, 1, 0], // Fade in, stay, fade out
+        y: 400, // Fall down relative to container
+        rotate: rotate,
+        scale: [0.8, 1, 1, 0.6], // Scale up slightly then down
+      }}
+      transition={{
+        duration: duration,
+        delay: delay,
+        ease: "linear", // Linear fall
+      }}
+      style={{
+        filter: "drop-shadow(0 2px 5px rgba(0,0,0,0.15))",
+        fontSize: "1.25rem"
+      }}
     >
-      <div className="w-12 h-8 rounded-sm flex items-center justify-center shadow-xl"
-        style={{ background: "linear-gradient(135deg, #8b6b2a, #c9a45c)" }}>
-        <Mail className="w-5 h-5 text-white/80" />
-      </div>
+      {emoji}
     </motion.div>
   )
 }
 
-export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, schoolName, groupName, graduationYear }: TimeCapsuleProps) {
+export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, schoolName, groupName, graduationYear, currentUser }: TimeCapsuleProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerHeight, setContainerHeight] = useState(0);
   const [selectedType, setSelectedType] = useState<string | null>(null)
+
+  const selectedTypeData = capsuleTypes.find(t => t.id === selectedType)
+  const SelectedIcon = selectedTypeData?.icon || Lock
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainerHeight(containerRef.current.offsetHeight);
+    }
+    // Recalculate height if selectedType changes (modal opens/closes)
+    // or if window resizes (though this is less critical for this effect)
+    const handleResize = () => {
+      if (containerRef.current) setContainerHeight(containerRef.current.offsetHeight);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [selectedType]);
+
   const [content, setContent] = useState("")
-  const [author, setAuthor] = useState("")
-  const [letterTitle, setLetterTitle] = useState("")
-  const [openDate, setOpenDate] = useState("")
   const [letters, setLetters] = useState<CapsuleLetter[]>([
     {
       id: "l1",
       type: "self",
-      title: "Ирээдүйн өөртөө бичих захидал",
+      title: "Ирээдүйн өөртөө",
       content: "",
       author: "Сарангуа",
       openDate: "2034-05-28",
@@ -113,60 +136,81 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
     },
     {
       id: "l2",
-      type: "dream",
-      title: "Миний хүсэл мөрөөдөл",
+      type: "goals", // Updated type
+      title: "Миний ирээдүйн зорилго", // Updated title
       content: "",
       author: "Мишээл",
       openDate: "2034-05-28",
       createdAt: "2024 оны 2-р сарын 20",
     },
   ])
-  const [showFlyingEnvelope, setShowFlyingEnvelope] = useState(false)
-  const [flyingTarget, setFlyingTarget] = useState("")
+  const [rainingLetters, setRainingLetters] = useState<RainingLetterParticle[]>([]);
+
+  const triggerRainingLetters = useCallback(() => {
+    const newLetters: RainingLetterParticle[] = [];
+    const numberOfLetters = 15 + Math.floor(Math.random() * 10); // 15-25 items
+
+    for (let i = 0; i < numberOfLetters; i++) {
+      newLetters.push({
+        id: `rain-${Date.now()}-${i}`,
+        x: Math.random() * 100, // 0-100% horizontal position
+        delay: Math.random() * 1, // 0-1s delay
+        duration: 2 + Math.random() * 1, // 2-3s duration
+        rotate: Math.random() * 720 - 360, // -360 to 360 degrees rotation
+        emoji: RAINING_EMOJIS[Math.floor(Math.random() * RAINING_EMOJIS.length)],
+        containerHeight: 0,
+      });
+    }
+    setRainingLetters(newLetters);
+  }, []);
+
+
 
   const handleSubmit = () => {
-    if (!content.trim() || !selectedType || !author.trim()) return
+    if (!content.trim() || !selectedType) return
+    const authorName = currentUser?.name || "Нууц"
+    const typeLabel = capsuleTypes.find(t => t.id === selectedType)?.label || ""
+
     const newLetter: CapsuleLetter = {
       id: `l${Date.now()}`,
       type: selectedType,
-      title: letterTitle || capsuleTypes.find(t => t.id === selectedType)?.label || "",
+      title: typeLabel,
       content,
-      author,
-      openDate: openDate || "2034-05-28",
+      author: authorName,
+      openDate: reunionDate.toISOString().split('T')[0],
       createdAt: new Date().toLocaleDateString("mn-MN", { year: "numeric", month: "long", day: "numeric" }),
     }
-    setFlyingTarget(selectedType)
-    setShowFlyingEnvelope(true)
+    
+    triggerRainingLetters(); // Trigger raining letters animation
+
     setTimeout(() => {
       setLetters(prev => [newLetter, ...prev])
       onWrite(content, selectedType)
       setContent("")
-      setLetterTitle("")
-      setAuthor("")
-      setOpenDate("")
       setSelectedType(null)
-    }, 500)
+    }, 500);
+
+    setTimeout(() => {
+      setRainingLetters([]); // Clear letters after they've fallen
+    }, 5000); // 5 seconds to cover duration + delay
   }
 
   const lettersByType = (typeId: string) => letters.filter(l => l.type === typeId)
 
   return (
-    <div className="space-y-5">
-      {/* Flying envelope animation */}
+    <div className="space-y-5 relative" ref={containerRef}>
+      {/* Raining letters animation */}
       <AnimatePresence>
-        {showFlyingEnvelope && (
-          <FlyingEnvelope
-            targetId={flyingTarget}
-            onComplete={() => setShowFlyingEnvelope(false)}
-          />
-        )}
+        {rainingLetters.map((particle) => (
+          <RainingLetter key={particle.id} {...particle} containerHeight={containerHeight} />
+        ))}
       </AnimatePresence>
 
       {/* Countdown Header - Restyled to match Home Page Hero */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden border border-border shadow-lg"
+        className="bg-card rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden border border-border shadow-lg w-full max-w-md mx-auto"
       >
         {/* Decorative Background */}
         <div className="absolute inset-0 opacity-40">
@@ -181,20 +225,13 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
             transition={{ delay: 0.2 }}
             className="mb-8 space-y-3"
           >
-            <div className="flex items-center justify-center gap-2 mb-1">
-              <Lock className="w-3.5 h-3.5 text-[#c9a45c]" />
-              <span className="text-[10px] uppercase tracking-[0.3em] text-[#c9a45c] font-bold">
-                Цаг хугацааны капсул
-              </span>
-            </div>
-
             {groupName && (
               <p className="text-[10px] uppercase tracking-[0.4em] text-[#c9a45c] font-bold">
                 {groupName}
               </p>
             )}
-            <h1 className="text-3xl sm:text-5xl font-script text-foreground leading-[1.1] px-2">
-              {schoolName || "Шинэ Монгол Технологийн Коллеж"}
+            <h1 className="text-2xl sm:text-4xl font-script text-foreground leading-[1.1] px-2">
+              Бид дахин уулзахад нээгдэх захидлууд
             </h1>
             <div className="flex items-center justify-center gap-3">
               <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent to-[#c9a45c] max-w-[60px]" />
@@ -205,181 +242,115 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
             </div>
           </motion.div>
 
-          <CountdownTimer targetDate={reunionDate} />
-
-          <div className="mt-4 pt-4 border-t border-border/50 space-y-1">
-            <p className="text-[10px] text-muted-foreground font-sans">
-              Нээгдэх өдөр: {reunionDate.toLocaleDateString("mn-MN", { year: "numeric", month: "long", day: "numeric" })}
-            </p>
-            {reunionLocationDetails && (
-              <p className="text-[10px] text-[#c9a45c] font-sans flex items-center justify-center gap-1">
-                <MapPin className="w-3 h-3" />
-                Уулзах газар: <span className="font-bold">{reunionLocationDetails.name}</span>
-              </p>
-            )}
-            {reunionLocationDetails && (
-              <p className="text-[9px] text-muted-foreground font-sans italic">
-                {reunionLocationDetails.address}
-              </p>
-            )}
-            <p className="text-[9px] text-muted-foreground mt-2 font-sans italic opacity-70">
-              Өнөөдрийн захидал, мөрөөдөл, дурсамжууд товлосон өдөр нээгдэнэ.
-            </p>
-          </div>
+          <CountdownTimer targetDate={reunionDate} title="Захидлууд нээгдэхэд..." />
         </div>
       </motion.div>
 
       {/* 4 Capsule Type Boxes */}
-      <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-2">
         {capsuleTypes.map((type, index) => {
           const count = lettersByType(type.id).length
           return (
-            <motion.div
+            <motion.button
               key={type.id}
-              id={`capsule-${type.id}`}
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.08 }}
-              className={`rounded-2xl border p-4 ${type.bgClass}`}
+              transition={{ delay: 0.1 + index * 0.1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setSelectedType(type.id)}
+              className="bg-card border border-border rounded-2xl p-4 text-left shadow-md hover:border-[#c9a45c] transition-all group relative overflow-hidden"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3 flex-1 min-w-0">
-                  {/* Wax seal / envelope icon */}
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm border border-white/60"
-                    style={{ background: `radial-gradient(circle at 35% 35%, ${type.sealColor}cc, ${type.sealColor})` }}>
-                    <type.icon className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="font-bold text-sm text-foreground font-serif leading-tight">{type.label}</h3>
-                    <p className="text-xs text-muted-foreground font-sans mt-0.5">{type.subtitle}</p>
-                    {count > 0 && (
-                      <p className="text-[10px] text-muted-foreground/70 font-sans mt-1">
-                        {count} захидал хадгалагдсан
-                      </p>
-                    )}
-                  </div>
+              {/* Decorative background icon - Matches Home Dashboard */}
+              <type.icon className="absolute -right-2 top-1/2 -translate-y-1/2 w-16 h-16 text-[#1f2d5a] opacity-[0.05] group-hover:opacity-10 transition-opacity" />
+
+              <div className="relative z-10">
+                <div className="w-8 h-8 rounded-full bg-[#c9a45c]/10 flex items-center justify-center mb-3 group-hover:bg-[#c9a45c]/20 transition-colors border border-[#c9a45c]">
+                  <type.icon className="w-4 h-4 text-[#1f2d5a]" />
                 </div>
-                <Button
-                  size="sm"
-                  onClick={() => setSelectedType(selectedType === type.id ? null : type.id)}
-                  variant={selectedType === type.id ? "default" : "outline"}
-                  className="shrink-0 h-8 text-xs font-sans font-semibold"
-                >
-                  <PenLine className="w-3 h-3 mr-1" />
-                  Бичих
-                </Button>
+                <p className="text-2xl font-bold text-[#1f2d5a] leading-none font-mono tabular-nums">{count}</p>
+                <p className="text-[9px] uppercase font-bold tracking-widest text-[#1f2d5a] font-sans mt-2 leading-tight">
+                  {type.label}
+                </p>
               </div>
-
-              {/* Letters count chips */}
-              {count > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {lettersByType(type.id).map(letter => (
-                    <div key={letter.id} className="flex items-center gap-1 px-2 py-1 rounded-full bg-white/60 border border-white/40 backdrop-blur-sm">
-                      <Mail className="w-2.5 h-2.5 text-muted-foreground" />
-                      <span className="text-[9px] text-muted-foreground font-sans truncate max-w-[80px]">{letter.author}</span>
-                      <Lock className="w-2 h-2 text-muted-foreground/50" />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Writing form - expands inline */}
-              <AnimatePresence>
-                {selectedType === type.id && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="mt-4 pt-4 border-t border-white/40 space-y-3">
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-sans">Таны нэр</label>
-                          <Input
-                            value={author}
-                            onChange={(e) => setAuthor(e.target.value)}
-                            placeholder="Нэрээ оруулна уу"
-                            className="bg-white/70 border-white/50 h-9 text-sm mt-1 font-sans text-foreground placeholder:text-muted-foreground"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-sans">Гарчиг</label>
-                          <Input
-                            value={letterTitle}
-                            onChange={(e) => setLetterTitle(e.target.value)}
-                            placeholder="Захианы гарчиг"
-                            className="bg-white/70 border-white/50 h-9 text-sm mt-1 font-sans text-foreground placeholder:text-muted-foreground"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-sans">Захиа</label>
-                        <Textarea
-                          value={content}
-                          onChange={(e) => setContent(e.target.value)}
-                          placeholder={
-                            type.id === "self"
-                              ? "Хүндэт ирээдүйн би,\n\nБи чамд хэлэхийг хүссэн зүйл минь..."
-                              : type.id === "class"
-                              ? "Хайрт найзуудаа,\n\nТа нарт хэлэхийг хүссэн зүйл..."
-                              : type.id === "teacher"
-                              ? "Хүндэт багш минь,\n\n..."
-                              : "10 жилийн дараа намайг..."
-                          }
-                          className="bg-white/70 border-white/50 min-h-[120px] text-sm mt-1 resize-none font-serif text-foreground placeholder:text-muted-foreground"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-sans">Нээгдэх өдөр</label>
-                        <Input
-                          type="date"
-                          value={openDate}
-                          onChange={(e) => setOpenDate(e.target.value)}
-                          className="bg-white/70 border-white/50 h-9 text-sm mt-1 font-sans text-foreground"
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          onClick={handleSubmit}
-                          disabled={!content.trim() || !author.trim()}
-                          className="flex-1 h-10 font-bold font-sans text-sm"
-                          style={{ background: type.sealColor }}
-                        >
-                          <Lock className="w-3.5 h-3.5 mr-1.5" />
-                          Капсулд хадгалах
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setSelectedType(null)}
-                          className="h-10 w-10 p-0"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+            </motion.button>
           )
         })}
       </div>
 
-      {/* Unlocked area */}
-      <div className="space-y-3">
-        <h3 className="text-sm text-muted-foreground font-sans flex items-center gap-2">
-          <Unlock className="w-4 h-4" />
-          Нээгдсэн дурсамжууд
-        </h3>
-        <div className="glass-card rounded-xl p-4 text-center text-muted-foreground">
-          <Sparkles className="w-7 h-7 mx-auto mb-2 text-primary/40" />
-          <p className="text-sm font-sans">Одоогоор нээгдсэн зурвас алга</p>
-          <p className="text-xs mt-1 font-sans">Таны захидлууд хугацаа нь дууссаны дараа энд харагдах болно</p>
-        </div>
-      </div>
+      {/* Write Letter Modal Section - Styled like Profile Write Letter */}
+      <AnimatePresence>
+        {selectedType && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="bg-card rounded-3xl p-6 relative overflow-hidden border border-border shadow-2xl mt-4"
+          >
+            {/* Luxury Cream Paper Texture */}
+            <div className="absolute inset-0 opacity-[0.06] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
+
+            {/* Decorative Background Spots - Matches Home Page Hero */}
+            <div className="absolute inset-0 opacity-20 pointer-events-none">
+              <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-primary blur-[80px]" />
+              <div className="absolute -bottom-10 -right-10 w-32 h-32 rounded-full bg-accent blur-[60px]" />
+            </div>
+
+            <div className="relative z-10 space-y-6">
+              <div className="flex items-center justify-between gap-6">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#f8e4b3] to-[#d4af37] flex items-center justify-center shadow-md border border-amber-900/10 shrink-0">
+                    <SelectedIcon className="w-6 h-6 text-[#14213d]" />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-[#1f2d5a] font-serif tracking-tight italic leading-snug text-justify">
+                    {selectedType === "self"
+                      ? "Ирээдүйн өөртөө хэлмээр байгаа зүйлсээ энд бичнэ үү !"
+                      : selectedType === "goals"
+                      ? "Ирээдүйн зорилгоо энд бичнэ үү !"
+                      : selectedType === "prediction"
+                      ? "Ирээдүйд хэн, юу, яаж болох талаар таамаглалаа энд бичнэ үү !"
+                      : selectedType === "promise"
+                      ? "Ангийнхандаа өгөх өөрийн амлалтаа энд бичнэ үү !"
+                      : capsuleTypes.find(t => t.id === selectedType)?.label}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setSelectedType(null)}
+                  className="w-9 h-9 rounded-full flex items-center justify-center bg-stone-100 hover:bg-stone-200 text-stone-500 transition-colors shadow-sm"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                        <Textarea
+                          value={content}
+                          onChange={(e) => setContent(e.target.value)}
+                          placeholder={
+                            selectedType === "self"
+                              ? "Хүндэт ирээдүйн би,\n\nБи чамд хэлэхийг хүссэн зүйл минь..."
+                              : selectedType === "goals"
+                              ? "Миний ирээдүйн зорилго бол..."
+                              : selectedType === "prediction"
+                              ? "Ирээдүйд ийм зүйл болно гэж таамаглаж байна..."
+                              : "Би ирээдүйн өөртөө болон бусдад ийм амлалт өгч байна..."
+                          }
+                          className="bg-white/50 border-stone-200 min-h-[200px] text-base resize-none rounded-2xl focus:ring-primary/20 text-stone-800 placeholder:text-stone-400 font-serif italic p-5 shadow-inner"
+                        />
+                        
+                          <Button
+                            onClick={handleSubmit}
+                            disabled={!content.trim()}
+                            className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-2xl shadow-xl shadow-primary/20 text-lg transition-all active:scale-[0.98]"
+                          >
+                            <Lock className="w-5 h-5 mr-2" />
+                            Захидлыг түгжих
+                          </Button>
+                </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

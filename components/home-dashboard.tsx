@@ -93,7 +93,7 @@ export function HomeDashboard({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden border border-border shadow-lg"
+        className="bg-card rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden border border-border shadow-lg w-full max-w-md mx-auto"
       >
         {/* Decorative Background */}
         <div className="absolute inset-0 opacity-40">
@@ -125,7 +125,7 @@ export function HomeDashboard({
             </div>
           </motion.div>
 
-          <CountdownTimer targetDate={reunionDate} />
+          <CountdownTimer targetDate={reunionDate} title="Бид дахин уулзахад..." />
         </div>
       </motion.div>
 

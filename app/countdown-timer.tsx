@@ -200,7 +200,7 @@ export function CountdownTimer({
         <FlipDigit value={timeLeft.seconds} label="Сек" />
       </div>
       <motion.h3
-        className="text-sm sm:text-base text-[#1f2d5a] font-serif font-bold italic tracking-wide"
+        className="text-lg sm:text-xl text-[#1f2d5a] font-serif font-bold italic tracking-wide"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
