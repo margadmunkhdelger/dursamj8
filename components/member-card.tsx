@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { Heart, MessageCircle, X, Send, Pencil, Save, Camera, Upload, Instagram, Mail, Plus, PenLine, GraduationCap, Quote, ChevronLeft, ChevronRight, MailOpen } from "lucide-react"
+import { Heart, MessageCircle, X, Send, Pencil, Save, Camera, Upload, Instagram, Mail, Plus, PenLine, GraduationCap, ChevronLeft, ChevronRight, MailOpen } from "lucide-react"
 import Image from "next/image"
 import { useState, useRef, memo, useCallback, useMemo, useEffect } from "react"
 import { Input } from "@/components/ui/input"
@@ -249,8 +249,7 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
   const [showComments, setShowComments] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [currentCommentIndex, setCurrentCommentIndex] = useState<number | null>(null)
-  const [newComment, setNewComment] = useState("")
-  const [animationPhase, setAnimationPhase] = useState<'closed' | 'open'>('closed')
+  const [newComment, setNewComment] = useState("") 
   const [particles, setParticles] = useState<any[]>([])
 
   const createParticles = useCallback(() => {
@@ -262,27 +261,22 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
         id: i,
         emoji: emojis[Math.floor(Math.random() * emojis.length)],
         angle: angle,
-        distance: 120 + Math.random() * 180,
+        distance: 200 + Math.random() * 300,
         rotation: Math.random() * 720 - 360,
-        scale: 0.8 + Math.random() * 1.5,
+        scale: 1.8 + Math.random() * 2.5,
         delay: Math.random() * 0.1,
       })
     }
     setParticles(newParticles)
   }, [])
 
-  useEffect(() => {
-    if (currentCommentIndex !== null && animationPhase === 'closed') {
-      const timer = setTimeout(() => {
-        createParticles()
-        setAnimationPhase('open')
-      }, 500)
-      return () => clearTimeout(timer)
-    } else if (currentCommentIndex === null) {
-      setAnimationPhase('closed')
+  useEffect(() => { // Trigger particles when letter modal opens
+    if (currentCommentIndex !== null) {
+      createParticles();
+    } else {
       setParticles([])
     }
-  }, [currentCommentIndex, animationPhase, createParticles])
+  }, [currentCommentIndex, createParticles]);
 
   const handleComment = () => {
     if (!newComment.trim()) return
@@ -490,119 +484,112 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
             className="fixed inset-0 z-[110] bg-white/5 backdrop-blur-md flex items-center justify-center p-4"
             onClick={() => setCurrentCommentIndex(null)}
           >
-            {/* Celebration Particles - Fireworks burst effect */}
-            <AnimatePresence>
-              {particles.map((particle) => (
-                <motion.div
-                  key={particle.id}
-                  initial={{ opacity: 1, x: 0, y: 0, scale: 0, rotate: 0 }}
-                  animate={{ 
-                    opacity: 0, 
-                    x: Math.cos(particle.angle) * particle.distance, 
-                    y: Math.sin(particle.angle) * particle.distance, 
-                    scale: particle.scale, 
-                    rotate: particle.rotation 
-                  }}
-                  transition={{ duration: 1.5, delay: particle.delay, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="absolute left-1/2 top-1/2 text-3xl pointer-events-none z-[130]"
-                >
-                  {particle.emoji}
-                </motion.div>
-              ))}
-            </AnimatePresence>
-
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className={cn(
-                "w-full max-w-sm flex relative overflow-hidden transition-all duration-700",
-                animationPhase === 'open' 
-                  ? "bg-card rounded-3xl p-8 text-center shadow-2xl border border-border min-h-[320px]" 
-                  : "bg-transparent items-center justify-center"
-              )}
-            >
-              {animationPhase === 'closed' ? (
-                <motion.div
-                  className="relative w-full max-w-[320px] h-[200px] bg-[#14213d] rounded-sm shadow-2xl overflow-hidden border border-white/5"
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  {/* Envelope Visuals */}
-                  <div className="absolute inset-0 z-10" style={{ clipPath: "polygon(0 100%, 50% 50%, 100% 100%)", background: "linear-gradient(to top, #0f1a2e, #14213d)" }} />
-                  <div className="absolute inset-0 z-10" style={{ clipPath: "polygon(0 0, 50% 50%, 0 100%)", background: "#182640" }} />
-                  <div className="absolute inset-0 z-10" style={{ clipPath: "polygon(100% 0, 50% 50%, 100% 100%)", background: "#182640" }} />
-                  <motion.div 
-                    className="absolute inset-0 z-30 origin-top shadow-xl" 
-                    animate={{ rotateX: -180 }}
-                    transition={{ duration: 0.7, delay: 0.3, ease: "easeInOut" }}
-                    style={{ clipPath: "polygon(0 0, 100% 0, 50% 50%)", background: "linear-gradient(to bottom, #223147, #1c2a43)", transformStyle: "preserve-3d", backfaceVisibility: "hidden" }} 
-                  />
-                  <div className="absolute inset-0 z-40 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#f8e4b3] to-[#d4af37] shadow-lg flex items-center justify-center relative ring-1 ring-white/20">
-                      <GraduationCap className="w-6 h-6 text-[#1a2b4c]" />
-                    </div>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="relative z-10 w-full space-y-6"
-                >
-                  {/* Navigation Controls */}
-                  {member.comments.length > 1 && (
-                <>
-                  <button
-                    disabled={currentCommentIndex === 0}
-                    onClick={(e) => { e.stopPropagation(); setCurrentCommentIndex(prev => prev! - 1); }}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-stone-100/50 text-[#1f2d5a] hover:bg-[#c9a45c]/20 transition-all disabled:opacity-20 z-30"
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </button>
-                  <button
-                    disabled={currentCommentIndex === member.comments.length - 1}
-                    onClick={(e) => { e.stopPropagation(); setCurrentCommentIndex(prev => prev! + 1); }}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-stone-100/50 text-[#1f2d5a] hover:bg-[#c9a45c]/20 transition-all disabled:opacity-20 z-30"
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
-                </>
-              )}
-
-                  {/* Decorative Background */}
-                  <div className="absolute inset-0 opacity-20 pointer-events-none">
-                    <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-primary blur-[80px]" />
-                    <div className="absolute -bottom-10 -right-10 w-32 h-32 rounded-full bg-accent blur-[60px]" />
-                  </div>
-
-              <button
-                onClick={(e) => { e.stopPropagation(); setCurrentCommentIndex(null); }}
-                aria-label="Close letter"
-                className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors z-20 text-muted-foreground"
+            <div className="relative w-full max-w-sm flex items-center justify-center">
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full flex relative overflow-hidden bg-card rounded-3xl px-4 sm:px-6 py-4 text-center shadow-2xl border border-border min-h-[220px]"
               >
-                <X className="w-4 h-4" />
-              </button>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative z-10 w-full flex flex-col text-left"
+              >
+                  {/* Decorative Background */}
+                  {/* Removed existing decorative background */}
 
-                <div className="text-[10px] font-sans font-bold text-[#c9a45c] uppercase tracking-[0.2em]">
-                  Захидал {currentCommentIndex + 1} / {member.comments.length}
-                </div>
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 mx-auto">
-                  <Mail className="w-8 h-8 text-primary" />
-                </div>
+                  {/* Luxury Cream Paper Texture */}
+                  <div className="absolute inset-0 opacity-[0.06] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
+
+                  {/* Decorative Corner Ribbon */}
+                  <div className="absolute -top-8 -right-8 w-24 h-24 z-0 opacity-20 pointer-events-none rotate-12">
+                    <svg viewBox="0 0 100 100" className="w-full h-full fill-[#c9a45c]">
+                      <path d="M0 0 L100 100 L100 0 Z" />
+                    </svg>
+                  </div>
+
+                  {/* Subtle Watermark Decoration */}
+                  <div className="absolute bottom-0 left-0 opacity-[0.03] pointer-events-none">
+                    <GraduationCap className="w-32 h-32 text-[#1a2b4c]" />
+                  </div>
+
+                  <div className="relative flex items-center justify-between mb-3 px-1">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e4b3] to-[#d4af37] flex items-center justify-center shadow-sm">
+                        <GraduationCap className="w-5 h-5 text-[#1a2b4c]" />
+                      </div>
+                      <h3 className="text-xl sm:text-2xl text-[#1a2b4c] font-script leading-none pt-1">Захидал {currentCommentIndex + 1}/{member.comments.length}</h3>
+                    </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setCurrentCommentIndex(null); }}
+                    aria-label="Close letter"
+                    className="w-9 h-9 rounded-full flex items-center justify-center bg-stone-100 hover:bg-stone-200 text-stone-500 transition-colors shadow-sm relative z-40"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                  </div>
                 
-                <p className="text-lg text-foreground italic leading-relaxed font-serif px-2">
+                <p className="text-base sm:text-lg text-stone-700 italic leading-relaxed font-serif text-justify px-2 py-1">
                   &ldquo;{member.comments[currentCommentIndex].text}&rdquo; 
                 </p>
                 
-                <div className="pt-4 border-t border-border">
-                  <p className="text-sm font-bold text-foreground">-{member.comments[currentCommentIndex].author}-</p>
-                  <p className="text-[10px] text-muted-foreground mt-1">{member.comments[currentCommentIndex].time}</p>
+                <div className="pt-3 mt-2 border-t border-stone-200 flex items-center justify-between">
+                  <div className="w-8">
+                    {member.comments.length > 1 && (
+                      <button
+                        disabled={currentCommentIndex === 0}
+                        onClick={(e) => { e.stopPropagation(); setCurrentCommentIndex(prev => prev! - 1); }}
+                        className="p-1 rounded-full text-stone-400 hover:bg-stone-100 transition-colors disabled:opacity-0"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-center gap-3 flex-1 px-2">
+                    <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent to-[#c9a45c] max-w-[40px] sm:max-w-[60px]" />
+                    <p className="text-xl sm:text-2xl text-[#1f2d5a] font-script leading-none pt-1 whitespace-nowrap">
+                      {member.comments[currentCommentIndex].author}
+                    </p>
+                    <div className="h-0.5 flex-1 bg-gradient-to-l from-transparent to-[#c9a45c] max-w-[40px] sm:max-w-[60px]" />
+                  </div>
+                  <div className="w-8 flex justify-end">
+                    {member.comments.length > 1 && (
+                      <button
+                        disabled={currentCommentIndex === member.comments.length - 1}
+                        onClick={(e) => { e.stopPropagation(); setCurrentCommentIndex(prev => prev! + 1); }}
+                        className="p-1 rounded-full text-stone-400 hover:bg-stone-100 transition-colors disabled:opacity-0"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
                 </motion.div>
-              )}
-            </motion.div>
+              </motion.div>
+
+              {/* Celebration Particles - Fireworks burst effect - Moved outside overflow-hidden to allow full spread over modal */}
+              <AnimatePresence>
+                {particles.map((particle) => (
+                  <motion.div
+                    key={particle.id}
+                    initial={{ opacity: 1, x: 0, y: 0, scale: 0, rotate: 0 }}
+                    animate={{ 
+                      opacity: 0, 
+                      x: Math.cos(particle.angle) * particle.distance, 
+                      y: Math.sin(particle.angle) * particle.distance, 
+                      scale: particle.scale, 
+                      rotate: particle.rotation 
+                    }}
+                    transition={{ duration: 2.8, delay: particle.delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    className="absolute left-1/2 top-1/2 text-5xl pointer-events-none z-[130]"
+                  >
+                    {particle.emoji}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

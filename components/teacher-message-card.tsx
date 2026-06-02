@@ -40,9 +40,9 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
         id: i,
         emoji: CELEBRATION_EMOJIS[Math.floor(Math.random() * CELEBRATION_EMOJIS.length)],
         angle: angle,
-        distance: 150 + Math.random() * 200,
+        distance: 250 + Math.random() * 350,
         rotation: Math.random() * 720 - 360,
-        scale: 1 + Math.random() * 1.5,
+        scale: 2 + Math.random() * 2.5,
         delay: Math.random() * 0.15,
       })
     }
@@ -77,56 +77,17 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.5 }} 
-      className={`bg-card rounded-2xl flex relative overflow-hidden shadow-lg mx-auto w-full max-w-lg border border-border px-4 sm:px-6 transition-all duration-500 ${
-        animationPhase === 'open' 
-          ? "items-start pt-3 sm:pt-4 pb-3 sm:pb-4 min-h-[220px]" 
-          : "items-center justify-center py-4 sm:py-6 min-h-[280px]"
-      }`}
-    >
-      {/* Celebration Particles - Fireworks Burst Effect */}
-      <AnimatePresence>
-        {particles.map((particle) => {
-          const targetX = Math.cos(particle.angle) * particle.distance
-          const targetY = Math.sin(particle.angle) * particle.distance
-          return (
-            <motion.div
-              key={particle.id}
-              initial={{ 
-                opacity: 1, 
-                x: 0, 
-                y: 0, 
-                scale: 0,
-                rotate: 0 
-              }}
-              animate={{ 
-                opacity: 0,
-                x: targetX,
-                y: targetY,
-                scale: particle.scale,
-                rotate: particle.rotation
-              }}
-              exit={{ opacity: 0 }}
-              transition={{ 
-                duration: 1.8,
-                delay: particle.delay,
-                ease: [0.25, 0.46, 0.45, 0.94]
-              }}
-              className="absolute left-1/2 top-1/2 text-4xl pointer-events-none z-[100]"
-              style={{ 
-                marginLeft: "-0.75rem", 
-                marginTop: "-0.75rem",
-                filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.3))"
-              }}
-            >
-              {particle.emoji}
-            </motion.div>
-          )
-        })}
-      </AnimatePresence>
+    <div className="relative w-full max-w-lg mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }} 
+        className={`bg-card rounded-2xl flex relative overflow-hidden shadow-lg w-full border border-border px-4 sm:px-6 transition-all duration-500 ${
+          animationPhase === 'open' 
+            ? "items-start pt-3 sm:pt-4 pb-3 sm:pb-4 min-h-[220px]" 
+            : "items-center justify-center py-4 sm:py-6 min-h-[280px]"
+        }`}
+      >
 
       <AnimatePresence mode="wait">
         {animationPhase !== 'open' ? (
@@ -248,7 +209,7 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
               <GraduationCap className="w-32 h-32 text-[#1a2b4c]" />
             </div>
 
-            <div className="relative flex items-center justify-between mb-2 pb-2">
+            <div className="relative flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e4b3] to-[#d4af37] flex items-center justify-center shadow-sm">
                   <GraduationCap className="w-5 h-5 text-[#1a2b4c]" />
@@ -307,7 +268,7 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
             )}
             {!isEditing && (
               <motion.p 
-                className="text-sm font-bold text-[#1f2d5a] uppercase tracking-widest pt-1"
+                className="text-sm font-bold text-[#1f2d5a] uppercase tracking-widest pt-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
@@ -321,6 +282,48 @@ export function TeacherMessageCard({ teacherName, message, isTeacher, onUpdate }
       </AnimatePresence>
       {/* Luxury Cream Paper Texture */}
       <div className="absolute inset-0 opacity-[0.06] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
-    </motion.div>
+      </motion.div>
+
+      {/* Celebration Particles - Fireworks Burst Effect - Moved outside overflow-hidden container to allow full spread */}
+      <AnimatePresence>
+        {particles.map((particle) => {
+          const targetX = Math.cos(particle.angle) * particle.distance
+          const targetY = Math.sin(particle.angle) * particle.distance
+          return (
+            <motion.div
+              key={particle.id}
+              initial={{ 
+                opacity: 1, 
+                x: 0, 
+                y: 0, 
+                scale: 0,
+                rotate: 0 
+              }}
+              animate={{ 
+                opacity: 0,
+                x: targetX,
+                y: targetY,
+                scale: particle.scale,
+                rotate: particle.rotation
+              }}
+              exit={{ opacity: 0 }}
+              transition={{ 
+                duration: 3.0,
+                delay: particle.delay,
+                ease: [0.25, 0.46, 0.45, 0.94]
+              }}
+              className="absolute left-1/2 top-1/2 text-6xl pointer-events-none z-[100]"
+              style={{ 
+                marginLeft: "-0.75rem", 
+                marginTop: "-0.75rem",
+                filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.3))"
+              }}
+            >
+              {particle.emoji}
+            </motion.div>
+          )
+        })}
+      </AnimatePresence>
+    </div>
   )
 }
