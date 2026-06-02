@@ -113,17 +113,17 @@ export function AlbumFlow({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, x: -20, scale: 0.95 }}
             transition={springSmooth}
-            className="w-full"
+            className="w-full flex-1 flex flex-col min-h-0"
           >
-            <motion.div className={cn(PAGE_CONTENT_CLASS, "pt-4")}>
+            <motion.div className={cn(PAGE_CONTENT_CLASS, "pt-4 flex-1 flex flex-col min-h-0")}>
               <motion.div
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                className="h-full"
+                className="flex-1 flex flex-col min-h-0"
               >
                 <AlbumPanel // Main album cover panel
                   variant="cover" 
-                  className="relative p-5 sm:p-8 space-y-5 sm:space-y-10 text-center border-l-[8px] sm:border-l-[12px] border-l-amber-900/60 bg-[#f4f1ea] shadow-[10px_20px_40px_-15px_rgba(0,0,0,0.3)] max-h-[calc(100dvh-4rem)] min-h-0 flex flex-col justify-center overflow-hidden"
+                  className="relative p-5 sm:p-8 space-y-5 sm:space-y-8 text-center border-l-[8px] sm:border-l-[12px] border-l-amber-900/60 bg-[#f4f1ea] shadow-[10px_20px_40px_-15px_rgba(0,0,0,0.3)] flex-1 min-h-0 flex flex-col justify-center overflow-hidden"
                 >
                   {/* Minimalist Book Cover Background Effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-900/5 via-transparent to-stone-900/5 pointer-events-none" />
@@ -272,12 +272,12 @@ export function AlbumFlow({
             initial={{ opacity: 0, x: 20, scale: 0.95 }}
             animate={{ opacity: 1, x: 0, scale: 1, transition: { ...springSmooth, delay: 0.2 } }}
             exit={{ opacity: 0, x: 20, scale: 0.95, transition: springSmooth }}
-            className="w-full"
+            className="w-full flex-1 flex flex-col min-h-0"
           >
-            <motion.div className={cn(PAGE_CONTENT_CLASS, "pt-4")}>
+            <motion.div className={cn(PAGE_CONTENT_CLASS, "pt-4 flex-1 flex flex-col min-h-0")}>
               <AlbumPanel
                 variant="cover"
-                className="relative p-5 sm:p-8 border-l-[8px] sm:border-l-[12px] border-l-amber-900/60 bg-[#f4f1ea] shadow-[10px_20px_40px_-15px_rgba(0,0,0,0.3)] max-h-[calc(100dvh-4rem)] min-h-0 flex flex-col overflow-hidden"
+                className="relative p-5 sm:p-8 border-l-[8px] sm:border-l-[12px] border-l-amber-900/60 bg-[#f4f1ea] shadow-[10px_20px_40px_-15px_rgba(0,0,0,0.3)] flex-1 min-h-0 flex flex-col overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-foreground/5 pointer-events-none" />
                 <div className="absolute left-0 top-0 bottom-0 w-px bg-black/5" />

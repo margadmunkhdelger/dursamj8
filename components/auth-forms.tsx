@@ -421,8 +421,8 @@ export function AuthForms({ onSuccess }: AuthFormsProps) {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
       >
-        <p className="text-xs text-muted-foreground font-serif italic leading-relaxed">
-          &ldquo;Нэг анги. Нэг дурсамж. Үүрд хадгалагдах мөчүүд.&rdquo;
+        <p className="text-sm text-muted-foreground font-serif italic leading-relaxed">
+          &ldquo;Дурсамж бүтээх хамгийн тохиромжтой үе бол одоо.&rdquo;
         </p>
       </motion.div>
     </motion.div>
