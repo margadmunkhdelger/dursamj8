@@ -2,10 +2,12 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useRef, useCallback, useEffect } from "react"
-import { Heart, MessageCircle, Share2, X, ChevronLeft, ChevronRight, Plus, Send, Upload, ImagePlus, Sparkles, Camera } from "lucide-react"
+import { Heart, MessageCircle, Share2, X, ChevronLeft, ChevronRight, Plus, Send, Upload, ImagePlus, Sparkles, Camera, LayoutGrid, Rotate3d } from "lucide-react"
 import Image from "next/image"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Carousel3D } from "./carousel-3d"
 
 interface Memory {
   id: string
@@ -99,16 +101,16 @@ function DecorativeElement({ type }: { type: number }) {
     // Mini polaroid
     <motion.div 
       key="polaroid" 
-      className="w-3 h-3.5 bg-white/60 rounded-[2px] shadow-sm p-[2px]"
+      className="w-3 h-3.5 bg-[#f8e4b3]/60 rounded-[2px] shadow-sm p-[2px]"
       animate={{ rotate: [-5, 5, -5] }}
       transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
     >
-      <div className="w-full h-2 bg-primary/25 rounded-[1px]" />
+      <div className="w-full h-2 bg-[#c9a45c]/25 rounded-[1px]" />
     </motion.div>,
     // Camera lens
     <motion.svg 
       key="lens" 
-      className="w-3.5 h-3.5 text-primary/35" 
+      className="w-3.5 h-3.5 text-[#c9a45c]/50" 
       viewBox="0 0 24 24" 
       fill="none"
       stroke="currentColor"
@@ -126,14 +128,14 @@ function DecorativeElement({ type }: { type: number }) {
       animate={{ opacity: [0.3, 0.5, 0.3] }}
       transition={{ duration: 2, repeat: Infinity }}
     >
-      <div className="w-1 h-2 bg-primary/30 rounded-[1px]" />
-      <div className="w-1 h-2 bg-primary/20 rounded-[1px]" />
-      <div className="w-1 h-2 bg-primary/30 rounded-[1px]" />
+      <div className="w-1 h-2 bg-[#c9a45c]/30 rounded-[1px]" />
+      <div className="w-1 h-2 bg-[#c9a45c]/20 rounded-[1px]" />
+      <div className="w-1 h-2 bg-[#c9a45c]/30 rounded-[1px]" />
     </motion.div>,
     // Photo corner
     <motion.svg 
       key="corner" 
-      className="w-3 h-3 text-primary/35" 
+      className="w-3 h-3 text-[#c9a45c]/40" 
       viewBox="0 0 24 24" 
       fill="currentColor"
       animate={{ rotate: [0, 90, 0] }}
@@ -144,7 +146,7 @@ function DecorativeElement({ type }: { type: number }) {
     // Shutter/aperture
     <motion.svg
       key="shutter"
-      className="w-3.5 h-3.5 text-primary/30"
+      className="w-3.5 h-3.5 text-[#c9a45c]/30"
       viewBox="0 0 24 24"
       fill="currentColor"
       animate={{ rotate: [0, 60, 0] }}
@@ -229,39 +231,59 @@ function PhotoFrame({
       style={{ zIndex: 1 }}
     >
       {/* Soft shadow */}
-      <div className="absolute inset-0 bg-black/10 rounded-lg blur-md translate-y-1 translate-x-0.5" />
+      <div className="absolute inset-0 bg-black/10 rounded-lg blur-md translate-y-1 translate-x-0.5 z-0" />
       
-      {/* Gingham pattern border */}
-      <div className="relative bg-white p-1.5 sm:p-2 rounded-lg shadow-md gingham-frame">
-        {/* Inner white mat */}
-        <div className="bg-white p-0.5 rounded-md">
-          {/* Photo container with dynamic aspect ratio - adapts to image */}
-                          <div 
-                            className="relative w-full rounded-sm overflow-hidden bg-muted/10"
-                            style={frameStyle}
-                          >
-                            {imageLoaded ? (
-                              <Image
-                                src={memory.src}
-                                alt={memory.caption}
-                                fill
-                                sizes="(max-width: 640px) 45vw, 200px"
-                                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                              />
-                            ) : (
-                              <div className="absolute inset-0 bg-muted/50 animate-pulse" />
-                            )}
-                            
-                            {/* Hover overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          </div>
-        </div>
-        
-        {/* Date label at bottom with subtle background */}
-        <div className="mt-1.5 flex justify-center">
-          <span className="text-[8px] sm:text-[9px] text-foreground/70 font-sans truncate px-2 py-0.5 bg-muted/60 rounded-full">
-            {memory.date}
-          </span>
+      {/* Deep Blue Frame with Gold Accents */}
+      <div className="relative p-2 rounded-xl bg-[#1f2d5a] shadow-2xl border border-[#1f2d5a]/80 z-10">
+        {/* Gold Inner Border */}
+        <div className="relative p-1 rounded-lg border-2 border-[#c9a45c]/60 overflow-hidden">
+          {/* Ornate Premium Border */}
+          <div className="relative bg-white p-1.5 sm:p-2 rounded-lg shadow-xl border border-stone-200 overflow-hidden">
+            {/* Subtle Gold Corner Accents */}
+            <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-[#c9a45c]/40 rounded-tl-sm" />
+            <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-[#c9a45c]/40 rounded-tr-sm" />
+            <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-[#c9a45c]/40 rounded-bl-sm" />
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-[#c9a45c]/40 rounded-br-sm" />
+
+            {/* Inner paper mat */}
+            <div className="bg-white p-0.5 rounded-sm relative z-10">
+              {/* Photo container with dynamic aspect ratio - adapts to image */}
+              <div 
+                className="relative w-full rounded-sm overflow-hidden bg-stone-50"
+                style={frameStyle}
+              >
+                {/* Subtle natural paper texture on empty state */}
+                {!imageLoaded && (
+                  <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
+                )}
+
+                {imageLoaded ? (
+                  <Image
+                    src={memory.src}
+                    alt={memory.caption}
+                    fill
+                    sizes="(max-width: 640px) 45vw, 200px"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-muted/50 animate-pulse" />
+                )}
+                
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1f2d5a]/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            </div>
+            
+            {/* Author and Caption label at bottom */}
+            <div className="mt-2 flex flex-col items-center gap-0.5 px-2 pb-1">
+              <span className="text-[9px] font-bold text-[#1f2d5a] uppercase tracking-widest text-center line-clamp-1">
+                {memory.author}
+              </span>
+              <p className="text-[8px] text-stone-500 italic text-center line-clamp-1">
+                {memory.caption}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -295,6 +317,7 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [clickOrigin, setClickOrigin] = useState({ x: 0, y: 0 })
+  const [viewMode, setViewMode] = useState<"grid" | "3d">("3d")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Format date to Mongolian
@@ -414,13 +437,14 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
   }
 
   const addMemory = () => {
-    if (!newMemory.caption.trim() || !newMemory.imageUrl || !newMemory.date) return
+    if (!newMemory.caption.trim() || !newMemory.imageUrl) return
+    const today = new Date().toISOString().split('T')[0]
     const memory: Memory = {
       id: `m${Date.now()}`,
       type: "photo",
       src: newMemory.imageUrl,
       caption: newMemory.caption,
-      date: formatMongolianDate(newMemory.date),
+      date: formatMongolianDate(today),
       likes: 0,
       comments: [],
       author: currentUser?.name || "Anonymous"
@@ -441,6 +465,16 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
     <div className="relative w-full bg-background overflow-hidden">
       {/* Floating photo-themed decorative elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Paper texture overlay for the entire gallery background */}
+        <div 
+          className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-multiply"
+          style={{ backgroundImage: `url('https://www.transparenttextures.com/patterns/natural-paper.png')` }}
+        />
+
+        {/* Subtle gradient glows - matching other pages */}
+        <div className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-[#c9a45c]/5 blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-[10%] -right-[10%] w-[40%] h-[40%] rounded-full bg-[#1f2d5a]/5 blur-[80px] pointer-events-none" />
+
         {/* Floating mini polaroid frame - top left */}
         <motion.div
           animate={{ 
@@ -524,75 +558,89 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
       {/* Content Area - no min-height, grows with content */}
       <div className="relative px-3 sm:px-4 py-4 sm:py-5">
         {/* Header Section - more decorative */}
-        <div className="mb-5 sm:mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2 sm:gap-3">
-              {onBack && ( 
-                <Button variant="ghost" size="icon" onClick={onBack} className="w-8 h-8 rounded-full bg-card hover:bg-muted shadow-sm flex-shrink-0 border border-border">
-                  <ChevronLeft className="w-4 h-4 text-foreground" />
-                </Button>
-              )}
+        <div className="mb-5 sm:mb-6 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#c9a45c]/10 flex items-center justify-center border border-[#c9a45c]/40 shadow-sm">
+                <Camera className="w-5 h-5 text-[#1f2d5a]" />
+              </div>
               <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                  <h2 className="text-lg sm:text-xl font-semibold text-foreground font-serif">Дурсамжууд</h2>
-                </div>
-                <p className="text-[10px] sm:text-xs text-muted-foreground font-sans mt-0.5 flex items-center gap-1.5">
-                  <Sparkles className="w-3 h-3" />
-                  {memories.length} үнэт мөч хадгалагдсан
+                <h2 className="text-xl sm:text-2xl font-bold text-[#1f2d5a] font-serif leading-none">Дурсамжууд</h2>
+                <p className="text-[10px] sm:text-xs text-[#1f2d5a]/60 font-sans mt-1 flex items-center gap-1 uppercase tracking-widest font-black">
+                  <Sparkles className="w-3 h-3 text-[#c9a45c]" />
+                  {memories.length} Үнэт мөч
                 </p>
               </div>
             </div>
-            <Button 
-              size="sm" 
-              className="gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm text-xs px-3 h-8 flex-shrink-0"
+            <div className="flex items-center gap-2 bg-stone-100 p-1 rounded-full shadow-inner border border-stone-200">
+              <button 
+                onClick={() => setViewMode("3d")}
+                className={cn("p-1.5 rounded-full transition-all", viewMode === "3d" ? "bg-white text-[#c9a45c] shadow-sm" : "text-stone-400 hover:text-stone-600")}
+              >
+                <Rotate3d className="w-4 h-4" />
+              </button>
+              <button 
+                onClick={() => setViewMode("grid")}
+                className={cn("p-1.5 rounded-full transition-all", viewMode === "grid" ? "bg-white text-[#c9a45c] shadow-sm" : "text-stone-400 hover:text-stone-600")}
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
+            </div>
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-1.5 bg-[#1f2d5a] hover:bg-[#2a4178] text-white shadow-md text-[10px] font-bold uppercase tracking-widest px-4 h-9 rounded-full flex-shrink-0"
               onClick={() => setShowAddModal(true)}
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-3 h-3" />
               <span className="hidden sm:inline">Дурсамж</span> нэмэх
-            </Button>
+            </motion.button>
           </div>
-          
+
           {/* Decorative divider */}
           <div className="flex items-center gap-2 px-1">
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#c9a45c]/30 to-transparent" />
             <div className="flex items-center gap-1.5">
-              <div className="w-1 h-1 rounded-full bg-primary/30" />
-              <div className="w-1.5 h-1.5 rounded-full bg-primary/50" />
-              <div className="w-1 h-1 rounded-full bg-primary/30" />
+              <div className="w-1 h-1 rounded-full bg-[#c9a45c]/30" />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#c9a45c]/60" />
+              <div className="w-1 h-1 rounded-full bg-[#c9a45c]/30" />
             </div>
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#c9a45c]/30 to-transparent" />
           </div>
         </div>
 
         {/* Photo Grid with decorative elements */}
-        <div className="relative">
-          {/* Corner decorations */}
-          <div className="absolute -top-2 -left-1 w-6 h-6 border-l-2 border-t-2 border-primary/20 rounded-tl-lg" />
-          <div className="absolute -top-2 -right-1 w-6 h-6 border-r-2 border-t-2 border-primary/20 rounded-tr-lg" />
-          
-          <div className="grid grid-cols-2 gap-4 sm:gap-5 pb-4">
-          {memories.map((memory, index) => (
-            <div key={memory.id} className="relative">
-              <PhotoFrame
-                memory={memory}
-                index={index}
-                onClick={(e) => openMemory(memory, index, e)}
-              />
-              {/* Small decorative element between some photos */}
-              {index % 3 === 1 && index < memories.length - 1 && (
-                <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 z-0">
-                  <DecorativeElement type={index} />
-                </div>
-              )}
+        {viewMode === "grid" ? (
+          <div className="relative">
+            {/* Corner decorations */}
+            <div className="absolute -top-2 -left-1 w-6 h-6 border-l-2 border-t-2 border-[#c9a45c]/20 rounded-tl-lg" />
+            <div className="absolute -top-2 -right-1 w-6 h-6 border-r-2 border-t-2 border-[#c9a45c]/20 rounded-tr-lg" />
+            
+            <div className="grid grid-cols-2 gap-4 sm:gap-5 pb-4">
+            {memories.map((memory, index) => (
+              <div key={memory.id} className="relative">
+                <PhotoFrame
+                  memory={memory}
+                  index={index}
+                  onClick={(e) => openMemory(memory, index, e)}
+                />
+                {/* Small decorative element between some photos */}
+                {index % 3 === 1 && index < memories.length - 1 && (
+                  <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 z-0">
+                    <DecorativeElement type={index} />
+                  </div>
+                )}
+              </div>
+            ))}
             </div>
-          ))}
+            
+            {/* Bottom corner decorations */}
+            <div className="absolute -bottom-2 -left-1 w-6 h-6 border-l-2 border-b-2 border-[#c9a45c]/20 rounded-bl-lg" />
+            <div className="absolute -bottom-2 -right-1 w-6 h-6 border-r-2 border-b-2 border-[#c9a45c]/20 rounded-br-lg" />
           </div>
-          
-          {/* Bottom corner decorations */}
-          <div className="absolute -bottom-2 -left-1 w-6 h-6 border-l-2 border-b-2 border-primary/20 rounded-bl-lg" />
-          <div className="absolute -bottom-2 -right-1 w-6 h-6 border-r-2 border-b-2 border-primary/20 rounded-br-lg" />
-        </div>
+        ) : (
+          <Carousel3D memories={memories} onSelect={openMemory} />
+        )}
         
         {/* Bottom decorative flourish */}
         {memories.length > 0 && (
@@ -630,27 +678,30 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-foreground/80 flex items-center justify-center p-3 sm:p-4"
+            className="fixed inset-0 z-[110] bg-white/5 backdrop-blur-md flex items-center justify-center p-4"
             onClick={resetAddModal}
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()} 
-              className="w-full max-w-sm sm:max-w-md max-h-[85vh] overflow-y-auto bg-card rounded-xl p-4 sm:p-5 shadow-xl border border-border"
+              className="w-[calc(100%-2rem)] max-w-md bg-card rounded-3xl p-6 relative overflow-hidden border border-border shadow-2xl"
             >
+              <div className="absolute inset-0 opacity-[0.06] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
+
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Camera className="w-4 h-4 text-primary" />
-                  <h3 className="text-base font-semibold text-foreground font-serif">Шинэ дурсамж</h3>
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#f8e4b3] to-[#d4af37] flex items-center justify-center shadow-md border border-amber-900/10">
+                    <Camera className="w-6 h-6 text-[#14213d]" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#1f2d5a] font-serif tracking-tight">Шинэ дурсамж</h3>
                 </div>
                 <button
                   onClick={resetAddModal}
-                  aria-label="Close"
-                  className="w-7 h-7 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors text-muted-foreground"
+                  className="w-9 h-9 rounded-full flex items-center justify-center bg-stone-100 hover:bg-stone-200 text-stone-500 transition-colors shadow-sm"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
@@ -669,8 +720,8 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                   onClick={() => fileInputRef.current?.click()}
-                  className={`relative aspect-[4/3] rounded-lg overflow-hidden cursor-pointer border-2 border-dashed transition-colors ${
-                    isDragging ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                  className={`relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer border-2 border-dashed transition-colors bg-stone-50/50 ${
+                    isDragging ? 'border-[#c9a45c] bg-[#c9a45c]/5' : 'border-stone-200 hover:border-[#c9a45c]/50'
                   }`}
                 >
                   {previewImage ? (
@@ -689,16 +740,16 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                     <div className="flex flex-col items-center justify-center h-full gap-2 p-4">
                       <motion.div
                         animate={isDragging ? { scale: 1.1 } : { scale: 1 }}
-                        className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"
+                        className="w-12 h-12 rounded-full bg-[#c9a45c]/10 flex items-center justify-center border border-[#c9a45c]/30 shadow-sm"
                       >
                         {isDragging ? (
-                          <Upload className="w-5 h-5 text-primary" />
+                          <Upload className="w-6 h-6 text-[#1f2d5a]" />
                         ) : (
-                          <ImagePlus className="w-5 h-5 text-primary" />
+                          <ImagePlus className="w-6 h-6 text-[#1f2d5a]" />
                         )}
                       </motion.div>
                       <div className="text-center">
-                        <p className="text-xs font-medium text-foreground">
+                        <p className="text-xs font-bold text-[#1f2d5a] font-sans uppercase tracking-wider">
                           {isDragging ? "Зургаа энд тавина уу" : "Зураг сонгох"}
                         </p>
                         <p className="text-[10px] text-muted-foreground mt-0.5">
@@ -713,25 +764,15 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                   value={newMemory.caption}
                   onChange={(e) => setNewMemory(prev => ({ ...prev, caption: e.target.value }))}
                   placeholder="Энэ мөчийн тухай бичнэ үү..."
-                  className="bg-background text-sm"
+                  className="bg-white/50 border-stone-200 text-sm h-11 rounded-xl text-[#1f2d5a] font-serif italic"
                 />
-                
-                <div className="flex items-center gap-2">
-                  <label className="text-xs text-muted-foreground whitespace-nowrap">Огноо:</label>
-                  <Input
-                    type="date"
-                    value={newMemory.date}
-                    onChange={(e) => setNewMemory(prev => ({ ...prev, date: e.target.value }))}
-                    className="bg-background text-sm flex-1"
-                  />
-                </div>
                 
                 <Button 
                   onClick={addMemory}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-9 text-sm"
-                  disabled={!newMemory.caption.trim() || !newMemory.imageUrl || !newMemory.date}
+                  className="w-full h-12 bg-[#1f2d5a] hover:bg-[#2a4178] text-white font-bold rounded-xl shadow-lg transition-all active:scale-[0.98]"
+                  disabled={!newMemory.caption.trim() || !newMemory.imageUrl}
                 >
-                  <Plus className="w-4 h-4 mr-1.5" />
+                  <Plus className="w-4 h-4 mr-2" />
                   Нэмэх
                 </Button>
               </div>
@@ -740,7 +781,7 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
         )}
       </AnimatePresence>
 
-      {/* Fullscreen Viewer - elegant expand animation */}
+      {/* Fullscreen Viewer Modal */}
       <AnimatePresence>
         {selectedMemory && (
           <motion.div
@@ -824,7 +865,7 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
               >
                 {/* Gingham frame for photo - adapts to image size */}
                 <motion.div 
-                  className="gingham-frame p-2.5 sm:p-3 rounded-xl inline-block"
+                  className="p-2.5 sm:p-3 rounded-xl inline-block bg-white shadow-2xl relative"
                   initial={{ boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}
                   animate={{ boxShadow: "0 25px 50px -12px rgba(0,0,0,0.4)" }}
                   transition={{ delay: 0.15, duration: 0.4 }}
@@ -843,18 +884,18 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                     </div>
                   </div>
                   
-                  {/* Caption inside frame - like Polaroid */}
+                  {/* Caption inside frame - Premium Style */}
                   <motion.div 
                     className="bg-white px-3 pb-3 pt-2 rounded-b-lg -mt-0.5"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.25, duration: 0.2 }}
                   >
-                    <p className="text-xs sm:text-sm text-foreground/80 text-center font-sans leading-relaxed">
+                    <p className="text-sm sm:text-base text-[#1f2d5a] text-center font-serif italic leading-relaxed px-4">
                       {selectedMemory.caption}
                     </p>
                     <div className="flex justify-center mt-1.5">
-                      <span className="text-[10px] text-foreground/60 font-sans px-2 py-0.5 bg-muted/50 rounded-full">
+                      <span className="text-[10px] text-[#1f2d5a]/60 font-sans font-bold uppercase tracking-widest px-3 py-1 bg-stone-50 rounded-full border border-stone-100">
                         {selectedMemory.date}
                       </span>
                     </div>
@@ -865,7 +906,7 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
             
             {/* Bottom Actions Bar */}
             <motion.div
-              className="bg-card/95 backdrop-blur-xl border-t border-border"
+              className="bg-white/90 backdrop-blur-xl border-t border-stone-200 shadow-[0_-10px_30px_rgba(0,0,0,0.1)]"
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
@@ -875,19 +916,19 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                 <div className="flex items-center justify-center gap-6">
                   <button 
                     onClick={() => toggleLike(selectedMemory.id)} 
-                    className={`flex items-center gap-2 transition-colors ${selectedMemory.liked ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
+                    className={`flex items-center gap-2 transition-colors ${selectedMemory.liked ? 'text-[#ff2d55]' : 'text-stone-400 hover:text-[#ff2d55]'}`}
                   >
                     <Heart className={`w-5 h-5 ${selectedMemory.liked ? 'fill-current' : ''}`} />
-                    <span className="text-sm font-medium">{selectedMemory.likes}</span>
+                    <span className="text-sm font-black font-sans lining-nums">{selectedMemory.likes}</span>
                   </button>
                   <button 
                     onClick={() => setShowComments(!showComments)}
-                    className={`flex items-center gap-2 transition-colors ${showComments ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                    className={`flex items-center gap-2 transition-colors ${showComments ? 'text-[#1f2d5a]' : 'text-stone-400 hover:text-[#1f2d5a]'}`}
                   >
                     <MessageCircle className="w-5 h-5" />
-                    <span className="text-sm font-medium">{selectedMemory.comments.length}</span>
+                    <span className="text-sm font-black font-sans lining-nums">{selectedMemory.comments.length}</span>
                   </button>
-                  <button aria-label="Share" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <button aria-label="Share" className="text-stone-400 hover:text-[#1f2d5a] transition-colors">
                     <Share2 className="w-5 h-5" />
                   </button>
                 </div>
@@ -901,21 +942,21 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden" 
                     >
-                      <div className="pt-3 mt-3 border-t border-border space-y-2 max-h-32 overflow-y-auto">
+                      <div className="pt-3 mt-3 border-t border-stone-100 space-y-2 max-h-32 overflow-y-auto">
                         {selectedMemory.comments.length === 0 ? (
-                          <p className="text-xs text-muted-foreground text-center py-2">Сэтгэгдэл байхгүй байна</p>
+                          <p className="text-xs text-stone-400 text-center py-2 font-serif italic">Сэтгэгдэл байхгүй байна</p>
                         ) : (
                           selectedMemory.comments.map((comment) => (
                             <div key={comment.id} className="flex gap-2">
-                              <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium text-primary flex-shrink-0">
+                              <div className="w-6 h-6 rounded-full bg-[#c9a45c]/10 flex items-center justify-center text-[10px] font-black text-[#1f2d5a] border border-[#c9a45c]/30 flex-shrink-0">
                                 {comment.author[0]}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-xs text-foreground">
-                                  <span className="font-semibold">{comment.author}</span>
-                                  <span className="text-muted-foreground ml-1.5">{comment.text}</span>
+                                <p className="text-xs text-[#1f2d5a] leading-tight">
+                                  <span className="font-bold">{comment.author}</span>
+                                  <span className="text-stone-500 ml-1.5 font-serif italic">{comment.text}</span>
                                 </p>
-                                <p className="text-[10px] text-muted-foreground/60">{comment.time}</p>
+                                <p className="text-[10px] text-stone-400/60 font-sans">{comment.time}</p>
                               </div>
                             </div>
                           ))
@@ -923,6 +964,13 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                       </div>
                       
                       {/* Add Comment */}
+                  {/* Gold frame edges */}
+                  <div className="absolute inset-2 border border-[#c9a45c]/20 pointer-events-none rounded-lg" />
+                  <div className="absolute top-4 left-4 w-4 h-4 border-t border-l border-[#c9a45c]/40 rounded-tl-sm" />
+                  <div className="absolute top-4 right-4 w-4 h-4 border-t border-r border-[#c9a45c]/40 rounded-tr-sm" />
+                  <div className="absolute bottom-4 left-4 w-4 h-4 border-b border-l border-[#c9a45c]/40 rounded-bl-sm" />
+                  <div className="absolute bottom-4 right-4 w-4 h-4 border-b border-r border-[#c9a45c]/40 rounded-br-sm" />
+
                       <div className="flex gap-2 mt-3 pt-3 border-t border-border">
                         <Input
                           value={newComment}
