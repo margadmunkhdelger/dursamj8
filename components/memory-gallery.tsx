@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useRef, useCallback, useEffect } from "react"
-import { Heart, MessageCircle, Share2, X, ChevronLeft, ChevronRight, Plus, Send, Upload, ImagePlus, Sparkles, Camera, LayoutGrid, Rotate3d } from "lucide-react"
+import { Heart, MessageCircle, Share2, X, ChevronLeft, ChevronRight, Plus, Send, Upload, ImagePlus, Sparkles, Camera, LayoutGrid, Rotate3d, Play } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -29,7 +29,23 @@ interface Comment {
   time: string
 }
 
+const getYouTubeId = (url: string) => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
 const initialMemories: Memory[] = [
+  {
+    id: "v1",
+    type: "video",
+    src: "https://youtu.be/PO2tKcyTW8U",
+    caption: "Бидний хамгийн нандин мөчүүд 🎓",
+    date: "2024 оны 5-р сарын 28",
+    likes: 124,
+    comments: [],
+    author: "Ангийнхан"
+  },
   {
     id: "1",
     type: "photo",
@@ -257,7 +273,17 @@ function PhotoFrame({
                   <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
                 )}
 
-                {imageLoaded ? (
+                {memory.type === "video" && getYouTubeId(memory.src) ? (
+                  <div className="absolute inset-0 bg-stone-900 flex items-center justify-center">
+                    <Image
+                      src={`https://img.youtube.com/vi/${getYouTubeId(memory.src)}/mqdefault.jpg`}
+                      alt={memory.caption}
+                      fill
+                      className="object-cover opacity-60"
+                    />
+                    <Play className="w-10 h-10 text-white/80 relative z-10" />
+                  </div>
+                ) : imageLoaded ? (
                   <Image
                     src={memory.src}
                     alt={memory.caption}
@@ -439,9 +465,10 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
   const addMemory = () => {
     if (!newMemory.caption.trim() || !newMemory.imageUrl) return
     const today = new Date().toISOString().split('T')[0]
+    const youtubeId = getYouTubeId(newMemory.imageUrl);
     const memory: Memory = {
       id: `m${Date.now()}`,
-      type: "photo",
+      type: youtubeId ? "video" : "photo",
       src: newMemory.imageUrl,
       caption: newMemory.caption,
       date: formatMongolianDate(today),
@@ -760,6 +787,19 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                   )}
                 </div>
                 
+                <div className="relative">
+                  <Input
+                    value={newMemory.imageUrl}
+                    onChange={(e) => {
+                      setNewMemory(prev => ({ ...prev, imageUrl: e.target.value }));
+                      // YouTube линк байвал зургийн preview-г арилгах
+                      if (getYouTubeId(e.target.value)) setPreviewImage(null);
+                    }}
+                    placeholder="Эсвэл YouTube линкээ энд оруулж болно..."
+                    className="bg-white/50 border-stone-200 text-xs h-10 rounded-xl text-[#1f2d5a]"
+                  />
+                </div>
+
                 <Input
                   value={newMemory.caption}
                   onChange={(e) => setNewMemory(prev => ({ ...prev, caption: e.target.value }))}
@@ -872,15 +912,30 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                 >
                   <div className="bg-white p-1.5 sm:p-2 rounded-lg">
                     <div className="relative rounded-md overflow-hidden flex items-center justify-center">
-                      <Image
-                        src={selectedMemory.src}
-                        alt={selectedMemory.caption}
-                        width={800}
-                        height={800}
-                        sizes="(max-width: 640px) 85vw, 500px"
-                        className="object-contain max-h-[50vh] sm:max-h-[55vh] w-auto h-auto rounded-md"
-                        priority
-                      />
+                      {selectedMemory.type === "video" && getYouTubeId(selectedMemory.src) ? (
+                        <div className="w-full aspect-video min-w-[300px] sm:min-w-[500px]">
+                          <iframe
+                            width="100%"
+                            height="100%"
+                            src={`https://www.youtube.com/embed/${getYouTubeId(selectedMemory.src)}?autoplay=1`}
+                            title="YouTube video player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                            className="rounded-md"
+                          />
+                        </div>
+                      ) : (
+                        <Image
+                          src={selectedMemory.src}
+                          alt={selectedMemory.caption}
+                          width={800}
+                          height={800}
+                          sizes="(max-width: 640px) 85vw, 500px"
+                          className="object-contain max-h-[50vh] sm:max-h-[55vh] w-auto h-auto rounded-md"
+                          priority
+                        />
+                      )}
                     </div>
                   </div>
                   
