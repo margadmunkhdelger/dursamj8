@@ -280,7 +280,7 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
               initial={{ opacity: 0, scaleY: 0 }}
               animate={{ opacity: 1, scaleY: 1 }}
               transition={{ delay: 0.5, duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
-              className="absolute top-[-16px] sm:top-[-24px] left-[-4px] sm:left-[-8px] w-6 sm:w-8 bottom-0 z-0 pointer-events-none drop-shadow-md hidden min-[380px]:block origin-top"
+              className="absolute top-[-16px] sm:top-[-24px] left-[-4px] sm:left-[-8px] w-6 sm:w-8 bottom-0 z-0 pointer-events-none drop-shadow-md origin-top"
             >
               <svg viewBox="0 0 40 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
                 <path d="M0 0 H40 V80 L20 120 L0 80 Z" fill="#1f2d5a" />
@@ -297,7 +297,7 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
               initial={{ opacity: 0, scaleY: 0 }}
               animate={{ opacity: 1, scaleY: 1 }}
               transition={{ delay: 0.6, duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
-              className="absolute top-[-16px] sm:top-[-24px] right-[-4px] sm:right-[-8px] w-6 sm:w-8 bottom-0 z-0 pointer-events-none drop-shadow-md hidden min-[380px]:block origin-top"
+              className="absolute top-[-16px] sm:top-[-24px] right-[-4px] sm:right-[-8px] w-6 sm:w-8 bottom-0 z-0 pointer-events-none drop-shadow-md origin-top"
             >
               <svg viewBox="0 0 40 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full transform scale-x-[-1]" preserveAspectRatio="none">
                 <path d="M0 0 H40 V80 L20 120 L0 80 Z" fill="#1f2d5a" />
