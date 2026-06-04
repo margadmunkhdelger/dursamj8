@@ -254,7 +254,7 @@ export default function MemoriaApp() {
         )
       case "members":
         return (
-          <div className="pb-24">
+          <div className="pb-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -314,7 +314,7 @@ export default function MemoriaApp() {
         )
       case "capsule":
         return (
-          <div className="pb-24">
+          <div className="pb-10">
             <TimeCapsule
               reunionDate={reunionDate}
               schoolName={demoGroup.schoolName}
@@ -438,7 +438,7 @@ export default function MemoriaApp() {
             )}
             
             {/* Main scrollable area */}
-            <main className="flex-1 overflow-y-auto overflow-x-hidden w-full outline-none touch-pan-y overscroll-contain pt-[72px] pb-4">
+            <main className="flex-1 overflow-y-auto overflow-x-hidden w-full outline-none touch-pan-y overscroll-contain pt-[72px]">
               <div className="relative z-10 pt-4 px-4 max-w-md mx-auto">
                 <AnimatePresence mode="wait">
                   <motion.div
