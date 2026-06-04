@@ -88,7 +88,7 @@ export function HomeDashboard({
   };
 
   return (
-    <div className="space-y-4 pb-4">
+    <div className="space-y-4">
       {/* Hero Section with Countdown */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -105,7 +105,7 @@ export function HomeDashboard({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-8 space-y-3 relative"
+            className="mb-8 space-y-3 relative px-6"
           >
             {/* Left Graduation Ribbon Banner */}
             <motion.div
@@ -146,7 +146,7 @@ export function HomeDashboard({
                 {groupName}
               </p>
             )}
-            <h1 className="text-3xl sm:text-5xl font-script text-foreground leading-[1.1] px-2 relative z-10">
+            <h1 className="text-3xl sm:text-5xl font-script text-foreground leading-[1.1] relative z-10">
               {schoolName || "Шинэ Монгол Технологийн Коллеж"}
             </h1>
             <div className="flex items-center justify-center gap-3 relative z-10">

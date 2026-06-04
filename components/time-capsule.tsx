@@ -251,7 +251,7 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
   const archivedLetters = viewingArchiveType ? lettersByType(viewingArchiveType) : [];
 
   return (
-    <div className="space-y-5 relative" ref={containerRef}>
+    <div className="space-y-5 relative mb-4" ref={containerRef}>
       {/* Raining letters animation */}
       <AnimatePresence>
         {rainingLetters.map((particle) => (
@@ -273,7 +273,7 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="mb-8 space-y-3 relative"
+            className="mb-8 space-y-3 relative px-6"
           >
             {/* Left Graduation Ribbon Banner */}
             <motion.div
@@ -310,11 +310,11 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
             </motion.div>
 
             {groupName && (
-              <p className="text-[10px] uppercase tracking-[0.4em] text-[#c9a45c] font-bold relative z-10 px-6">
+              <p className="text-[10px] uppercase tracking-[0.4em] text-[#c9a45c] font-bold relative z-10">
                 {groupName}
               </p>
             )}
-            <h1 className="text-2xl sm:text-4xl font-script text-foreground leading-[1.1] px-6 relative z-10">
+            <h1 className="text-2xl sm:text-4xl font-script text-foreground leading-[1.1] relative z-10">
               Бид дахин уулзахад нээгдэх захидлууд
             </h1>
             <div className="flex items-center justify-center gap-3 relative z-10">
