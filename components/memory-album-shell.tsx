@@ -15,10 +15,10 @@ export function AlbumMobileFrame({ children }: AlbumMobileFrameProps) {
   return (
     <motion.div
       key="album-frame"
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -50 }}
-      className="fixed inset-0 w-full h-[100dvh] flex flex-col items-center relative overflow-hidden overscroll-none bg-background touch-none"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 w-full h-full flex flex-col items-center overflow-hidden bg-background touch-none"
     >
       <FloatingParticles count={80} />
       <motion.div
@@ -31,7 +31,7 @@ export function AlbumMobileFrame({ children }: AlbumMobileFrameProps) {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         aria-hidden
       />
-      <div className="relative z-10 pointer-events-auto w-full max-w-md flex-1 flex flex-col min-h-0 overflow-y-auto scrollbar-hide px-4 pt-[80px] pb-[env(safe-area-inset-bottom,12px)] touch-pan-y overscroll-contain">
+      <div className="relative z-10 pointer-events-auto w-full max-w-md flex-1 flex flex-col min-h-0 overflow-y-auto scrollbar-hide px-4 pt-[70px] pb-[env(safe-area-inset-bottom,0px)] touch-pan-y overscroll-contain">
         {children}
       </div>
     </motion.div>

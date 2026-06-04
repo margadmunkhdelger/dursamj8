@@ -20,7 +20,7 @@ const tabs = [
 export function MobileNav({ activeTab, onTabChange }: MobileNavProps) {
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-[70] touch-none overscroll-none select-none"
+      className="fixed top-0 left-0 right-0 z-[100] touch-none overscroll-none select-none"
       style={{
         paddingTop: "env(safe-area-inset-top, 8px)",
         background: "linear-gradient(to bottom, rgba(246,241,235,0.98) 60%, rgba(246,241,235,0.85) 100%)",
@@ -29,7 +29,7 @@ export function MobileNav({ activeTab, onTabChange }: MobileNavProps) {
         borderBottom: "1px solid rgba(201,164,92,0.2)",
       }}
     >
-      <div className="mx-auto max-w-md px-2 pt-1 pb-2">
+      <div className="mx-auto max-w-md px-2 pt-0.5 pb-1.5">
         <div className="flex items-center justify-between">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id
@@ -161,7 +161,7 @@ export function TopNav({ groupName, onSettings }: { groupName: string; onSetting
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className="fixed top-0 left-0 right-0 z-[60] px-4 pt-[max(1rem,env(safe-area-inset-top))] bg-gradient-to-b from-background/95 via-background/80 to-transparent pb-4 touch-none overscroll-none"
+        className="fixed top-0 left-0 right-0 z-[90] px-4 pt-[max(1rem,env(safe-area-inset-top))] bg-gradient-to-b from-background/95 via-background/80 to-transparent pb-4 touch-none overscroll-none"
         style={{
           WebkitBackdropFilter: "blur(16px)",
           backdropFilter: "blur(16px)",
