@@ -1,13 +1,7 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion"
-import { useState, useRef } from "react"
-import { Pencil, Save, Upload, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
-import Image from "next/image"
 
 interface SongCertificateProps {
   studentName: string
@@ -24,115 +18,15 @@ export function SongCertificate({
   graduationYear,
   isTeacher = false,
 }: SongCertificateProps) {
-  const [editMode, setEditMode] = useState(false)
-  const [editSchool, setEditSchool] = useState(schoolName)
-  const [editClass, setEditClass] = useState(className)
-  const [editYear, setEditYear] = useState(String(graduationYear))
-  const [certText, setCertText] = useState(
-    `Энэхүү дурсамжийн хайрцаг нь ${schoolName} сургуулийн ${className} ангийн сурагчдын хамтдаа бүтээсэн хамгийн нандин мөчүүд, захиа, зураг, бичлэгийг хадгалж буйг батламжлав.`
-  )
-  const [logoSrc, setLogoSrc] = useState<string | null>(null)
-  const [saved, setSaved] = useState({ school: schoolName, cls: className, year: graduationYear, text: certText })
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => setLogoSrc(reader.result as string)
-      reader.readAsDataURL(file)
-    }
-  }
-
-  const handleSave = () => {
-    const updatedText = certText
-      .replace(schoolName, editSchool)
-      .replace(className, editClass)
-    setSaved({ school: editSchool, cls: editClass, year: Number(editYear), text: updatedText })
-    setCertText(updatedText)
-    setEditMode(false)
-  }
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden min-h-0">
+    <div className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden min-h-0 touch-none">
       <div 
         className="absolute inset-0 opacity-[0.4] mix-blend-multiply pointer-events-none -z-10"
         style={{
           backgroundImage: `url("https://www.transparenttextures.com/patterns/pinstriped-suit.png"), radial-gradient(circle at center, transparent 0%, rgba(180,140,100,0.1) 100%)`,
         }}
       />
-      <AnimatePresence>
-        {isTeacher && editMode && (
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute right-0 top-0 bottom-0 w-72 z-30 bg-card border-l border-border shadow-2xl flex flex-col overflow-y-auto"
-          >
-            <div className="p-4 border-b border-border flex items-center justify-between">
-              <h3 className="font-serif font-bold text-foreground text-sm">Батламж засварлах</h3>
-              <button onClick={() => setEditMode(false)} className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-muted text-muted-foreground">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="p-4 space-y-4 flex-1">
-              {/* Logo upload */}
-              <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">Сургуулийн лого</label>
-                <input type="file" ref={fileInputRef} onChange={handleLogoUpload} accept="image/*" className="hidden" />
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="mt-2 w-full h-20 rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center cursor-pointer hover:border-primary/40 transition-colors bg-muted/30"
-                >
-                  {logoSrc ? (
-                    <div className="relative w-14 h-14">
-                      <Image src={logoSrc} alt="Logo" fill className="object-contain rounded" />
-                    </div>
-                  ) : (
-                    <>
-                      <Upload className="w-5 h-5 text-muted-foreground mb-1" />
-                      <span className="text-xs text-muted-foreground font-sans">Лого оруулах</span>
-                    </>
-                  )}
-                </div>
-              </div>
-              <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">Сургуулийн нэр</label>
-                <Input value={editSchool} onChange={(e) => setEditSchool(e.target.value)} className="mt-1 h-9 bg-input border-border text-sm font-sans text-foreground" />
-              </div>
-              <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">Анги / бүлэг</label>
-                <Input value={editClass} onChange={(e) => setEditClass(e.target.value)} className="mt-1 h-9 bg-input border-border text-sm font-sans text-foreground" />
-              </div>
-              <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">Төгсөх он</label>
-                <Input value={editYear} onChange={(e) => setEditYear(e.target.value)} type="number" className="mt-1 h-9 bg-input border-border text-sm font-sans text-foreground" />
-              </div>
-              <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-sans">Батламжийн текст</label>
-                <Textarea value={certText} onChange={(e) => setCertText(e.target.value)} className="mt-1 bg-input border-border text-sm font-serif min-h-[100px] resize-none text-foreground" />
-              </div>
-              <Button onClick={handleSave} className="w-full h-10 font-bold font-sans text-sm">
-                <Save className="w-4 h-4 mr-2" />
-                Хадгалах
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <div className="w-full flex-1 flex flex-col items-center justify-center px-2 py-4 min-h-0 relative">
-        {isTeacher && !editMode && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            onClick={() => setEditMode(true)}
-            className="absolute top-0 right-4 z-20 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-card border border-border shadow-sm text-xs font-semibold font-sans text-foreground hover:bg-muted transition-colors"
-          >
-            <Pencil className="w-3.5 h-3.5" />
-            Засварлах
-          </motion.button>
-        )}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -426,12 +320,6 @@ export function SongCertificate({
               transition={{ delay: 0.5, duration: 0.6 }}
               className="mt-4"
             >
-              {/* Logo if uploaded */}
-              {logoSrc && (
-                <div className="relative w-12 h-12 mx-auto mb-3">
-                  <Image src={logoSrc} alt="School logo" fill className="object-contain" />
-                </div>
-              )}
               <h1
                 className="font-script text-3xl sm:text-4xl text-[#1f2d5a] tracking-wide"
                 style={{ textShadow: "2px 2px 8px rgba(31,45,90,0.15)" }}
@@ -483,7 +371,7 @@ export function SongCertificate({
               transition={{ delay: 0.95 }}
               className="text-xs sm:text-sm text-[#4a4a5a] leading-normal max-w-[340px] font-serif px-2 mt-4"
             >
-              {saved.text}
+              {`Энэхүү дурсамжийн хайрцаг нь ${schoolName} сургуулийн ${className} ангийн сурагчдын хамтдаа бүтээсэн хамгийн нандин мөчүүд, захиа, зураг, бичлэгийг хадгалж буйг батламжлав.`}
             </motion.p>
 
             {/* Year Badge */}
