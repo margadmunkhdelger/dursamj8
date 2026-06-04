@@ -446,7 +446,7 @@ export default function MemoriaApp() {
             )}
             
             {/* Main scrollable area - Adjusted top padding to account for CurrentUserBadge */}
-            <main ref={mainScrollRef} className="flex-1 overflow-y-auto overflow-x-hidden w-full outline-none touch-pan-y overscroll-contain pt-[calc(env(safe-area-inset-top,0px)+60px)] pb-[60px]">
+            <main ref={mainScrollRef} className="flex-1 overflow-y-auto overflow-x-hidden w-full outline-none touch-pan-y overscroll-contain pt-[calc(env(safe-area-inset-top,0px)+54px)] pb-[60px]">
               <div className="relative z-10 pt-2 px-4 max-w-md mx-auto">
                 <AnimatePresence mode="wait">
                   <motion.div

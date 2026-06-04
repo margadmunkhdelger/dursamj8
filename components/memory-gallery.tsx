@@ -947,25 +947,6 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
                   <X className="w-7 h-7" />
                 </motion.button>
 
-                {/* Delete Button (Visible only to author or teacher) */}
-                {(currentUser?.name === selectedMemory.author || currentUser?.id === "teacher_1") && (
-                  <motion.button
-                    key="delete-button"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.35, duration: 0.2 }}
-                    onClick={() => {
-                      if (window.confirm("Энэ дурсамжийг устгахдаа итгэлтэй байна уу?")) {
-                        deleteMemory(selectedMemory.id)
-                      }
-                    }}
-                    className="absolute -top-14 left-0 z-50 w-12 h-12 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3]/60 hover:text-red-400 transition-all border border-[#c9a45c]/30 hover:border-red-500/50 shadow-xl"
-                    title="Устгах"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </motion.button>
-                )}
-
               <motion.div
                 key={selectedMemory.id}
                 drag="x"
@@ -1049,21 +1030,39 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="flex items-center gap-10 mt-10 z-30"
+                className="flex items-center justify-between w-full mt-10 z-30"
               >
                 <button
                   onClick={() => navigateMemory("prev")}
-                  className="w-14 h-14 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3] hover:bg-[#2a4178] transition-all border border-[#c9a45c]/50 shadow-xl active:scale-95"
+                  className="w-12 h-12 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3] hover:bg-[#2a4178] transition-all border border-[#c9a45c]/50 shadow-xl active:scale-95"
                   title="Өмнөх"
                 >
-                  <ChevronLeft className="w-8 h-8" />
+                  <ChevronLeft className="w-7 h-7" />
                 </button>
+
+                {/* Delete Button (Visible only to author or teacher) in the middle */}
+                <div className="flex-1 flex justify-center">
+                  {(currentUser?.name === selectedMemory.author || currentUser?.id === "teacher_1") && (
+                    <button
+                      onClick={() => {
+                        if (window.confirm("Энэ дурсамжийг устгахдаа итгэлтэй байна уу?")) {
+                          deleteMemory(selectedMemory.id)
+                        }
+                      }}
+                      className="w-12 h-12 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3]/60 hover:text-red-400 transition-all border border-[#c9a45c]/30 hover:border-red-500/50 shadow-xl active:scale-95"
+                      title="Устгах"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
+
                 <button
                   onClick={() => navigateMemory("next")}
-                  className="w-14 h-14 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3] hover:bg-[#2a4178] transition-all border border-[#c9a45c]/50 shadow-xl active:scale-95"
+                  className="w-12 h-12 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3] hover:bg-[#2a4178] transition-all border border-[#c9a45c]/50 shadow-xl active:scale-95"
                   title="Дараах"
                 >
-                  <ChevronRight className="w-8 h-8" />
+                  <ChevronRight className="w-7 h-7" />
                 </button>
               </motion.div>
               </div>
