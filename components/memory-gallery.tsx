@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useRef, useCallback, useEffect } from "react"
-import { Heart, MessageCircle, Share2, X, ChevronLeft, ChevronRight, Plus, Send, Upload, ImagePlus, Camera, LayoutGrid, Rotate3d, Play, MoveHorizontal } from "lucide-react"
+import { Heart, MessageCircle, Share2, X, ChevronLeft, ChevronRight, Plus, Send, Upload, ImagePlus, Camera, LayoutGrid, Rotate3d, Play, MoveHorizontal, Trash2 } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -259,15 +259,15 @@ function PhotoFrame({
       style={{ zIndex: 1 }}
     >
       {/* Soft shadow */}
-      <div className="absolute inset-0 bg-black/10 rounded-lg blur-md translate-y-1 translate-x-0.5 z-0" />
+      <div className="absolute inset-0 bg-black/10 rounded-2xl blur-md translate-y-1 translate-x-0.5 z-0" />
       
       {/* Deep Blue Frame - Slightly Wider and Elegant */}
-      <div className="relative p-2 rounded-lg bg-[#1f2d5a] shadow-2xl border border-[#1f2d5a]/80 z-10">
+      <div className="relative p-2 rounded-2xl bg-[#1f2d5a] shadow-2xl border border-[#1f2d5a]/80 z-10">
         {/* Gold line running through the middle of the frame */}
-        <div className="absolute inset-[4px] border border-[#d4af37] rounded-[6px] pointer-events-none z-20" />
+        <div className="absolute inset-[4px] border border-[#d4af37] rounded-2xl pointer-events-none z-20" />
 
         {/* Inner Content Area */}
-        <div className="relative rounded-md shadow-xl overflow-hidden flex flex-col bg-white">
+        <div className="relative rounded-2xl shadow-xl overflow-hidden flex flex-col bg-white">
           <div 
             className="relative w-full overflow-hidden bg-stone-50"
             style={frameStyle}
@@ -326,7 +326,7 @@ function PhotoFrame({
 }
 
 interface MemoryGalleryProps {
-  currentUser?: { name: string; nickname: string; avatar: string } | null
+  currentUser?: { id?: string; name: string; nickname: string; avatar: string } | null
   onBack?: () => void
   schoolName?: string
   graduationYear?: number
@@ -420,6 +420,11 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
     setShowComments(false)
   }
 
+  const deleteMemory = (id: string) => {
+    setMemories(prev => prev.filter(m => m.id !== id))
+    setSelectedMemory(null)
+  }
+
   const toggleLike = (memoryId: string, e?: React.MouseEvent) => {
     e?.stopPropagation()
     setMemories(prev => prev.map(m => {
@@ -489,7 +494,7 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
   }
 
   return (
-    <div className="relative w-full flex flex-col bg-background overflow-hidden">
+    <div className="relative w-full flex flex-col bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
       {/* Floating photo-themed decorative elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Paper texture overlay for the entire gallery background */}
@@ -679,8 +684,8 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
         {viewMode === "grid" ? (
           <div className="relative">
             {/* Corner decorations */}
-            <div className="absolute -top-2 -left-1 w-6 h-6 border-l-2 border-t-2 border-[#c9a45c]/20 rounded-tl-lg" />
-            <div className="absolute -top-2 -right-1 w-6 h-6 border-r-2 border-t-2 border-[#c9a45c]/20 rounded-tr-lg" />
+            <div className="absolute -top-2 -left-1 w-6 h-6 border-l-2 border-t-2 border-[#c9a45c]/20 rounded-tl-2xl" />
+            <div className="absolute -top-2 -right-1 w-6 h-6 border-r-2 border-t-2 border-[#c9a45c]/20 rounded-tr-2xl" />
             
             <div className="flex gap-4 sm:gap-5 pb-4 items-start">
               {/* Зүүн багана - Тэгш индексүүд */}
@@ -723,8 +728,8 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
             </div>
             
             {/* Bottom corner decorations */}
-            <div className="absolute -bottom-2 -left-1 w-6 h-6 border-l-2 border-b-2 border-[#c9a45c]/20 rounded-bl-lg" />
-            <div className="absolute -bottom-2 -right-1 w-6 h-6 border-r-2 border-b-2 border-[#c9a45c]/20 rounded-br-lg" />
+            <div className="absolute -bottom-2 -left-1 w-6 h-6 border-l-2 border-b-2 border-[#c9a45c]/20 rounded-bl-2xl" />
+            <div className="absolute -bottom-2 -right-1 w-6 h-6 border-r-2 border-b-2 border-[#c9a45c]/20 rounded-br-2xl" />
           </div>
         ) : (
           <Carousel3D memories={memories} onSelect={openMemory} />
@@ -774,7 +779,7 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()} 
-              className="w-[calc(100%-2rem)] max-w-md bg-card rounded-3xl p-6 relative overflow-hidden border border-border shadow-2xl"
+              className="w-[calc(100%-2rem)] max-w-md bg-card rounded-2xl p-6 relative overflow-hidden border border-border shadow-2xl"
             >
               <div className="absolute inset-0 opacity-[0.06] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
 
@@ -923,7 +928,7 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
             {/* Main Content Area */}
             <div 
               className="flex-1 flex flex-col items-center justify-center px-4 sm:px-12 pb-12 min-h-0 relative z-20"
-              style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 5rem)" }}
+              style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 7.5rem)" }}
             >
               
               {/* Stable UI Wrapper for Controls and Animated Content */}
@@ -937,10 +942,29 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
                   transition={{ delay: 0.3, duration: 0.2 }}
                   onClick={() => setSelectedMemory(null)}
                   aria-label="Close memory view"
-                  className="absolute -top-16 right-0 z-50 w-12 h-12 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3] hover:bg-[#2a4178] transition-all border border-[#c9a45c]/50 shadow-xl"
+                  className="absolute -top-14 right-0 z-50 w-12 h-12 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3] hover:bg-[#2a4178] transition-all border border-[#c9a45c]/50 shadow-xl"
                 >
                   <X className="w-7 h-7" />
                 </motion.button>
+
+                {/* Delete Button (Visible only to author or teacher) */}
+                {(currentUser?.name === selectedMemory.author || currentUser?.id === "teacher_1") && (
+                  <motion.button
+                    key="delete-button"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.35, duration: 0.2 }}
+                    onClick={() => {
+                      if (window.confirm("Энэ дурсамжийг устгахдаа итгэлтэй байна уу?")) {
+                        deleteMemory(selectedMemory.id)
+                      }
+                    }}
+                    className="absolute -top-14 left-0 z-50 w-12 h-12 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3]/60 hover:text-red-400 transition-all border border-[#c9a45c]/30 hover:border-red-500/50 shadow-xl"
+                    title="Устгах"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </motion.button>
+                )}
 
               <motion.div
                 key={selectedMemory.id}
@@ -980,10 +1004,10 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
                 className="flex flex-col max-h-full items-center cursor-grab active:cursor-grabbing w-full"
               >
                 {/* Premium Frame style matching 3D items */}
-                <div className="relative p-2 rounded-lg bg-[#1f2d5a] shadow-2xl border border-[#1f2d5a]/80 w-full">
-                  <div className="absolute inset-[4px] border border-[#d4af37] rounded-[6px] pointer-events-none z-20" />
+                <div className="relative p-2 rounded-2xl bg-[#1f2d5a] shadow-2xl border border-[#1f2d5a]/80 w-full">
+                  <div className="absolute inset-[4px] border border-[#d4af37] rounded-2xl pointer-events-none z-20" />
                   
-                  <div className="relative rounded-md shadow-xl overflow-hidden flex flex-col bg-white">
+                  <div className="relative rounded-2xl shadow-xl overflow-hidden flex flex-col bg-white">
                     <div className="relative overflow-hidden flex items-center justify-center bg-stone-50">
                       {selectedMemory.type === "video" && getYouTubeId(selectedMemory.src) ? (
                         <div className="w-full aspect-video">

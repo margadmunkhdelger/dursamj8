@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { FloatingParticles } from "@/components/floating-particles"
 import { AuthForms } from "@/components/auth-forms"
@@ -148,6 +148,14 @@ export default function MemoriaApp() {
 
   const approvedMembers = members.filter(m => m.status === "approved")
   const pendingMembers = members.filter(m => m.status === "pending")
+
+  const mainScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (mainScrollRef.current) {
+      mainScrollRef.current.scrollTop = 0;
+    }
+  }, [activeTab]);
 
   const handleMemberLike = (memberId: string) => {
     if (!currentUser) return
@@ -438,8 +446,8 @@ export default function MemoriaApp() {
             )}
             
             {/* Main scrollable area - Adjusted top padding to account for CurrentUserBadge */}
-            <main className="flex-1 overflow-y-auto overflow-x-hidden w-full outline-none touch-pan-y overscroll-contain pt-[80px]">
-              <div className="relative z-10 pt-4 px-4 max-w-md mx-auto">
+            <main ref={mainScrollRef} className="flex-1 overflow-y-auto overflow-x-hidden w-full outline-none touch-pan-y overscroll-contain pt-[calc(env(safe-area-inset-top,0px)+60px)] pb-[60px]">
+              <div className="relative z-10 pt-2 px-4 max-w-md mx-auto">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}

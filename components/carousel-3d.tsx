@@ -171,12 +171,12 @@ function CarouselItem({ memory, index, rotation, angleStep, radiusX, radiusZ, on
       <motion.div 
         style={{ filter: brightness }}
         whileHover={{ y: -20, rotate: 0, transition: { duration: 0.3 } }}
-        className="relative p-2 rounded-lg bg-[#1f2d5a] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.6)] border border-[#1f2d5a]/80"
+        className="relative p-2 rounded-2xl bg-[#1f2d5a] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.6)] border border-[#1f2d5a]/80"
       >
         {/* Gold line running through the middle of the frame */}
-        <div className="absolute inset-[4px] border border-[#d4af37] rounded-[6px] pointer-events-none z-20" />
+        <div className="absolute inset-[4px] border border-[#d4af37] rounded-2xl pointer-events-none z-20" />
 
-        <div className="relative rounded-md shadow-xl overflow-hidden bg-white flex flex-col">
+        <div className="relative rounded-2xl shadow-xl overflow-hidden bg-white flex flex-col">
           <div 
             className="relative bg-stone-50 overflow-hidden"
             style={{ aspectRatio: `${displayAspectRatio}` }}
