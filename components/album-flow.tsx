@@ -115,7 +115,7 @@ export function AlbumFlow({
             transition={springSmooth}
             className="w-full flex-1 flex flex-col min-h-0"
           >
-            <motion.div className={cn(PAGE_CONTENT_CLASS, "pt-4 flex-1 flex flex-col min-h-0")}>
+            <motion.div className={cn(PAGE_CONTENT_CLASS, "pt-1 flex-1 flex flex-col min-h-0")}>
               <motion.div
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}

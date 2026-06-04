@@ -101,8 +101,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${playfairDisplay.variable} ${cormorantGaramond.variable} ${lora.variable} ${libreBaskerville.variable} ${greatVibes.variable} ${allura.variable} bg-background`}>
-      <body className="font-sans antialiased min-h-screen overflow-x-hidden">
+    <html lang="en" className={`${playfairDisplay.variable} ${cormorantGaramond.variable} ${lora.variable} ${libreBaskerville.variable} ${greatVibes.variable} ${allura.variable} bg-background h-full overflow-hidden`}>
+      <body className="font-sans antialiased h-full overflow-hidden fixed inset-0 touch-none">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

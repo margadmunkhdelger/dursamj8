@@ -369,7 +369,7 @@ export default function MemoriaApp() {
   ]);
 
   return (
-    <main className="h-[100dvh] w-screen overflow-hidden flex flex-col relative bg-[#F5F0E8]">
+    <div className="h-full w-full overflow-hidden flex flex-col relative bg-[#F5F0E8]">
       <AnimatePresence mode="wait">
 
         {/* Auth Page */}
@@ -428,7 +428,7 @@ export default function MemoriaApp() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 flex flex-col overflow-hidden h-[100dvh] w-full"
+            className="fixed inset-0 flex flex-col overflow-hidden w-full h-full"
           >
             <FloatingParticles count={15} />
             
@@ -458,6 +458,6 @@ export default function MemoriaApp() {
           </motion.div>
         )}
       </AnimatePresence>
-    </main>
+    </div>
   )
 }
