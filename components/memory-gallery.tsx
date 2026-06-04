@@ -890,7 +890,7 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[60] bg-[#f6f1eb]/80 backdrop-blur-md flex flex-col overflow-hidden"
+            className="fixed inset-0 z-[80] bg-[#f6f1eb]/95 backdrop-blur-md flex flex-col overflow-hidden"
           >
             {/* Soft light rays emanating from click point */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -921,7 +921,10 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-12 pt-16 pb-12 min-h-0 relative z-20">
+            <div 
+              className="flex-1 flex flex-col items-center justify-center px-4 sm:px-12 pb-12 min-h-0 relative z-20"
+              style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 5rem)" }}
+            >
               
               {/* Stable UI Wrapper for Controls and Animated Content */}
               <div className="relative w-[280px] sm:w-[350px] flex flex-col items-center">
@@ -1042,95 +1045,6 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
               </div>
             </div>
             
-            {/* Bottom Actions Bar */}
-            <motion.div
-              className="bg-white/90 backdrop-blur-xl border-t border-stone-200 shadow-[0_-10px_30px_rgba(0,0,0,0.1)]"
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.1 }}
-            >
-              <div className="max-w-md mx-auto px-4 py-3">
-                {/* Actions */}
-                <div className="flex items-center justify-center gap-6">
-                  <button 
-                    onClick={() => toggleLike(selectedMemory.id)} 
-                    className={`flex items-center gap-2 transition-colors ${selectedMemory.liked ? 'text-[#ff2d55]' : 'text-stone-400 hover:text-[#ff2d55]'}`}
-                  >
-                    <Heart className={`w-5 h-5 ${selectedMemory.liked ? 'fill-current' : ''}`} />
-                    <span className="text-sm font-black font-sans lining-nums">{selectedMemory.likes}</span>
-                  </button>
-                  <button 
-                    onClick={() => setShowComments(!showComments)}
-                    className={`flex items-center gap-2 transition-colors ${showComments ? 'text-[#1f2d5a]' : 'text-stone-400 hover:text-[#1f2d5a]'}`}
-                  >
-                    <MessageCircle className="w-5 h-5" />
-                    <span className="text-sm font-black font-sans lining-nums">{selectedMemory.comments.length}</span>
-                  </button>
-                  <button aria-label="Share" className="text-stone-400 hover:text-[#1f2d5a] transition-colors">
-                    <Share2 className="w-5 h-5" />
-                  </button>
-                </div>
-
-                {/* Comments Section */}
-                <AnimatePresence>
-                  {showComments && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden relative" 
-                    >
-                      <div className="pt-3 mt-3 border-t border-stone-100 space-y-2 max-h-32 overflow-y-auto">
-                        {selectedMemory.comments.length === 0 ? (
-                          <p className="text-xs text-stone-400 text-center py-2 font-serif italic">Сэтгэгдэл байхгүй байна</p>
-                        ) : (
-                          selectedMemory.comments.map((comment) => (
-                            <div key={comment.id} className="flex gap-2">
-                              <div className="w-6 h-6 rounded-full bg-[#c9a45c]/10 flex items-center justify-center text-[10px] font-black text-[#1f2d5a] border border-[#c9a45c]/30 flex-shrink-0">
-                                {comment.author[0]}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-xs text-[#1f2d5a] leading-tight">
-                                  <span className="font-bold">{comment.author}</span>
-                                  <span className="text-stone-500 ml-1.5 font-serif italic">{comment.text}</span>
-                                </p>
-                                <p className="text-[10px] text-stone-400/60 font-sans">{comment.time}</p>
-                              </div>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                      
-                      {/* Add Comment */}
-                  {/* Gold frame edges */}
-                  <div className="absolute inset-2 border border-[#c9a45c]/20 pointer-events-none rounded-lg" />
-                  <div className="absolute top-4 left-4 w-4 h-4 border-t border-l border-[#c9a45c]/40 rounded-tl-sm" />
-                  <div className="absolute top-4 right-4 w-4 h-4 border-t border-r border-[#c9a45c]/40 rounded-tr-sm" />
-                  <div className="absolute bottom-4 left-4 w-4 h-4 border-b border-l border-[#c9a45c]/40 rounded-bl-sm" />
-                  <div className="absolute bottom-4 right-4 w-4 h-4 border-b border-r border-[#c9a45c]/40 rounded-br-sm" />
-
-                      <div className="flex gap-2 mt-3 pt-3 border-t border-border">
-                        <Input
-                          value={newComment}
-                          onChange={(e) => setNewComment(e.target.value)}
-                          placeholder="Сэтгэгдэл бичих..."
-                          className="text-sm h-9"
-                          onKeyDown={(e) => e.key === 'Enter' && addComment()}
-                        />
-                        <Button 
-                          size="sm" 
-                          onClick={addComment}
-                          disabled={!newComment.trim()}
-                          className="h-9 px-3"
-                        >
-                          <Send className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
