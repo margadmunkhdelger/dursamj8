@@ -53,15 +53,13 @@ export function SongCertificate({
     setEditMode(false)
   }
   return (
-    <div className="fixed inset-0 bg-[#f6f1eb]">
+    <div className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden min-h-0">
       <div 
-        className="absolute inset-0 opacity-[0.4] mix-blend-multiply pointer-events-none"
+        className="absolute inset-0 opacity-[0.4] mix-blend-multiply pointer-events-none -z-10"
         style={{
           backgroundImage: `url("https://www.transparenttextures.com/patterns/pinstriped-suit.png"), radial-gradient(circle at center, transparent 0%, rgba(180,140,100,0.1) 100%)`,
         }}
       />
-
-      {/* Teacher edit panel - slides in from right */}
       <AnimatePresence>
         {isTeacher && editMode && (
           <motion.div
@@ -123,14 +121,13 @@ export function SongCertificate({
         )}
       </AnimatePresence>
 
-      <div className="absolute inset-0 flex items-center justify-center px-4 pt-20 pb-24">
-        {/* Teacher edit button */}
+      <div className="w-full flex-1 flex flex-col items-center justify-center px-2 py-4 min-h-0 relative">
         {isTeacher && !editMode && (
           <motion.button
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={() => setEditMode(true)}
-            className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-card border border-border shadow-sm text-xs font-semibold font-sans text-foreground hover:bg-muted transition-colors"
+            className="absolute top-0 right-4 z-20 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-card border border-border shadow-sm text-xs font-semibold font-sans text-foreground hover:bg-muted transition-colors"
           >
             <Pencil className="w-3.5 h-3.5" />
             Засварлах
@@ -140,10 +137,9 @@ export function SongCertificate({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative w-full max-w-[min(420px,95vw)] bg-white rounded-lg overflow-hidden"
+          className="relative w-full max-w-[400px] bg-white rounded-lg overflow-hidden shrink shadow-2xl"
           style={{
-            boxShadow: "0 8px 32px rgba(31,45,90,0.15), 0 24px 60px rgba(0,0,0,0.12)",
-            maxHeight: "min(650px, 85vh)",
+            maxHeight: "100%",
             aspectRatio: "3/4",
           }}
         >
