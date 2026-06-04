@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Home, Users, Clock, Image, Award, Bell, Palette, Lock, HelpCircle, LogOut, X } from "lucide-react"
+import { Home, Users, Mail, Image, Award, Bell, Palette, Lock, HelpCircle, LogOut, X } from "lucide-react"
 import { useState } from "react"
 
 interface MobileNavProps {
@@ -12,7 +12,7 @@ interface MobileNavProps {
 const tabs = [
   { id: "home", icon: Home, label: "Нүүр" },
   { id: "members", icon: Users, label: "Бид" },
-  { id: "capsule", icon: Clock, label: "Капсул" },
+  { id: "capsule", icon: Mail, label: "Захидал" },
   { id: "gallery", icon: Image, label: "Зураг" },
   { id: "music", icon: Award, label: "Батламж" },
 ]
@@ -20,16 +20,16 @@ const tabs = [
 export function MobileNav({ activeTab, onTabChange }: MobileNavProps) {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-[70] safe-area-bottom"
+      className="fixed top-0 left-0 right-0 z-[70]"
       style={{
-        paddingBottom: "max(0.75rem, env(safe-area-inset-bottom, 24px))",
-        background: "linear-gradient(to top, rgba(246,241,235,0.98) 60%, rgba(246,241,235,0.85) 100%)",
+        paddingTop: "env(safe-area-inset-top, 8px)",
+        background: "linear-gradient(to bottom, rgba(246,241,235,0.98) 60%, rgba(246,241,235,0.85) 100%)",
         WebkitBackdropFilter: "blur(20px) saturate(1.4)",
         backdropFilter: "blur(20px) saturate(1.4)",
-        borderTop: "1px solid rgba(201,164,92,0.2)",
+        borderBottom: "1px solid rgba(201,164,92,0.2)",
       }}
     >
-      <div className="mx-auto max-w-md px-2 pt-2">
+      <div className="mx-auto max-w-md px-2 pt-1 pb-2">
         <div className="flex items-center justify-between">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id
@@ -43,19 +43,18 @@ export function MobileNav({ activeTab, onTabChange }: MobileNavProps) {
                   <motion.div
                     layoutId="activeTab"
                     className="absolute inset-0 rounded-xl"
-                    style={{ background: "rgba(201,164,92,0.12)" }}
+                    style={{ 
+                      background: "rgba(201, 164, 92, 0.12)", 
+                      border: "1px solid #c9a45c" 
+                    }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   />
                 )}
                 <tab.icon
-                  className={`w-5 h-5 relative z-10 transition-colors flex-shrink-0 ${
-                    isActive ? "text-[#c9a45c]" : "text-[#8a7a6a]/60"
-                  }`}
+                  className="w-5 h-5 relative z-10 transition-colors flex-shrink-0 text-[#1f2d5a]"
                 />
                 <span
-                  className={`text-[9px] sm:text-[10px] relative z-10 transition-colors truncate font-sans font-semibold ${
-                    isActive ? "text-[#c9a45c]" : "text-[#8a7a6a]/60"
-                  }`}
+                  className="text-[9px] sm:text-[10px] relative z-10 transition-colors truncate font-sans font-semibold text-[#1f2d5a]"
                 >
                   {tab.label}
                 </span>

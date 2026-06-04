@@ -258,12 +258,38 @@ export default function MemoriaApp() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-4"
+              className="mb-6 relative overflow-hidden bg-[#1f2d5a] rounded-2xl p-6 shadow-xl border border-[#c9a45c]/30"
             >
-              <h2 className="text-xl font-semibold mb-1">Манай Ангийнхан</h2>
-              <p className="text-sm text-muted-foreground">
-                {approvedMembers.length} гишүүд дурсамжаа хуваалцаж байна
-              </p>
+              {/* Decorative Gold Line */}
+              <div className="absolute inset-1.5 border border-[#c9a45c]/40 rounded-[14px] pointer-events-none" />
+
+              {/* Decorative Corner Ornaments */}
+              <div className="absolute top-0 right-0 w-16 h-16 opacity-20 pointer-events-none">
+                <svg viewBox="0 0 100 100" className="w-full h-full fill-[#c9a45c]">
+                  <path d="M100 0 L100 100 L0 0 Z" />
+                </svg>
+              </div>
+              <div className="absolute bottom-0 left-0 w-12 h-12 opacity-10 pointer-events-none rotate-180">
+                <svg viewBox="0 0 100 100" className="w-full h-full fill-[#c9a45c]">
+                  <path d="M100 0 L100 100 L0 0 Z" />
+                </svg>
+              </div>
+
+              <div className="relative z-10 text-center">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-[#c9a45c] font-bold mb-2">
+                  {demoGroup.schoolName}
+                </p>
+                <h2 className="text-xl sm:text-2xl font-serif font-black text-[#f8e4b3] leading-tight">
+                  {demoGroup.name} ангийн багш болон төгсөгчид
+                </h2>
+                <div className="flex items-center justify-center gap-2 mt-3">
+                  <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#c9a45c]/50" />
+                  <span className="text-[10px] text-[#c9a45c] font-bold uppercase tracking-widest">
+                    Class of {demoGroup.graduationYear}
+                  </span>
+                  <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#c9a45c]/50" />
+                </div>
+              </div>
             </motion.div>
             
             {/* Pending Members Approval */}
@@ -304,9 +330,11 @@ export default function MemoriaApp() {
         )
       case "gallery":
         return (
-          <div className="pb-20 sm:pb-24">
-            <MemoryGallery currentUser={currentUser} />
-          </div>
+          <MemoryGallery 
+            currentUser={currentUser} 
+            schoolName={demoGroup.schoolName}
+            graduationYear={demoGroup.graduationYear}
+          />
         )
       case "music":
         return (
@@ -400,7 +428,7 @@ export default function MemoriaApp() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 flex flex-col overflow-hidden h-[100dvh] w-full pt-[max(1rem,env(safe-area-inset-top))]"
+            className="fixed inset-0 flex flex-col overflow-hidden h-[100dvh] w-full"
           >
             <FloatingParticles count={15} />
             
@@ -410,7 +438,7 @@ export default function MemoriaApp() {
             )}
             
             {/* Main scrollable area */}
-            <main className="flex-1 overflow-y-auto w-full outline-none touch-pan-y overscroll-contain pb-[90px]">
+            <main className="flex-1 overflow-y-auto overflow-x-hidden w-full outline-none touch-pan-y overscroll-contain pt-[72px] pb-4">
               <div className="relative z-10 pt-4 px-4 max-w-md mx-auto">
                 <AnimatePresence mode="wait">
                   <motion.div

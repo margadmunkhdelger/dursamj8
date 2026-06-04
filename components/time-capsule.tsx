@@ -261,13 +261,10 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
 
       {/* Countdown Header - Restyled to match Home Page Hero */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
         className="bg-card rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden border border-border shadow-lg w-full max-w-md mx-auto"
       >
-        {/* Decorative Background */}
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-primary blur-[80px]" />
+        {/* Decorative Background - Contained within card to prevent horizontal overflow */}
+        <div className="absolute inset-0 opacity-40 overflow-hidden rounded-2xl pointer-events-none">
           <div className="absolute -bottom-10 -right-10 w-32 h-32 rounded-full bg-accent blur-[60px]" />
         </div>
 
@@ -276,17 +273,51 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="mb-8 space-y-3"
+            className="mb-8 space-y-3 relative"
           >
+            {/* Left Graduation Ribbon Banner */}
+            <motion.div
+              initial={{ opacity: 0, scaleY: 0 }}
+              animate={{ opacity: 1, scaleY: 1 }}
+              transition={{ delay: 0.5, duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+              className="absolute top-[-16px] sm:top-[-24px] left-[-4px] sm:left-[-8px] w-6 sm:w-8 bottom-0 z-0 pointer-events-none drop-shadow-md hidden min-[380px]:block origin-top"
+            >
+              <svg viewBox="0 0 40 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
+                <path d="M0 0 H40 V80 L20 120 L0 80 Z" fill="#1f2d5a" />
+                <path d="M4 0 V78 L20 115 L36 78 V0" stroke="#c9a45c" strokeWidth="2" />
+                <path d="M8 0 V76 L20 112 L32 76 V0" stroke="#c9a45c" strokeWidth="0.5" opacity="0.4" />
+                <circle cx="20" cy="25" r="3" fill="#c9a45c" opacity="0.5" />
+                <circle cx="20" cy="50" r="3" fill="#c9a45c" opacity="0.5" />
+                <circle cx="20" cy="75" r="3" fill="#c9a45c" opacity="0.5" />
+              </svg>
+            </motion.div>
+
+            {/* Right Graduation Ribbon Banner */}
+            <motion.div
+              initial={{ opacity: 0, scaleY: 0 }}
+              animate={{ opacity: 1, scaleY: 1 }}
+              transition={{ delay: 0.6, duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+              className="absolute top-[-16px] sm:top-[-24px] right-[-4px] sm:right-[-8px] w-6 sm:w-8 bottom-0 z-0 pointer-events-none drop-shadow-md hidden min-[380px]:block origin-top"
+            >
+              <svg viewBox="0 0 40 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full transform scale-x-[-1]" preserveAspectRatio="none">
+                <path d="M0 0 H40 V80 L20 120 L0 80 Z" fill="#1f2d5a" />
+                <path d="M4 0 V78 L20 115 L36 78 V0" stroke="#c9a45c" strokeWidth="2" />
+                <path d="M8 0 V76 L20 112 L32 76 V0" stroke="#c9a45c" strokeWidth="0.5" opacity="0.4" />
+                <circle cx="20" cy="25" r="3" fill="#c9a45c" opacity="0.5" />
+                <circle cx="20" cy="50" r="3" fill="#c9a45c" opacity="0.5" />
+                <circle cx="20" cy="75" r="3" fill="#c9a45c" opacity="0.5" />
+              </svg>
+            </motion.div>
+
             {groupName && (
-              <p className="text-[10px] uppercase tracking-[0.4em] text-[#c9a45c] font-bold">
+              <p className="text-[10px] uppercase tracking-[0.4em] text-[#c9a45c] font-bold relative z-10 px-6">
                 {groupName}
               </p>
             )}
-            <h1 className="text-2xl sm:text-4xl font-script text-foreground leading-[1.1] px-2">
+            <h1 className="text-2xl sm:text-4xl font-script text-foreground leading-[1.1] px-6 relative z-10">
               Бид дахин уулзахад нээгдэх захидлууд
             </h1>
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-3 relative z-10">
               <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent to-[#c9a45c] max-w-[60px]" />
               <p className="text-xs sm:text-sm font-sans font-bold text-[#1f2d5a] uppercase tracking-[0.2em] whitespace-nowrap lining-nums tabular-nums">
                 {graduationYear} ОНЫ ТӨГСӨЛТ
@@ -295,7 +326,7 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
             </div>
           </motion.div>
 
-          <CountdownTimer targetDate={reunionDate} title="Захидлууд нээгдэхэд..." />
+          <CountdownTimer targetDate={reunionDate} title="Захидлууд нээгдэхэд..." variant="default" />
         </div>
       </motion.div>
 
@@ -314,9 +345,7 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
             <div key={type.id} className="relative flex flex-col items-center">
               {/* Write Button (The "Hanger") */}
               <motion.button
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + index * 0.1 }}
+                transition={{ delay: index * 0.05 }}
                 whileHover={{ scale: 1.01, backgroundColor: "var(--muted)" }}
                 whileTap={{ scale: 0.99 }}
                 onClick={() => setSelectedType(selectedType === type.id ? null : type.id)}
@@ -457,10 +486,7 @@ export function TimeCapsule({ reunionDate, onWrite, reunionLocationDetails, scho
                 </div>
 
                 <motion.button
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + index * 0.1 }}
+                  transition={{ delay: 0.1 + index * 0.05 }}
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                   onClick={() => openArchive(type.id)}

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { CountdownTimer } from "./countdown-timer"
-import { Users, Image as ImageIcon, Clock, Award, MessageCircle, Plus, ArrowRight, MapPin, Pencil, Save } from "lucide-react"
+import { Users, Image as ImageIcon, Mail, Award, MessageCircle, Plus, ArrowRight, MapPin, Pencil, Save } from "lucide-react"
 import Image from "next/image"
 import { TeacherMessageCard } from "./teacher-message-card"
 import { Button } from "@/components/ui/button"
@@ -93,30 +93,63 @@ export function HomeDashboard({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden border border-border shadow-lg w-full max-w-md mx-auto"
+        className="bg-card rounded-2xl p-4 sm:p-6 text-center relative border border-border shadow-lg w-full max-w-md mx-auto"
       >
-        {/* Decorative Background */}
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-primary blur-[80px]" />
+        {/* Decorative Background - Contained within card to prevent horizontal overflow */}
+        <div className="absolute inset-0 opacity-40 overflow-hidden rounded-2xl pointer-events-none">
           <div className="absolute -bottom-10 -right-10 w-32 h-32 rounded-full bg-accent blur-[60px]" />
         </div>
 
         <div className="relative z-10">
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="mb-8 space-y-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-8 space-y-3 relative"
           >
+            {/* Left Graduation Ribbon Banner */}
+            <motion.div
+              initial={{ opacity: 0, scaleY: 0 }}
+              animate={{ opacity: 1, scaleY: 1 }}
+              transition={{ delay: 0.5, duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+              className="absolute top-[-16px] sm:top-[-24px] left-[-4px] sm:left-[-8px] w-6 sm:w-8 bottom-0 z-0 pointer-events-none drop-shadow-md hidden min-[380px]:block origin-top"
+            >
+              <svg viewBox="0 0 40 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
+                <path d="M0 0 H40 V80 L20 120 L0 80 Z" fill="#1f2d5a" />
+                <path d="M4 0 V78 L20 115 L36 78 V0" stroke="#c9a45c" strokeWidth="2" />
+                <path d="M8 0 V76 L20 112 L32 76 V0" stroke="#c9a45c" strokeWidth="0.5" opacity="0.4" />
+                <circle cx="20" cy="25" r="3" fill="#c9a45c" opacity="0.5" />
+                <circle cx="20" cy="50" r="3" fill="#c9a45c" opacity="0.5" />
+                <circle cx="20" cy="75" r="3" fill="#c9a45c" opacity="0.5" />
+              </svg>
+            </motion.div>
+
+            {/* Right Graduation Ribbon Banner */}
+            <motion.div
+              initial={{ opacity: 0, scaleY: 0 }}
+              animate={{ opacity: 1, scaleY: 1 }}
+              transition={{ delay: 0.6, duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
+              className="absolute top-[-16px] sm:top-[-24px] right-[-4px] sm:right-[-8px] w-6 sm:w-8 bottom-0 z-0 pointer-events-none drop-shadow-md hidden min-[380px]:block origin-top"
+            >
+              <svg viewBox="0 0 40 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full transform scale-x-[-1]" preserveAspectRatio="none">
+                <path d="M0 0 H40 V80 L20 120 L0 80 Z" fill="#1f2d5a" />
+                <path d="M4 0 V78 L20 115 L36 78 V0" stroke="#c9a45c" strokeWidth="2" />
+                <path d="M8 0 V76 L20 112 L32 76 V0" stroke="#c9a45c" strokeWidth="0.5" opacity="0.4" />
+                <circle cx="20" cy="25" r="3" fill="#c9a45c" opacity="0.5" />
+                <circle cx="20" cy="50" r="3" fill="#c9a45c" opacity="0.5" />
+                <circle cx="20" cy="75" r="3" fill="#c9a45c" opacity="0.5" />
+              </svg>
+            </motion.div>
+
             {groupName && (
-              <p className="text-[10px] uppercase tracking-[0.4em] text-[#c9a45c] font-bold">
+              <p className="text-[10px] uppercase tracking-[0.4em] text-[#c9a45c] font-bold relative z-10">
                 {groupName}
               </p>
             )}
-            <h1 className="text-3xl sm:text-5xl font-script text-foreground leading-[1.1] px-2">
+            <h1 className="text-3xl sm:text-5xl font-script text-foreground leading-[1.1] px-2 relative z-10">
               {schoolName || "Шинэ Монгол Технологийн Коллеж"}
             </h1>
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-3 relative z-10">
               <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent to-[#c9a45c] max-w-[60px]" />
               <p className="text-xs sm:text-sm font-sans font-bold text-[#1f2d5a] uppercase tracking-[0.2em] whitespace-nowrap lining-nums tabular-nums">
                 {graduationYear} ОНЫ ТӨГСӨЛТ
@@ -252,7 +285,7 @@ export function HomeDashboard({
         {[
           { label: "Гишүүд", value: memberCount, icon: Users, tab: "members" },
           { label: "Дурсамж", value: memoryCount, icon: ImageIcon, tab: "gallery" },
-          { label: "Капсул", value: 12, icon: Clock, tab: "capsule" },
+          { label: "Захидал", value: 12, icon: Mail, tab: "capsule" },
           { label: "Батламж", value: 1, icon: Award, tab: "music" },
         ].map((stat, index) => (
           <motion.button
@@ -363,7 +396,7 @@ export function HomeDashboard({
           <div className="w-10 h-10 rounded-full bg-[#c9a45c]/10 flex items-center justify-center border border-[#c9a45c] group-hover:scale-110 transition-transform">
             <MessageCircle className="w-5 h-5 text-[#1f2d5a]" />
           </div>
-          <span className="text-xs font-bold text-[#1f2d5a] uppercase tracking-wider font-sans">Захидал бичих</span>
+          <span className="text-xs font-bold text-[#1f2d5a] uppercase tracking-wider font-sans">Захидал үлдээх</span>
         </motion.button>
       </div>
 

@@ -154,8 +154,6 @@ export function CountdownTimer({
 
     return (
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
         className="bg-card rounded-xl px-3 py-2.5 relative overflow-hidden border border-border shadow-sm"
       >
         <motion.div

@@ -289,11 +289,17 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
 
   return (
     <>
+      {/* Visual Connector - Golden Chains (Гинжин холбоос) - Bridges the gap between cards */}
+      <div className={cn(
+        "flex justify-between w-full px-12 h-8 relative z-0",
+        index === 0 ? "-mt-8" : "-mt-2"
+      )}>
+        <div className="w-1.5 h-full bg-gradient-to-b from-[#c9a45c] via-[#f8e4b3] to-[#c9a45c] shadow-[0_1px_2px_rgba(0,0,0,0.1)] rounded-full border-x border-[#8b6914]/20" />
+        <div className="w-1.5 h-full bg-gradient-to-b from-[#c9a45c] via-[#f8e4b3] to-[#c9a45c] shadow-[0_1px_2px_rgba(0,0,0,0.1)] rounded-full border-x border-[#8b6914]/20" />
+      </div>
+
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.1, duration: 0.5 }}
-        className="relative mb-6 mx-2"
+        className="relative mb-0 mx-2"
         style={{ rotate: `${rotation}deg` }}
       >
         {/* Ornate Picture Frame (Jaaz) - Deep Blue and Gold */}
@@ -688,7 +694,7 @@ interface MemberGridProps {
 
 export function MemberGrid({ members, likedMembers, onLike, onComment, onUpdate, currentUser }: MemberGridProps) {
   return (
-    <div className="flex flex-col gap-4 max-w-xl mx-auto pt-4">
+    <div className="flex flex-col gap-0 max-w-xl mx-auto pt-2">
       {members.map((member, index) => (
         <MemberCard 
           key={member.id} 

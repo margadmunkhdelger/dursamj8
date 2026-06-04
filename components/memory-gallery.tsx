@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useRef, useCallback, useEffect } from "react"
-import { Heart, MessageCircle, Share2, X, ChevronLeft, ChevronRight, Plus, Send, Upload, ImagePlus, Sparkles, Camera, LayoutGrid, Rotate3d, Play } from "lucide-react"
+import { Heart, MessageCircle, Share2, X, ChevronLeft, ChevronRight, Plus, Send, Upload, ImagePlus, Camera, LayoutGrid, Rotate3d, Play, MoveHorizontal } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -194,6 +194,14 @@ function PhotoFrame({
   const rotation = rotations[index % rotations.length]
 
   useEffect(() => {
+    const videoId = getYouTubeId(memory.src);
+    if (memory.type === "video" && videoId) {
+      setAspectRatio(1.77);
+      setImageLoaded(true);
+      onLoad?.(1.77);
+      return;
+    }
+
     const img = new window.Image()
     img.crossOrigin = "anonymous"
     img.onload = () => {
@@ -203,10 +211,14 @@ function PhotoFrame({
       onLoad?.(ratio)
     }
     img.src = memory.src
-  }, [memory.src, onLoad])
+  }, [memory.src, memory.type, onLoad])
 
   // Calculate frame dimensions based on actual aspect ratio of image
   const getFrameStyle = () => {
+    // Видеоны хувьд 16:9 харьцааг (56.25%) албадах
+    if (memory.type === "video") {
+      return { paddingBottom: '56.25%' }
+    }
     // For very wide images (panorama, 16:9, etc)
     if (aspectRatio >= 2) {
       return { paddingBottom: '50%' }
@@ -249,66 +261,52 @@ function PhotoFrame({
       {/* Soft shadow */}
       <div className="absolute inset-0 bg-black/10 rounded-lg blur-md translate-y-1 translate-x-0.5 z-0" />
       
-      {/* Deep Blue Frame with Gold Accents */}
-      <div className="relative p-2 rounded-xl bg-[#1f2d5a] shadow-2xl border border-[#1f2d5a]/80 z-10">
-        {/* Gold Inner Border */}
-        <div className="relative p-1 rounded-lg border-2 border-[#c9a45c]/60 overflow-hidden">
-          {/* Ornate Premium Border */}
-          <div className="relative bg-white p-1.5 sm:p-2 rounded-lg shadow-xl border border-stone-200 overflow-hidden">
-            {/* Subtle Gold Corner Accents */}
-            <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-[#c9a45c]/40 rounded-tl-sm" />
-            <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-[#c9a45c]/40 rounded-tr-sm" />
-            <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-[#c9a45c]/40 rounded-bl-sm" />
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-[#c9a45c]/40 rounded-br-sm" />
+      {/* Deep Blue Frame - Slightly Wider and Elegant */}
+      <div className="relative p-2 rounded-lg bg-[#1f2d5a] shadow-2xl border border-[#1f2d5a]/80 z-10">
+        {/* Gold line running through the middle of the frame */}
+        <div className="absolute inset-[4px] border border-[#d4af37] rounded-[6px] pointer-events-none z-20" />
 
-            {/* Inner paper mat */}
-            <div className="bg-white p-0.5 rounded-sm relative z-10">
-              {/* Photo container with dynamic aspect ratio - adapts to image */}
-              <div 
-                className="relative w-full rounded-sm overflow-hidden bg-stone-50"
-                style={frameStyle}
-              >
-                {/* Subtle natural paper texture on empty state */}
-                {!imageLoaded && (
-                  <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
-                )}
+        {/* Inner Content Area */}
+        <div className="relative rounded-md shadow-xl overflow-hidden flex flex-col bg-white">
+          <div 
+            className="relative w-full overflow-hidden bg-stone-50"
+            style={frameStyle}
+          >
+            {!imageLoaded && (
+              <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
+            )}
 
-                {memory.type === "video" && getYouTubeId(memory.src) ? (
-                  <div className="absolute inset-0 bg-stone-900 flex items-center justify-center">
-                    <Image
-                      src={`https://img.youtube.com/vi/${getYouTubeId(memory.src)}/mqdefault.jpg`}
-                      alt={memory.caption}
-                      fill
-                      className="object-cover opacity-60"
-                    />
-                    <Play className="w-10 h-10 text-white/80 relative z-10" />
-                  </div>
-                ) : imageLoaded ? (
-                  <Image
-                    src={memory.src}
-                    alt={memory.caption}
-                    fill
-                    sizes="(max-width: 640px) 45vw, 200px"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-muted/50 animate-pulse" />
-                )}
-                
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1f2d5a]/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            {memory.type === "video" && getYouTubeId(memory.src) ? (
+              <div className="absolute inset-0 bg-stone-100 flex items-center justify-center">
+                <Image
+                  src={`https://i.ytimg.com/vi/${getYouTubeId(memory.src)}/hqdefault.jpg`}
+                  alt={memory.caption}
+                  fill
+                  className="object-cover"
+                />
+                <Play className="w-10 h-10 text-white/80 relative z-10" />
               </div>
-            </div>
+            ) : imageLoaded ? (
+              <Image
+                src={memory.src}
+                alt={memory.caption}
+                fill
+                sizes="(max-width: 640px) 45vw, 200px"
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-muted/50 animate-pulse" />
+            )}
             
-            {/* Author and Caption label at bottom */}
-            <div className="mt-2 flex flex-col items-center gap-0.5 px-2 pb-1">
-              <span className="text-[9px] font-bold text-[#1f2d5a] uppercase tracking-widest text-center line-clamp-1">
-                {memory.author}
-              </span>
-              <p className="text-[8px] text-stone-500 italic text-center line-clamp-1">
-                {memory.caption}
-              </p>
-            </div>
+            {/* Hover overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1f2d5a]/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </div>
+          
+          {/* Caption label at bottom (Author removed as requested) */}
+          <div className="py-2 text-center px-1 bg-white">
+            <p className="text-[9px] text-[#1f2d5a] italic leading-snug line-clamp-2 font-serif">
+              {memory.caption}
+            </p>
           </div>
         </div>
       </div>
@@ -330,9 +328,11 @@ function PhotoFrame({
 interface MemoryGalleryProps {
   currentUser?: { name: string; nickname: string; avatar: string } | null
   onBack?: () => void
+  schoolName?: string
+  graduationYear?: number
 }
 
-export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
+export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear }: MemoryGalleryProps) {
   const [memories, setMemories] = useState<Memory[]>(initialMemories)
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -489,7 +489,7 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
   }
 
   return (
-    <div className="relative w-full bg-background overflow-hidden">
+    <div className="relative w-full flex flex-col bg-background overflow-hidden">
       {/* Floating photo-themed decorative elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Paper texture overlay for the entire gallery background */}
@@ -583,46 +583,85 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
       </div>
 
       {/* Content Area - no min-height, grows with content */}
-      <div className="relative px-3 sm:px-4 py-4 sm:py-5">
+      <div className="relative flex-1 flex flex-col px-3 sm:px-4 py-4 sm:py-5 min-h-0">
+        {/* Header Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 relative overflow-hidden bg-[#1f2d5a] rounded-2xl p-4 shadow-xl border border-[#c9a45c]/30"
+        >
+          {/* Decorative Gold Line */}
+          <div className="absolute inset-1.5 border border-[#c9a45c]/40 rounded-[14px] pointer-events-none" />
+
+          {/* Decorative Corner Ornaments */}
+          <div className="absolute top-0 right-0 w-16 h-16 opacity-20 pointer-events-none">
+            <svg viewBox="0 0 100 100" className="w-full h-full fill-[#c9a45c]">
+              <path d="M100 0 L100 100 L0 0 Z" />
+            </svg>
+          </div>
+          <div className="absolute bottom-0 left-0 w-12 h-12 opacity-10 pointer-events-none rotate-180">
+            <svg viewBox="0 0 100 100" className="w-full h-full fill-[#c9a45c]">
+              <path d="M100 0 L100 100 L0 0 Z" />
+            </svg>
+          </div>
+
+          <div className="relative z-10 text-center">
+            <h2 className="text-xl sm:text-2xl font-serif font-black text-[#f8e4b3] leading-tight">
+              Бидний бүтээсэн дурсамж
+            </h2>
+          </div>
+        </motion.div>
+
         {/* Header Section - more decorative */}
         <div className="mb-5 sm:mb-6 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#c9a45c]/10 flex items-center justify-center border border-[#c9a45c]/40 shadow-sm">
-                <Camera className="w-5 h-5 text-[#1f2d5a]" />
-              </div>
-              <div className="min-w-0">
-                <h2 className="text-xl sm:text-2xl font-bold text-[#1f2d5a] font-serif leading-none">Дурсамжууд</h2>
-                <p className="text-[10px] sm:text-xs text-[#1f2d5a]/60 font-sans mt-1 flex items-center gap-1 uppercase tracking-widest font-black">
-                  <Sparkles className="w-3 h-3 text-[#c9a45c]" />
-                  {memories.length} Үнэт мөч
-                </p>
-              </div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="w-11 h-11 rounded-full bg-[#1f2d5a] flex items-center justify-center shadow-md border border-[#c9a45c] shrink-0">
+              <Camera className="w-6 h-6 text-[#f8e4b3]" />
             </div>
-            <div className="flex items-center gap-2 bg-stone-100 p-1 rounded-full shadow-inner border border-stone-200">
+            
+            <div className="flex items-center gap-1 bg-[#1f2d5a] p-1 rounded-full shadow-inner border border-[#c9a45c]">
               <button 
                 onClick={() => setViewMode("3d")}
-                className={cn("p-1.5 rounded-full transition-all", viewMode === "3d" ? "bg-white text-[#c9a45c] shadow-sm" : "text-stone-400 hover:text-stone-600")}
+                className={cn("p-1.5 rounded-full transition-all", viewMode === "3d" ? "bg-[#c9a45c] text-[#1f2d5a] shadow-sm" : "text-[#f8e4b3] hover:text-white")}
               >
-                <Rotate3d className="w-4 h-4" />
+                <Rotate3d className="w-5 h-5" />
               </button>
               <button 
                 onClick={() => setViewMode("grid")}
-                className={cn("p-1.5 rounded-full transition-all", viewMode === "grid" ? "bg-white text-[#c9a45c] shadow-sm" : "text-stone-400 hover:text-stone-600")}
+                className={cn("p-1.5 rounded-full transition-all", viewMode === "grid" ? "bg-[#c9a45c] text-[#1f2d5a] shadow-sm" : "text-[#f8e4b3] hover:text-white")}
               >
-                <LayoutGrid className="w-4 h-4" />
+                <LayoutGrid className="w-5 h-5" />
               </button>
             </div>
             <motion.button 
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center gap-1.5 bg-[#1f2d5a] hover:bg-[#2a4178] text-white shadow-md text-[10px] font-bold uppercase tracking-widest px-4 h-9 rounded-full flex-shrink-0"
+              className="flex items-center gap-1.5 bg-[#1f2d5a] border border-[#c9a45c] hover:bg-[#2a4178] text-[#f8e4b3] shadow-md text-[10px] font-bold uppercase tracking-widest px-4 h-10 rounded-full shrink-0"
               onClick={() => setShowAddModal(true)}
             >
-              <Plus className="w-3 h-3" />
+              <Plus className="w-3 h-3 text-[#f8e4b3]" />
               <span className="hidden sm:inline">Дурсамж</span> нэмэх
             </motion.button>
           </div>
+
+          {/* Зааварчилгаа - 3D харагдац үед харагдана */}
+          <AnimatePresence>
+            {viewMode === "3d" && (
+              <motion.div 
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                className="flex flex-col items-center gap-1 pt-1"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#c9a45c]" />
+                  <MoveHorizontal className="w-3.5 h-3.5 text-[#c9a45c]" />
+                  <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#c9a45c]" />
+                </div>
+                <span className="text-[10px] uppercase font-black tracking-[0.3em] text-[#1f2d5a]">Дурсамжаа эргүүлж үзнэ үү</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Decorative divider */}
           <div className="flex items-center gap-2 px-1">
@@ -643,22 +682,44 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
             <div className="absolute -top-2 -left-1 w-6 h-6 border-l-2 border-t-2 border-[#c9a45c]/20 rounded-tl-lg" />
             <div className="absolute -top-2 -right-1 w-6 h-6 border-r-2 border-t-2 border-[#c9a45c]/20 rounded-tr-lg" />
             
-            <div className="grid grid-cols-2 gap-4 sm:gap-5 pb-4">
-            {memories.map((memory, index) => (
-              <div key={memory.id} className="relative">
-                <PhotoFrame
-                  memory={memory}
-                  index={index}
-                  onClick={(e) => openMemory(memory, index, e)}
-                />
-                {/* Small decorative element between some photos */}
-                {index % 3 === 1 && index < memories.length - 1 && (
-                  <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 z-0">
-                    <DecorativeElement type={index} />
+            <div className="flex gap-4 sm:gap-5 pb-4 items-start">
+              {/* Зүүн багана - Тэгш индексүүд */}
+              <div className="flex-1 flex flex-col gap-4 sm:gap-5">
+                {memories.map((memory, i) => i % 2 === 0 ? (
+                  <div key={memory.id} className="relative">
+                    <PhotoFrame
+                      memory={memory}
+                      index={i}
+                      onClick={(e: any) => openMemory(memory, i, e)}
+                    />
+                    {/* Чимэглэлийн элементүүд */}
+                    {i % 3 === 1 && i < memories.length - 1 && (
+                      <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 z-0">
+                        <DecorativeElement type={i} />
+                      </div>
+                    )}
                   </div>
-                )}
+                ) : null)}
               </div>
-            ))}
+
+              {/* Баруун багана - Сондгой индексүүд */}
+              <div className="flex-1 flex flex-col gap-4 sm:gap-5">
+                {memories.map((memory, i) => i % 2 !== 0 ? (
+                  <div key={memory.id} className="relative">
+                    <PhotoFrame
+                      memory={memory}
+                      index={i}
+                      onClick={(e: any) => openMemory(memory, i, e)}
+                    />
+                    {/* Чимэглэлийн элементүүд */}
+                    {i % 3 === 1 && i < memories.length - 1 && (
+                      <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 z-0">
+                        <DecorativeElement type={i} />
+                      </div>
+                    )}
+                  </div>
+                ) : null)}
+              </div>
             </div>
             
             {/* Bottom corner decorations */}
@@ -829,59 +890,71 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[60] bg-foreground/95 flex flex-col overflow-hidden"
+            className="fixed inset-0 z-[60] bg-[#f6f1eb]/80 backdrop-blur-md flex flex-col overflow-hidden"
           >
             {/* Soft light rays emanating from click point */}
-            <motion.div
-              initial={{ opacity: 0.6 }}
-              animate={{ opacity: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="absolute inset-0 pointer-events-none z-10"
-              style={{
-                background: `radial-gradient(circle at ${clickOrigin.x}px ${clickOrigin.y}px, rgba(255,255,255,0.15) 0%, transparent 50%)`
-              }}
-            />
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <motion.div
+                initial={{ opacity: 0.6 }}
+                animate={{ opacity: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="absolute inset-0 z-10"
+                style={{
+                  background: `radial-gradient(circle at ${clickOrigin.x}px ${clickOrigin.y}px, rgba(255,255,255,0.15) 0%, transparent 50%)`
+                }}
+              />
+              
+              {/* Swipe instruction for mobile */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.4, 0] }}
+                transition={{ delay: 1, duration: 2, repeat: 1 }}
+                className="absolute bottom-32 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 sm:hidden"
+              >
+                <div className="flex items-center gap-4">
+                  <ChevronLeft className="w-4 h-4 text-white/40" />
+                  <div className="w-12 h-0.5 bg-white/20 rounded-full" />
+                  <ChevronRight className="w-4 h-4 text-white/40" />
+                </div>
+                <span className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Шударч үзнэ үү</span>
+              </motion.div>
+            </div>
 
-            {/* Close Button */}
-            <motion.button
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.2 }}
-              onClick={() => setSelectedMemory(null)}
-              aria-label="Close memory view"
-              className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
-            >
-              <X className="w-5 h-5" />
-            </motion.button>
+            {/* Main Content Area */}
+            <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-12 pt-16 pb-12 min-h-0 relative z-20">
+              
+              {/* Stable UI Wrapper for Controls and Animated Content */}
+              <div className="relative w-[280px] sm:w-[350px] flex flex-col items-center">
+                
+                {/* Close Button (Stable - Outside keyed content) */}
+                <motion.button
+                  key="close-button"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.2 }}
+                  onClick={() => setSelectedMemory(null)}
+                  aria-label="Close memory view"
+                  className="absolute -top-16 right-0 z-50 w-12 h-12 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3] hover:bg-[#2a4178] transition-all border border-[#c9a45c]/50 shadow-xl"
+                >
+                  <X className="w-7 h-7" />
+                </motion.button>
 
-            {/* Navigation */}
-            <motion.button
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.35, duration: 0.2 }}
-              onClick={() => navigateMemory("prev")}
-              aria-label="Previous"
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </motion.button>
-            <motion.button
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.35, duration: 0.2 }}
-              onClick={() => navigateMemory("next")}
-              aria-label="Next"
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </motion.button>
-
-            {/* Main Content Area - smooth expand from click point */}
-            <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-12 pt-14 pb-4 min-h-0 overflow-hidden">
               <motion.div
                 key={selectedMemory.id}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.7}
+                onDragEnd={(e, info) => {
+                  const swipe = info.offset.x;
+                  const velocity = info.velocity.x;
+                  if (swipe < -100 || (swipe < -20 && velocity < -500)) {
+                    navigateMemory("next");
+                  } else if (swipe > 100 || (swipe > 20 && velocity > 500)) {
+                    navigateMemory("prev");
+                  }
+                }}
                 initial={{ 
-                  scale: 0.3,
+                  scale: 0.8,
                   opacity: 0,
                   y: 20,
                   filter: "blur(8px)"
@@ -901,19 +974,16 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                   duration: 0.35,
                   ease: [0.32, 0.72, 0, 1]
                 }}
-                className="flex flex-col max-h-full"
+                className="flex flex-col max-h-full items-center cursor-grab active:cursor-grabbing w-full"
               >
-                {/* Gingham frame for photo - adapts to image size */}
-                <motion.div 
-                  className="p-2.5 sm:p-3 rounded-xl inline-block bg-white shadow-2xl relative"
-                  initial={{ boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}
-                  animate={{ boxShadow: "0 25px 50px -12px rgba(0,0,0,0.4)" }}
-                  transition={{ delay: 0.15, duration: 0.4 }}
-                >
-                  <div className="bg-white p-1.5 sm:p-2 rounded-lg">
-                    <div className="relative rounded-md overflow-hidden flex items-center justify-center">
+                {/* Premium Frame style matching 3D items */}
+                <div className="relative p-2 rounded-lg bg-[#1f2d5a] shadow-2xl border border-[#1f2d5a]/80 w-full">
+                  <div className="absolute inset-[4px] border border-[#d4af37] rounded-[6px] pointer-events-none z-20" />
+                  
+                  <div className="relative rounded-md shadow-xl overflow-hidden flex flex-col bg-white">
+                    <div className="relative overflow-hidden flex items-center justify-center bg-stone-50">
                       {selectedMemory.type === "video" && getYouTubeId(selectedMemory.src) ? (
-                        <div className="w-full aspect-video min-w-[300px] sm:min-w-[500px]">
+                        <div className="w-full aspect-video">
                           <iframe
                             width="100%"
                             height="100%"
@@ -922,7 +992,7 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowFullScreen
-                            className="rounded-md"
+                            className="w-full h-full"
                           />
                         </div>
                       ) : (
@@ -931,32 +1001,45 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                           alt={selectedMemory.caption}
                           width={800}
                           height={800}
-                          sizes="(max-width: 640px) 85vw, 500px"
-                          className="object-contain max-h-[50vh] sm:max-h-[55vh] w-auto h-auto rounded-md"
+                          className="object-contain w-full h-auto max-h-[60vh]"
                           priority
                         />
                       )}
                     </div>
-                  </div>
-                  
-                  {/* Caption inside frame - Premium Style */}
-                  <motion.div 
-                    className="bg-white px-3 pb-3 pt-2 rounded-b-lg -mt-0.5"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.25, duration: 0.2 }}
-                  >
-                    <p className="text-sm sm:text-base text-[#1f2d5a] text-center font-serif italic leading-relaxed px-4">
-                      {selectedMemory.caption}
-                    </p>
-                    <div className="flex justify-center mt-1.5">
-                      <span className="text-[10px] text-[#1f2d5a]/60 font-sans font-bold uppercase tracking-widest px-3 py-1 bg-stone-50 rounded-full border border-stone-100">
-                        {selectedMemory.date}
-                      </span>
+
+                    <div className="py-3 text-center px-4 bg-white border-t border-stone-100">
+                      <p className="text-[11px] sm:text-xs text-[#1f2d5a] italic leading-snug line-clamp-2 font-serif">
+                        {selectedMemory.caption}
+                      </p>
                     </div>
-                  </motion.div>
-                </motion.div>
+                  </div>
+                </div>
               </motion.div>
+
+              {/* Navigation Controls (Stable - Outside keyed content) */}
+              <motion.div 
+                key="nav-controls"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="flex items-center gap-10 mt-10 z-30"
+              >
+                <button
+                  onClick={() => navigateMemory("prev")}
+                  className="w-14 h-14 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3] hover:bg-[#2a4178] transition-all border border-[#c9a45c]/50 shadow-xl active:scale-95"
+                  title="Өмнөх"
+                >
+                  <ChevronLeft className="w-8 h-8" />
+                </button>
+                <button
+                  onClick={() => navigateMemory("next")}
+                  className="w-14 h-14 rounded-full bg-[#1f2d5a] flex items-center justify-center text-[#f8e4b3] hover:bg-[#2a4178] transition-all border border-[#c9a45c]/50 shadow-xl active:scale-95"
+                  title="Дараах"
+                >
+                  <ChevronRight className="w-8 h-8" />
+                </button>
+              </motion.div>
+              </div>
             </div>
             
             {/* Bottom Actions Bar */}
@@ -995,7 +1078,7 @@ export function MemoryGallery({ currentUser, onBack }: MemoryGalleryProps) {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden" 
+                      className="overflow-hidden relative" 
                     >
                       <div className="pt-3 mt-3 border-t border-stone-100 space-y-2 max-h-32 overflow-y-auto">
                         {selectedMemory.comments.length === 0 ? (
