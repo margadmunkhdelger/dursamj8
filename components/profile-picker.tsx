@@ -338,7 +338,7 @@ interface CurrentUserBadgeProps {
 
 export function CurrentUserBadge({ user, onSwitch }: CurrentUserBadgeProps) {
   return (
-    <motion.button initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.98 }} onClick={onSwitch} className="fixed top-[68px] right-4 z-40 bg-card rounded-full px-2.5 py-1 flex items-center gap-1.5 max-w-[calc(100vw-2rem)] border border-border shadow-sm">
+    <motion.button initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.98 }} onClick={onSwitch} className="fixed top-[68px] left-4 z-40 bg-card rounded-full px-2.5 py-1 flex items-center gap-1.5 max-w-[calc(100vw-2rem)] border border-border shadow-sm">
       <div className="relative w-5 h-5 rounded-full overflow-hidden ring-2 ring-primary/50 shrink-0">
         <Image src={user.avatar} alt={user.name} fill className="object-cover" />
       </div>
