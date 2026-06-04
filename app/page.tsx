@@ -437,8 +437,8 @@ export default function MemoriaApp() {
               <CurrentUserBadge user={currentUser} onSwitch={handleSwitchProfile} />
             )}
             
-            {/* Main scrollable area */}
-            <main className="flex-1 overflow-y-auto overflow-x-hidden w-full outline-none touch-pan-y overscroll-contain pt-[72px]">
+            {/* Main scrollable area - Adjusted top padding to account for CurrentUserBadge */}
+            <main className="flex-1 overflow-y-auto overflow-x-hidden w-full outline-none touch-pan-y overscroll-contain pt-[80px]">
               <div className="relative z-10 pt-4 px-4 max-w-md mx-auto">
                 <AnimatePresence mode="wait">
                   <motion.div

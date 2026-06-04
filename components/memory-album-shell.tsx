@@ -31,7 +31,7 @@ export function AlbumMobileFrame({ children }: AlbumMobileFrameProps) {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         aria-hidden
       />
-      <div className="relative z-10 pointer-events-auto w-full max-w-md flex-1 flex flex-col min-h-0 overflow-y-auto scrollbar-hide px-4 pt-[70px] pb-[env(safe-area-inset-bottom,0px)] touch-pan-y overscroll-contain">
+      <div className="relative z-10 pointer-events-auto w-full max-w-md flex-1 flex flex-col min-h-0 overflow-y-auto scrollbar-hide px-4 pb-[env(safe-area-inset-bottom,0px)] touch-pan-y overscroll-contain">
         {children}
       </div>
     </motion.div>
