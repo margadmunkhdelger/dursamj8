@@ -126,7 +126,7 @@ export function AlbumFlow({
               >
                 <AlbumPanel // Main album cover panel
                   variant="cover" 
-                  className="relative p-5 sm:p-8 py-10 sm:py-20 text-center border-l-[8px] sm:border-l-[12px] border-l-[#1f2d5a] bg-[#f4f1ea] shadow-none flex-1 min-h-0 flex flex-col justify-between items-center overflow-hidden"
+                  className="relative p-5 sm:p-8 py-6 sm:py-10 text-center border-l-[8px] sm:border-l-[12px] border-l-[#1f2d5a] bg-[#f4f1ea] shadow-none flex-1 min-h-0 flex flex-col justify-evenly items-center overflow-hidden"
                 >
                   {/* Зүүн талын нимгэн хар зураас (сүүдэр) */}
                   <div className="absolute left-0 top-0 bottom-0 w-px bg-black/10" />
@@ -192,10 +192,10 @@ export function AlbumFlow({
                           initial={{ opacity: 0, y: 12 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.55, ease: "easeOut" }}
-                          className="flex flex-col items-center gap-8 sm:gap-14 pt-10 sm:pt-16"
+                          className="flex flex-col items-center gap-5 sm:gap-8 pt-4 sm:pt-6"
                         >
-                          <div className="space-y-4">
-                            <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.6em] text-[#1f2d5a]/80 font-bold px-2">
+                          <div className="space-y-3">
+                            <p className="text-[8px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.5em] text-[#1f2d5a]/80 font-bold px-2">
                               <span className="inline">{display.fullSchoolName}</span>
                             </p>
                             <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-[#1f2d5a] tracking-tighter leading-tight font-sans drop-shadow-sm">
@@ -206,17 +206,17 @@ export function AlbumFlow({
                             </p>
                           </div>
 
-                          <div className="flex flex-wrap items-center justify-center gap-x-2 sm:gap-x-4 gap-y-2 px-4 sm:px-6 py-2.5 rounded-2xl sm:rounded-full border border-[#c9a45c] bg-[#1f2d5a]/5 max-w-[95%] mx-auto shadow-sm">
-                            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.25em] text-[#1f2d5a] min-w-0">
+                          <div className="flex flex-wrap items-center justify-center gap-x-1.5 sm:gap-x-3 gap-y-1.5 px-3 py-2 rounded-xl sm:rounded-full border border-[#c9a45c] bg-[#1f2d5a]/5 max-w-[98%] mx-auto shadow-sm">
+                            <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.1em] text-[#1f2d5a] min-w-0">
                               <span className="inline">{display.shortSchoolName}</span>
                             </span>
                             <div className="w-1 h-1 rounded-full bg-[#1f2d5a]/30" />
-                            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.25em] text-[#1f2d5a] min-w-0">
+                            <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.1em] text-[#1f2d5a] min-w-0">
                               <span className="inline">{groupName}</span>
                             </span>
                             <div className="w-1 h-1 rounded-full bg-[#1f2d5a]/30" />
-                            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.25em] text-[#1f2d5a] min-w-0">
-                              <span className="inline"><span className="font-mono tabular-nums tracking-normal">{graduationYear}</span> ОНЫ ТӨГСӨЛТ</span>
+                            <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.1em] text-[#1f2d5a] min-w-0">
+                              <span className="inline"><span className="font-mono tabular-nums">{graduationYear}</span> ОНЫ ТӨГСӨЛТ</span>
                             </span>
                           </div>
                         </motion.div>
