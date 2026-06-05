@@ -152,7 +152,7 @@ export function HomeDashboard({
             <div className="flex items-center justify-center gap-3 relative z-10">
               <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent to-[#c9a45c] max-w-[60px]" />
               <p className="text-xs sm:text-sm font-sans font-bold text-[#1f2d5a] uppercase tracking-[0.2em] whitespace-nowrap lining-nums tabular-nums">
-                {graduationYear} ОНЫ ТӨГСӨЛТ
+                <span className="font-mono tracking-normal">{graduationYear}</span> ОНЫ ТӨГСӨЛТ
               </p>
               <div className="h-0.5 flex-1 bg-gradient-to-l from-transparent to-[#c9a45c] max-w-[60px]" />
             </div>

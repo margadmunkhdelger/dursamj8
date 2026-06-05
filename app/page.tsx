@@ -318,7 +318,7 @@ export default function MemoriaApp() {
                 <div className="flex items-center justify-center gap-2 mt-3">
                   <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#c9a45c]/50" />
                   <span className="text-[10px] text-[#c9a45c] font-bold uppercase tracking-widest">
-                    Class of {demoGroup.graduationYear}
+                    Class of <span className="font-mono tabular-nums tracking-normal">{demoGroup.graduationYear}</span>
                   </span>
                   <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#c9a45c]/50" />
                 </div>

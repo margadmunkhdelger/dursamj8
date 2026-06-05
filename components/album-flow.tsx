@@ -126,7 +126,7 @@ export function AlbumFlow({
               >
                 <AlbumPanel // Main album cover panel
                   variant="cover" 
-                  className="relative p-5 sm:p-8 space-y-4 sm:space-y-6 text-center border-l-[8px] sm:border-l-[12px] border-l-[#1f2d5a] bg-[#f4f1ea] shadow-none flex-1 min-h-0 flex flex-col justify-center overflow-hidden"
+                  className="relative p-5 sm:p-8 py-10 sm:py-20 text-center border-l-[8px] sm:border-l-[12px] border-l-[#1f2d5a] bg-[#f4f1ea] shadow-none flex-1 min-h-0 flex flex-col justify-between items-center overflow-hidden"
                 >
                   {/* Зүүн талын нимгэн хар зураас (сүүдэр) */}
                   <div className="absolute left-0 top-0 bottom-0 w-px bg-black/10" />
@@ -184,7 +184,7 @@ export function AlbumFlow({
                     </svg>
                   </motion.div>
 
-                  <div className="relative z-10 space-y-8">
+                  <div className="relative z-10">
                     <AnimatePresence>
                       {contentPhase >= 2 && (
                         <motion.div
@@ -192,13 +192,13 @@ export function AlbumFlow({
                           initial={{ opacity: 0, y: 12 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.55, ease: "easeOut" }}
-                          className="flex flex-col items-center gap-4 sm:gap-6 pt-8 sm:pt-12"
+                          className="flex flex-col items-center gap-8 sm:gap-14 pt-10 sm:pt-16"
                         >
                           <div className="space-y-4">
-                            <p className="text-[10px] uppercase tracking-[0.6em] text-[#1f2d5a]/80 font-bold">
+                            <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.6em] text-[#1f2d5a]/80 font-bold px-2">
                               <span className="inline">{display.fullSchoolName}</span>
                             </p>
-                            <h2 className="text-3xl md:text-5xl sm:text-6xl font-black text-[#1f2d5a] tracking-tighter leading-tight font-sans drop-shadow-sm">
+                            <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-[#1f2d5a] tracking-tighter leading-tight font-sans drop-shadow-sm">
                               Дурсамжийн <br className="sm:hidden"/> хайрцаг
                             </h2>
                             <p className="text-xs sm:text-sm text-[#1f2d5a] italic max-w-xs mx-auto px-4 sm:px-6 font-serif leading-relaxed text-center">
@@ -206,17 +206,17 @@ export function AlbumFlow({
                             </p>
                           </div>
 
-                          <div className="inline-flex items-center justify-center gap-3 sm:gap-4 px-4 sm:px-6 py-2 rounded-full border border-[#c9a45c] bg-[#1f2d5a]/5">
-                            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#1f2d5a]">
+                          <div className="flex flex-wrap items-center justify-center gap-x-2 sm:gap-x-4 gap-y-2 px-4 sm:px-6 py-2.5 rounded-2xl sm:rounded-full border border-[#c9a45c] bg-[#1f2d5a]/5 max-w-[95%] mx-auto shadow-sm">
+                            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.25em] text-[#1f2d5a] min-w-0">
                               <span className="inline">{display.shortSchoolName}</span>
                             </span>
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#1f2d5a]" />
-                            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#1f2d5a]">
+                            <div className="w-1 h-1 rounded-full bg-[#1f2d5a]/30" />
+                            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.25em] text-[#1f2d5a] min-w-0">
                               <span className="inline">{groupName}</span>
                             </span>
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#1f2d5a]" />
-                            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#1f2d5a]">
-                              <span className="inline">{graduationYear} ОНЫ ТӨГСӨЛТ</span>
+                            <div className="w-1 h-1 rounded-full bg-[#1f2d5a]/30" />
+                            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] sm:tracking-[0.25em] text-[#1f2d5a] min-w-0">
+                              <span className="inline"><span className="font-mono tabular-nums tracking-normal">{graduationYear}</span> ОНЫ ТӨГСӨЛТ</span>
                             </span>
                           </div>
                         </motion.div>
@@ -231,7 +231,6 @@ export function AlbumFlow({
                         initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ ...springSmooth, delay: 0.2 }}
-                        className="pt-0 sm:pt-2"
                       >
                         <Button
                           onClick={handleEnter}
@@ -253,7 +252,6 @@ export function AlbumFlow({
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ ...springSmooth, delay: 0.3 }}
-                        className="pt-0"
                       >
                         <CountdownTimer
                           targetDate={reunionDate}
