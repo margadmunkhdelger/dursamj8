@@ -326,7 +326,7 @@ function PhotoFrame({
 }
 
 interface MemoryGalleryProps {
-  currentUser?: { id?: string; name: string; nickname: string; avatar: string } | null
+  currentUser?: { id?: string; name: string; nickname: string; avatar: string; role?: "student" | "teacher" } | null
   onBack?: () => void
   schoolName?: string
   graduationYear?: number
@@ -1042,7 +1042,7 @@ export function MemoryGallery({ currentUser, onBack, schoolName, graduationYear 
 
                 {/* Delete Button (Visible only to author or teacher) in the middle */}
                 <div className="flex-1 flex justify-center">
-                  {(currentUser?.name === selectedMemory.author || currentUser?.id === "teacher_1") && (
+                  {(currentUser?.name === selectedMemory.author || currentUser?.role === "teacher") && (
                     <button
                       onClick={() => {
                         if (window.confirm("Энэ дурсамжийг устгахдаа итгэлтэй байна уу?")) {

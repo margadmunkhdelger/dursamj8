@@ -19,28 +19,28 @@ export function SongCertificate({
   isTeacher = false,
 }: SongCertificateProps) {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden min-h-0 touch-none">
+    <div className="w-full h-full flex flex-col items-center relative overflow-hidden min-h-0 touch-none">
       <div 
         className="absolute inset-0 opacity-[0.4] mix-blend-multiply pointer-events-none -z-10"
         style={{
-          backgroundImage: `url("https://www.transparenttextures.com/patterns/pinstriped-suit.png"), radial-gradient(circle at center, transparent 0%, rgba(180,140,100,0.1) 100%)`,
+          backgroundImage: `url("https://www.transparenttextures.com/patterns/pinstriped-suit.png")`,
         }}
       />
-      <div className="w-full flex-1 flex flex-col items-center justify-center px-2 py-4 min-h-0 relative">
+      <div className="w-full flex-1 flex flex-col items-center px-0 py-2 min-h-0 relative">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative w-full max-w-[400px] bg-white rounded-lg overflow-hidden shrink shadow-2xl"
+          className="relative w-full bg-white rounded-lg overflow-hidden shrink shadow-none border border-stone-200"
           style={{
             maxHeight: "100%",
-            aspectRatio: "3/4",
+            aspectRatio: "1 / 1.414",
           }}
         >
           {/* ===== LUXURIOUS CORNER ORNAMENTS - Navy Blue & Gold ===== */}
 
           {/* Top Left Corner Ornament */}
-          <div className="absolute top-0 left-0 w-36 h-36 z-20">
+          <div className="absolute top-0 left-0 w-28 sm:w-36 h-28 sm:h-36 z-20">
             <svg className="w-full h-full" viewBox="0 0 120 120">
               <defs>
                 <linearGradient id="tlNavy" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -88,7 +88,7 @@ export function SongCertificate({
           </div>
 
           {/* Top Right Corner Ornament */}
-          <div className="absolute top-0 right-0 w-36 h-36 z-20">
+          <div className="absolute top-0 right-0 w-28 sm:w-36 h-28 sm:h-36 z-20">
             <svg className="w-full h-full" viewBox="0 0 120 120">
               <defs>
                 <linearGradient id="trNavy" x1="100%" y1="0%" x2="0%" y2="100%">
@@ -131,7 +131,7 @@ export function SongCertificate({
           </div>
 
           {/* Bottom Left Corner Ornament */}
-          <div className="absolute bottom-0 left-0 w-36 h-36 z-20">
+          <div className="absolute bottom-0 left-0 w-28 sm:w-36 h-28 sm:h-36 z-20">
             <svg className="w-full h-full" viewBox="0 0 120 120">
               <defs>
                 <linearGradient id="blNavy" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -174,7 +174,7 @@ export function SongCertificate({
           </div>
 
           {/* Bottom Right Corner Ornament */}
-          <div className="absolute bottom-0 right-0 w-36 h-36 z-20">
+          <div className="absolute bottom-0 right-0 w-28 sm:w-36 h-28 sm:h-36 z-20">
             <svg className="w-full h-full" viewBox="0 0 120 120">
               <defs>
                 <linearGradient id="brNavy" x1="100%" y1="100%" x2="0%" y2="0%">
@@ -225,7 +225,7 @@ export function SongCertificate({
           <div className="absolute inset-4 border border-[#c9a45c]/30 rounded pointer-events-none z-10" />
 
           {/* ===== CERTIFICATE CONTENT ===== */}
-          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 py-12 text-center overflow-hidden">
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 py-10 text-center overflow-hidden">
 
             {/* Gold Medal Badge - Elegant and prominent */}
             <motion.div
@@ -268,14 +268,14 @@ export function SongCertificate({
                 style={{
                   background: "conic-gradient(from 0deg, #f4d03f, #e8c98c, #c9a45c, #8b6914, #c9a45c, #e8c98c, #f4d03f, #c9a45c, #8b6914, #c9a45c, #f4d03f)",
                   padding: "6px",
-                  boxShadow: "0 12px 40px rgba(201,164,92,0.5), 0 6px 12px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.3)",
+                  boxShadow: "none",
                 }}
               >
                 <div
                   className="w-full h-full rounded-full flex flex-col items-center justify-center"
                   style={{
                     background: "radial-gradient(circle at 30% 25%, #3d5a96, #2a4178 50%, #1f2d5a 80%, #152040)",
-                    boxShadow: "inset 0 -4px 12px rgba(0,0,0,0.3), inset 0 4px 8px rgba(255,255,255,0.1)",
+                    boxShadow: "none",
                   }}
                 >
                   <span className="text-[#f4d03f] text-[8px] tracking-[0.15em]">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
@@ -295,7 +295,6 @@ export function SongCertificate({
                     background: "linear-gradient(180deg, #1f2d5a 0%, #2a4178 40%, #152040 100%)",
                     clipPath: "polygon(8% 0%, 92% 0%, 100% 100%, 50% 70%, 0% 100%)",
                     transform: "rotate(-15deg)",
-                    boxShadow: "2px 2px 4px rgba(0,0,0,0.2)",
                   }}
                 />
                 <motion.div
@@ -307,7 +306,6 @@ export function SongCertificate({
                     background: "linear-gradient(180deg, #2a4178 0%, #3d5a96 40%, #1f2d5a 100%)",
                     clipPath: "polygon(8% 0%, 92% 0%, 100% 100%, 50% 70%, 0% 100%)",
                     transform: "rotate(15deg)",
-                    boxShadow: "-2px 2px 4px rgba(0,0,0,0.2)",
                   }}
                 />
               </div>
@@ -322,7 +320,6 @@ export function SongCertificate({
             >
               <h1
                 className="font-script text-3xl sm:text-4xl text-[#1f2d5a] tracking-wide"
-                style={{ textShadow: "2px 2px 8px rgba(31,45,90,0.15)" }}
               >
                 Батламж
               </h1>
@@ -351,7 +348,6 @@ export function SongCertificate({
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.75, type: "spring", stiffness: 80 }}
               className="font-serif text-2xl sm:text-3xl text-[#1f2d5a] mt-2 mb-2 px-2 font-bold break-words w-full max-w-[92%] leading-tight"
-              style={{ textShadow: "1px 1px 4px rgba(31,45,90,0.1)" }}
             >
               {studentName}
             </motion.h2>

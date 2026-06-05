@@ -407,7 +407,7 @@ export function HomeDashboard({
         transition={{ delay: 0.8 }}
         className="text-center py-3"
       >
-        <p className="text-xs text-muted-foreground italic">
+        <p className="text-xs text-[#1f2d5a]/80 italic font-medium">
           &ldquo;Дурсамж бүтээх хамгийн тохиромжтой үе бол одоо.&rdquo;
         </p>
       </motion.div>

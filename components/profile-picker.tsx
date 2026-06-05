@@ -1,9 +1,9 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion"
-import { Check, UserPlus, X, Clock, CheckCircle, XCircle } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion";
+import { Check, UserPlus, X, Clock, CheckCircle, XCircle, GraduationCap, Award, Camera, Upload } from "lucide-react";
 import Image from "next/image"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -19,6 +19,7 @@ export interface Member {
   comments: Comment[]
   voiceNotes: number
   photos: number
+  role?: "student" | "teacher" // New field for role
   status?: "approved" | "pending"
 }
 
@@ -53,13 +54,13 @@ function PolaroidCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4, ease: "easeOut" }}
-      whileHover={{ scale: 1.05, y: -4, zIndex: 20 }}
+      whileHover={{ zIndex: 20 }}
       whileTap={{ scale: 0.97 }}
       onClick={() => onSelect(member)}
       className="relative flex flex-col items-center group z-10"
     >
       {/* White polaroid card with shadow */}
-      <div className="bg-[#fdfdfd] p-1.5 pb-2.5 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-all group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.15)] flex flex-col items-center border border-white/50">
+      <div className="bg-[#fdfdfd] p-1.5 pb-2.5 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex flex-col items-center border border-[#1f2d5a]">
         {/* Photo container with gray background */}
         <div className={cn(
           "relative overflow-hidden bg-gray-200",
@@ -82,10 +83,17 @@ function PolaroidCard({
         </p>
       </div>
       
+      {/* Student Graduation Cap Badge */}
+      {!isTeacher && (
+        <div className="absolute -top-2 -left-2 w-5 h-5 bg-[#1f2d5a] text-[#c9a45c] rounded-full shadow-md z-20 border border-[#c9a45c]/50 flex items-center justify-center leading-none">
+          <GraduationCap size={11} strokeWidth={2.5} />
+        </div>
+      )}
+
       {/* Teacher badge */}
       {isTeacher && (
-        <div className="absolute -top-1.5 -right-1.5 bg-primary text-primary-foreground text-[7px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tight shadow-md z-10">
-          Багш
+        <div className="absolute -top-2 -left-2 w-5 h-5 bg-[#1f2d5a] text-[#c9a45c] rounded-full shadow-md z-20 border border-[#c9a45c]/50 flex items-center justify-center leading-none">
+          <Award size={11} strokeWidth={2.5} />
         </div>
       )}
     </motion.button>
@@ -99,27 +107,42 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
     nickname: "",
     quote: "",
     tags: "",
+    avatar: "",
+    role: "student", // Default to student
   })
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const { teacher, students } = useMemo(() => {
+  const { teachers, students } = useMemo(() => {
     const approved = members.filter((m) => m.status !== "pending")
     return {
-      teacher: approved.find(m => m.id === "teacher_1"),
-      students: approved.filter(m => m.id !== "teacher_1")
+      teachers: approved.filter(m => m.role === "teacher"), // Changed to filter for multiple teachers
+      students: approved.filter(m => m.role !== "teacher") // Students are those not marked as teacher
     }
   }, [members])
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setNewMember(prev => ({ ...prev, avatar: reader.result as string }))
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   const handleJoinSubmit = () => {
     if (!newMember.name || !newMember.nickname) return
     onRequestJoin({
       name: newMember.name,
       nickname: newMember.nickname,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${newMember.nickname}`,
+      avatar: newMember.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${newMember.nickname}`,
       tags: newMember.tags.split(",").map((t) => t.trim()).filter(Boolean).slice(0, 3),
       quote: newMember.quote || "Энэхүү дурсамжийн цомогт нэгдэж байгаадаа баяртай байна!",
+      role: newMember.role, // Pass the selected role
     })
+    setNewMember({ name: "", nickname: "", quote: "", tags: "", avatar: "" })
     setShowJoinForm(false)
-    setNewMember({ name: "", nickname: "", quote: "", tags: "" })
   }
 
   if (showJoinForm) {
@@ -129,16 +152,58 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
         animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
         exit={{ opacity: 0, x: -16 }}
         transition={{ type: "spring", stiffness: 280, damping: 30 }}
-        className="flex flex-col flex-1 min-h-0 relative p-4"
+        className="flex flex-col relative p-4 w-full my-auto"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
         <div className="flex items-center justify-between mb-3 shrink-0">
-          <h3 className="text-base font-bold text-foreground font-serif">Группт нэгдэх</h3>
+          <h3 className="text-base font-bold text-foreground font-serif">Профайл нэмэх</h3>
           <button type="button" onClick={() => setShowJoinForm(false)} aria-label="Close join form" className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-muted text-muted-foreground">
             <X className="w-4 h-4" /> 
           </button>
         </div>
-        <div className="space-y-3 flex-1 relative z-10 overflow-y-auto pr-1 min-w-0">
+
+        <div className="flex flex-col items-center gap-2 mb-4 shrink-0">
+          <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+          <div 
+            className="relative w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-primary/10 cursor-pointer group bg-muted flex items-center justify-center"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {newMember.avatar ? (
+              <Image src={newMember.avatar} alt="Preview" fill className="object-cover" />
+            ) : (
+              <Camera className="w-8 h-8 text-muted-foreground" />
+            )}
+            <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Upload className="w-5 h-5 text-white/90 mb-1" />
+            </div>
+          </div>
+          <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-sans">Зураг оруулах</p>
+        </div>
+
+        {/* Role Selection */}
+        <div className="space-y-1 mb-4 shrink-0">
+          <label className="text-[9px] uppercase tracking-wider text-muted-foreground ml-1">Таны үүрэг *</label>
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              type="button"
+              variant={newMember.role === "student" ? "default" : "outline"}
+              onClick={() => setNewMember(p => ({ ...p, role: "student" }))}
+              className="h-10 text-sm rounded-xl"
+            >
+              Сурагч
+            </Button>
+            <Button
+              type="button"
+              variant={newMember.role === "teacher" ? "default" : "outline"}
+              onClick={() => setNewMember(p => ({ ...p, role: "teacher" }))}
+              className="h-10 text-sm rounded-xl"
+            >
+              Багш
+            </Button>
+          </div>
+        </div>
+
+        <div className="space-y-3 relative z-10 min-w-0">
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
               <label className="text-[9px] uppercase tracking-wider text-muted-foreground ml-1">Таны нэр *</label>
@@ -158,12 +223,12 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
             <Input value={newMember.tags} onChange={(e) => setNewMember((p) => ({ ...p, tags: e.target.value }))} placeholder="Сагс, Хөгжим" className="bg-input border-border h-10 text-sm rounded-xl text-foreground placeholder:text-muted-foreground" />
           </div>
         </div>
-        <div className="mt-4 space-y-2 shrink-0 relative z-10">
+        <div className="mt-2 space-y-2 shrink-0 relative z-10">
           <Button onClick={handleJoinSubmit} disabled={!newMember.name || !newMember.nickname} className="w-full h-10 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-lg transition-all active:scale-95">
-            <Clock className="w-4 h-4 mr-2" />
-            Хүсэлт илгээх
+            <UserPlus className="w-4 h-4 mr-2" />
+            Профайл нэмэх
           </Button>
-          <p className="text-[8px] text-primary/70 text-center uppercase tracking-tight">Таны хүсэлтийг гишүүд баталгаажуулна</p>
+          <p className="text-[8px] text-primary/70 text-center uppercase tracking-tight">Таны профайл шууд жагсаалтад харагдах болно</p>
         </div>
       </motion.div>
     )
@@ -219,20 +284,23 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
           <div 
             className="flex-1 overflow-y-auto min-h-0 px-3 py-4 rounded-lg scrollbar-hide"
           >
-            {/* Teacher at top - centered prominently */}
-            {teacher && (
-              <div className="flex justify-center mb-4">
-                <PolaroidCard 
-                  member={teacher} 
-                  onSelect={onSelect} 
-                  isTeacher 
-                  delay={0.1}
-                />
+            {/* Teachers at top - centered */}
+            {teachers.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-3 pb-2 mb-4">
+                {teachers.map((teacherMember, idx) => (
+                  <PolaroidCard 
+                    key={teacherMember.id}
+                    member={teacherMember} 
+                    onSelect={onSelect} 
+                    isTeacher 
+                    delay={0.1 + idx * 0.03}
+                  />
+                ))}
               </div>
             )}
 
-            {/* Divider with decorative elements */}
-            {teacher && students.length > 0 && (
+            {/* Divider with decorative elements - only if there are teachers AND students */}
+            {teachers.length > 0 && students.length > 0 && (
               <div className="flex items-center justify-center gap-2 mb-3 px-2">
                 <div className="flex-1 h-px bg-[#c9a45c]/60" />
                 <span className="text-[9px] uppercase tracking-[0.2em] text-[#1f2d5a] font-black">Сурагчид</span>
@@ -254,7 +322,7 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
           </div>
 
           {/* Join button */}
-          <div className="mt-3 pt-2 border-t border-border/50 text-center shrink-0">
+          <div className="mt-3 pt-2 border-t border-stone-300 text-center shrink-0">
             <p className="text-[10px] text-muted-foreground font-sans mb-1.5">Жагсаалтад байхгүй юу?</p>
             <Button 
               onClick={() => setShowJoinForm(true)} 
@@ -262,7 +330,7 @@ export function ProfilePickerContent({ members, onSelect, onRequestJoin, embedde
               className="gap-2 h-9 px-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 font-bold text-xs rounded-full transition-all active:scale-95 border-none"
             >
               <UserPlus className="w-3 h-3" />
-              Нэгдэх хүсэлт
+              Профайл нэмэх
             </Button>
           </div>
         </div>
@@ -297,7 +365,7 @@ interface PendingMembersProps {
 }
 
 export function PendingMembers({ pendingMembers, currentUser, onApprove, onReject }: PendingMembersProps) {
-  if (pendingMembers.length === 0 || currentUser?.id !== "teacher_1") return null
+  if (pendingMembers.length === 0 || currentUser?.role !== "teacher") return null
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl p-3 mb-4 border border-border shadow-sm">

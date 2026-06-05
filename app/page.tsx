@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion"
+import { cn } from "@/lib/utils"
 import { FloatingParticles } from "@/components/floating-particles"
 import { AuthForms } from "@/components/auth-forms"
 import { AlbumFlow } from "@/components/album-flow"
@@ -41,6 +42,7 @@ const initialMembers: Member[] = [
     tags: ["Ангийн багш", "Математик"],
     quote: "Хайрт шавь нар минь, дурсамжуудаа үргэлж нандигнаж яваарай.",
     dreamJob: "Багш",
+    role: "teacher", // Explicitly set role for teacher
     likes: 50,
     comments: [],
     voiceNotes: 0,
@@ -55,6 +57,7 @@ const initialMembers: Member[] = [
     tags: ["Ангийн дарга", "Драмын дугуйлан", "Кофенд дуртай"],
     quote: "Уйтгартай дурсамж үлдээхэд амьдрал дэндүү богинохон",
     dreamJob: "Найруулагч",
+    role: "student",
     likes: 12,
     comments: [
       { id: "c1", author: "Б. Мишээл", text: "Хамгийн шилдэг ангийн дарга!", time: "2 өдрийн өмнө" }
@@ -71,6 +74,7 @@ const initialMembers: Member[] = [
     tags: ["Сагсан бөмбөгийн баг", "Техник сонирхогч", "Шөнийн шувуу"],
     quote: "Өдөр нь код бичиж, шөнө нь сагс тоглоно",
     dreamJob: "Тоглоом хөгжүүлэгч",
+    role: "student",
     likes: 18,
     comments: [
       { id: "c2", author: "А. Сарангуа", text: "Орой сууж код бичдэг байснаа санаж байна!", time: "1 өдрийн өмнө" }
@@ -87,6 +91,7 @@ const initialMembers: Member[] = [
     tags: ["Урлагийн дугуйлан", "Мөрөөдөгч", "Мууранд хайртай"],
     quote: "Зургийн цаасан дээр шинэ ертөнцийг бүтээхүй",
     dreamJob: "Зураач",
+    role: "student",
     likes: 24,
     comments: [],
     voiceNotes: 0,
@@ -101,6 +106,7 @@ const initialMembers: Member[] = [
     tags: ["Мэтгэлцээний клуб", "Номын хорхойтон", "Гүн ухаан"],
     quote: "Үг гэдэг бидэнд байгаа хамгийн хүчтэй зэвсэг",
     dreamJob: "Зохиолч",
+    role: "student",
     likes: 9,
     comments: [
       { id: "c3", author: "Г. Энхжин", text: "Чиний илтгэлүүд үнэхээр домог байсан шүү!", time: "3 өдрийн өмнө" },
@@ -118,6 +124,7 @@ const initialMembers: Member[] = [
     tags: ["Хөгжмийн хамтлаг", "Пянз цуглуулагч", "Аялагч"],
     quote: "Хөгжим бол амьдралын дууны дуулал",
     dreamJob: "Хөгжмийн продюсер",
+    role: "student",
     likes: 31,
     comments: [],
     voiceNotes: 5,
@@ -146,7 +153,14 @@ export default function MemoriaApp() {
     message: "Хайрт шавь нар минь, та бүхний ирээдүйн амьдралд аз жаргал, амжилт хүсье. Дурсамжуудаа үргэлж нандигнаж яваарай. Та нарыг үргэлж дэмжиж байх болно.",
   })
 
-  const approvedMembers = members.filter(m => m.status === "approved")
+  const approvedMembers = members
+    .filter(m => m.status === "approved")
+    .sort((a, b) => {
+      if (a.role === "teacher" && b.role !== "teacher") return -1
+      if (a.role !== "teacher" && b.role === "teacher") return 1
+      return 0
+    })
+
   const pendingMembers = members.filter(m => m.status === "pending")
 
   const mainScrollRef = useRef<HTMLDivElement>(null);
@@ -201,6 +215,16 @@ export default function MemoriaApp() {
     }
   }
 
+  const handleDeleteMember = (memberId: string) => {
+    if (window.confirm("Та өөрийн профайлыг устгахдаа итгэлтэй байна уу?")) {
+      setMembers(prev => prev.filter(m => m.id !== memberId))
+      if (currentUser?.id === memberId) {
+        setCurrentUser(null)
+        setAppState("profile-picker")
+      }
+    }
+  }
+
   const handleAuthSuccess = () => {
     setAppState("intro")
   }
@@ -210,15 +234,16 @@ export default function MemoriaApp() {
     setAppState("dashboard")
   }
 
-  const handleRequestJoin = (memberData: Omit<Member, "id" | "likes" | "comments" | "voiceNotes" | "photos" | "status">) => {
+  const handleRequestJoin = (memberData: Omit<Member, "id" | "likes" | "comments" | "voiceNotes" | "photos" | "status"> & { role?: "student" | "teacher" }) => {
+    const newId = memberData.role === "teacher" ? `teacher_${Date.now()}` : `student_${Date.now()}`; // Ensure unique IDs for students too
     const newMember: Member = {
       ...memberData,
-      id: `m${Date.now()}`,
+      id: newId,
       likes: 0,
       comments: [],
       voiceNotes: 0,
       photos: 0,
-      status: "pending"
+      status: "approved"
     }
     setMembers(prev => [...prev, newMember])
   }
@@ -255,7 +280,7 @@ export default function MemoriaApp() {
             onNavigate={setActiveTab}
             teacherMessage={teacherMessage}
             onUpdateTeacherMessage={(msg) => setTeacherMessage(prev => ({ ...prev, message: msg }))}
-            isTeacher={currentUser?.id === "teacher_1"}
+            isTeacher={currentUser?.role === "teacher"}
             reunionLocationDetails={reunionLocationDetails}
             onUpdateReunionDetails={handleUpdateReunionDetails}
           />
@@ -301,7 +326,7 @@ export default function MemoriaApp() {
             </motion.div>
             
             {/* Pending Members Approval */}
-            {currentUser?.id === "teacher_1" && (
+            {currentUser?.role === "teacher" && (
               <PendingMembers 
                 pendingMembers={pendingMembers}
                 currentUser={currentUser}
@@ -316,6 +341,7 @@ export default function MemoriaApp() {
               onLike={handleMemberLike}
               onComment={handleMemberComment}
               onUpdate={handleUpdateMember}
+              onDelete={handleDeleteMember}
               currentUser={currentUser}
             />
           </div>
@@ -351,7 +377,7 @@ export default function MemoriaApp() {
             schoolName={demoGroup.schoolName}
             className={demoGroup.name}
             graduationYear={demoGroup.graduationYear}
-            isTeacher={currentUser?.id === "teacher_1"}
+            isTeacher={currentUser?.role === "teacher"}
           />
         )
       default:
@@ -447,7 +473,12 @@ export default function MemoriaApp() {
             
             {/* Main scrollable area - Adjusted top padding to account for CurrentUserBadge */}
             <main ref={mainScrollRef} className="flex-1 overflow-y-auto overflow-x-hidden w-full outline-none touch-pan-y overscroll-contain pt-[calc(env(safe-area-inset-top,0px)+54px)] pb-[60px]">
-              <div className="relative z-10 pt-2 px-4 max-w-md mx-auto">
+              <div className={cn(
+                "relative z-10 pt-2 mx-auto max-w-md",
+                activeTab === "music" 
+                  ? "px-1 flex flex-col" 
+                  : "px-4"
+              )}>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}

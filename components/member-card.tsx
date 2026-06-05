@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { Heart, MessageCircle, X, Send, Pencil, Save, Camera, Upload, Instagram, Mail, Plus, PenLine, GraduationCap, ChevronLeft, ChevronRight, MailOpen } from "lucide-react"
+import { Heart, MessageCircle, X, Send, Pencil, Save, Camera, Upload, Instagram, Mail, Plus, PenLine, GraduationCap, ChevronLeft, ChevronRight, MailOpen, Trash2 } from "lucide-react"
 import Image from "next/image"
 import { useState, useRef, memo, useCallback, useMemo, useEffect } from "react"
 import { Input } from "@/components/ui/input"
@@ -20,6 +20,7 @@ interface Member {
   comments: Comment[]
   voiceNotes: number
   photos: number
+  role?: "student" | "teacher"
   status?: "approved" | "pending"
 }
 
@@ -36,6 +37,7 @@ interface MemberCardProps {
   onLike: (memberId: string) => void
   onComment: (memberId: string, comment: string) => void
   onUpdate?: (memberId: string, updatedData: Partial<Member>) => void
+  onDelete?: (memberId: string) => void
   isLiked?: boolean
   currentUser: Member | null
   isCurrentUser?: boolean
@@ -222,8 +224,8 @@ const InvitationEnvelope = ({ comment, onClose }: { comment: Comment, onClose: (
                      <path d="M42 45l8-8 8 8M50 37v20" fill="none" stroke="currentColor" strokeWidth="2.5" />
                      <path d="M40 60h20M45 65h10" fill="none" stroke="currentColor" strokeWidth="2" />
                    </svg>
-                   <div className="absolute -top-1 opacity-40">
-                      <GraduationCap className="w-4 h-4 text-[#1f2d5a]" />
+                   <div className="absolute inset-0 flex items-center justify-center opacity-40">
+                      <GraduationCap size={18} className="text-[#1f2d5a]" />
                    </div>
                 </div>
                 
@@ -245,7 +247,7 @@ const InvitationEnvelope = ({ comment, onClose }: { comment: Comment, onClose: (
   )
 }
 
-export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked, currentUser, isCurrentUser }: MemberCardProps) {
+export function MemberCard({ member, index, onLike, onComment, onUpdate, onDelete, isLiked, currentUser, isCurrentUser }: MemberCardProps) {
   const [showComments, setShowComments] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [currentCommentIndex, setCurrentCommentIndex] = useState<number | null>(null)
@@ -384,15 +386,24 @@ export function MemberCard({ member, index, onLike, onComment, onUpdate, isLiked
                 <h3 className="text-xl sm:text-2xl font-serif font-black text-[#1f2d5a] leading-tight tracking-tight">
                   {member.name}
                 </h3>
-                {isCurrentUser && (
+              {isCurrentUser && (
+                <div className="flex items-center gap-1 shrink-0">
                   <button
                     onClick={(e) => { e.stopPropagation(); setShowEditModal(true); }}
-                    className="p-1 rounded-full bg-stone-100/50 text-stone-400 hover:bg-primary hover:text-white transition-all shrink-0"
+                    className="p-1 rounded-full bg-stone-100/50 text-stone-400 hover:bg-primary hover:text-white transition-all"
                     title="Засах"
                   >
                     <Pencil className="w-3 h-3" />
                   </button>
-                )}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDelete?.(member.id); }}
+                    className="p-1 rounded-full bg-stone-100/50 text-stone-400 hover:bg-red-500 hover:text-white transition-all"
+                    title="Устгах"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
               </div>
               <div className="flex items-center justify-center gap-1.5 text-[#c9a45c] mt-1 font-sans font-bold uppercase tracking-[0.15em] text-[10px] sm:text-xs w-full">
                 <Instagram className="w-3 h-3 shrink-0" />
@@ -689,10 +700,11 @@ interface MemberGridProps {
   onLike: (memberId: string) => void
   onComment: (memberId: string, comment: string) => void
   onUpdate?: (memberId: string, updatedData: Partial<Member>) => void
+  onDelete?: (memberId: string) => void
   currentUser: Member | null
 }
 
-export function MemberGrid({ members, likedMembers, onLike, onComment, onUpdate, currentUser }: MemberGridProps) {
+export function MemberGrid({ members, likedMembers, onLike, onComment, onUpdate, onDelete, currentUser }: MemberGridProps) {
   return (
     <div className="flex flex-col gap-0 max-w-xl mx-auto pt-2">
       {members.map((member, index) => (
@@ -703,6 +715,7 @@ export function MemberGrid({ members, likedMembers, onLike, onComment, onUpdate,
           onLike={onLike}
           onComment={onComment}
           onUpdate={onUpdate}
+          onDelete={onDelete}
           isLiked={likedMembers.has(member.id)}
           currentUser={currentUser}
           isCurrentUser={currentUser?.id === member.id}

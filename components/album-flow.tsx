@@ -66,16 +66,21 @@ export function AlbumFlow({
   }, [])
 
   const display = useMemo(() => {
+    const fullSchool = schoolName; // Always the full school name from props
+    const shortSchool = identity?.school || schoolName; // Abbreviated from identity, or full name as fallback
+
     if (identity) {
       return {
-        school: identity.school, // Хэрэв identity байгаа бол түүний school-ийг ашиглана
+        fullSchoolName: fullSchool,
+        shortSchoolName: shortSchool,
         graduationLine: formatGraduationLine(identity),
         subtitle: formatGraduationSubtitle(identity),
         accessCode: identity.accessCode,
       }
     }
     return {
-      school: schoolName, // Demo үед дамжуулсан schoolName-ийг ашиглана
+      fullSchoolName: fullSchool,
+      shortSchoolName: shortSchool,
       graduationLine: `${graduationYear} оны төгсөлт`,
       subtitle: `${graduationYear} Оны Төгсөгчид`,
       accessCode: null as string | null,
@@ -115,26 +120,23 @@ export function AlbumFlow({
             transition={springSmooth}
             className="w-full flex-1 flex flex-col min-h-0"
           >
-            <motion.div className={cn(PAGE_CONTENT_CLASS, "pt-1 flex-1 flex flex-col min-h-0")}>
+            <motion.div className={cn(PAGE_CONTENT_CLASS, "pt-0 flex-1 flex flex-col min-h-0")}>
               <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                 className="flex-1 flex flex-col min-h-0"
               >
                 <AlbumPanel // Main album cover panel
                   variant="cover" 
-                  className="relative p-5 sm:p-8 space-y-5 sm:space-y-8 text-center border-l-[8px] sm:border-l-[12px] border-l-amber-900/60 bg-[#f4f1ea] shadow-[10px_20px_40px_-15px_rgba(0,0,0,0.3)] flex-1 min-h-0 flex flex-col justify-center overflow-hidden"
+                  className="relative p-5 sm:p-8 space-y-4 sm:space-y-6 text-center border-l-[8px] sm:border-l-[12px] border-l-[#1f2d5a] bg-[#f4f1ea] shadow-none flex-1 min-h-0 flex flex-col justify-center overflow-hidden"
                 >
-                  {/* Minimalist Book Cover Background Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-900/5 via-transparent to-stone-900/5 pointer-events-none" />
-                  <div className="absolute left-0 top-0 bottom-0 w-px bg-black/5" />
+                  {/* Зүүн талын нимгэн хар зураас (сүүдэр) */}
+                  <div className="absolute left-0 top-0 bottom-0 w-px bg-black/10" />
                   
                   {/* Top Left Decoration: Graduation Cap - Only on Cover */}
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.5, rotate: -60, x: -60, y: -60 }} 
-                    animate={{ opacity: 1, scale: 1, rotate: -15, x: -10, y: -10 }}
+                    initial={{ opacity: 0, scale: 0.5, rotate: -60, x: -60, y: -60 }}
+                    animate={{ opacity: 1, scale: 1, rotate: -15, x: -5, y: -5 }}
                     transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
-                    className="absolute top-0 left-0 z-20 pointer-events-none drop-shadow-2xl w-24 sm:w-36"
+                    className="absolute top-0 left-0 z-20 pointer-events-none drop-shadow-2xl w-20 sm:w-28"
                   >
                     <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                       {/* Board depth */}
@@ -170,10 +172,10 @@ export function AlbumFlow({
 
                   {/* Bottom Right Decoration: Gold Ribbon Seal - smaller */}
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.5, rotate: 60, x: 40, y: 40, rotateX: 45, rotateY: -45 }} 
-                    animate={{ opacity: 1, scale: 1, rotate: 10, x: 0, y: 0, rotateX: 0, rotateY: 0 }}
+                    initial={{ opacity: 0, scale: 0.5, rotate: 60, x: 40, y: 40, rotateX: 45, rotateY: -45 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 10, x: 5, y: 5, rotateX: 0, rotateY: 0 }}
                     transition={{ delay: 0.7, duration: 0.8, ease: "easeOut" }}
-                    className="absolute bottom-0 right-0 z-20 pointer-events-none drop-shadow-lg w-14 sm:w-16"
+                    className="absolute bottom-0 right-0 z-20 pointer-events-none drop-shadow-lg w-10 sm:w-12"
                   >
                     <svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
                       <path d="M20 40L10 75L30 60L50 75L40 40" fill="#d4af37" stroke="#b8860b" strokeWidth="1.5" />
@@ -190,30 +192,30 @@ export function AlbumFlow({
                           initial={{ opacity: 0, y: 12 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.55, ease: "easeOut" }}
-                          className="flex flex-col items-center gap-6 sm:gap-8 pt-8 sm:pt-12"
+                          className="flex flex-col items-center gap-4 sm:gap-6 pt-8 sm:pt-12"
                         >
                           <div className="space-y-4">
-                            <p className="text-[10px] uppercase tracking-[0.6em] text-amber-900/60 font-bold">
-                              <span className="inline">{display.school}</span>
+                            <p className="text-[10px] uppercase tracking-[0.6em] text-[#1f2d5a]/80 font-bold">
+                              <span className="inline">{display.fullSchoolName}</span>
                             </p>
-                            <h2 className="text-3xl sm:text-6xl font-black text-foreground tracking-tighter leading-tight font-sans drop-shadow-sm">
+                            <h2 className="text-3xl md:text-5xl sm:text-6xl font-black text-[#1f2d5a] tracking-tighter leading-tight font-sans drop-shadow-sm">
                               Дурсамжийн <br className="sm:hidden"/> хайрцаг
                             </h2>
-                            <p className="text-xs sm:text-sm text-stone-700 italic max-w-xs mx-auto px-4 sm:px-6 font-serif leading-relaxed text-justify">
+                            <p className="text-xs sm:text-sm text-[#1f2d5a] italic max-w-xs mx-auto px-4 sm:px-6 font-serif leading-relaxed text-center">
                               &quot;{quote}&quot;
                             </p>
                           </div>
 
-                          <div className="inline-flex items-center justify-center gap-3 sm:gap-4 px-4 sm:px-6 py-2 rounded-full border border-amber-900/20 bg-amber-900/5">
-                            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary/70">
-                              <span className="inline">{display.school}</span>
+                          <div className="inline-flex items-center justify-center gap-3 sm:gap-4 px-4 sm:px-6 py-2 rounded-full border border-[#c9a45c] bg-[#1f2d5a]/5">
+                            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#1f2d5a]">
+                              <span className="inline">{display.shortSchoolName}</span>
                             </span>
-                            <div className="w-1 h-1 rounded-full bg-primary/20" />
-                            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary/70">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#1f2d5a]" />
+                            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#1f2d5a]">
                               <span className="inline">{groupName}</span>
                             </span>
-                            <div className="w-1 h-1 rounded-full bg-primary/20" />
-                            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary/70">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#1f2d5a]" />
+                            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#1f2d5a]">
                               <span className="inline">{graduationYear} ОНЫ ТӨГСӨЛТ</span>
                             </span>
                           </div>
@@ -235,10 +237,10 @@ export function AlbumFlow({
                           onClick={handleEnter}
                           disabled={coverPhase !== "closed"}
                           size="lg"
-                          className="group relative overflow-hidden px-8 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-bold text-base transition-all duration-300 shadow-lg shadow-primary/20"
+                          className="group relative overflow-hidden px-8 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-bold text-sm sm:text-base transition-all duration-300 shadow-lg shadow-primary/20 flex items-center justify-center gap-2 mx-auto"
                         >
                           <span className="relative z-10">Цомгийг нээх</span>
-                          <ChevronRight className="w-5 h-5 ml-1 relative z-10 group-hover:translate-x-0.5 transition-transform" />
+                          <ChevronRight className="w-5 h-5 relative z-10 group-hover:translate-x-0.5 transition-transform" />
                         </Button>
                       </motion.div>
                     )}
@@ -256,7 +258,7 @@ export function AlbumFlow({
                         <CountdownTimer
                           targetDate={reunionDate}
                         />
-                        <p className="text-[9px] sm:text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] mt-3 sm:mt-6 text-center leading-snug break-words px-4 max-w-[92%] mx-auto">
+                        <p className="text-[9px] sm:text-[10px] text-[#1f2d5a] font-bold uppercase tracking-[0.2em] mt-3 sm:mt-6 text-center leading-snug break-words px-4 max-w-[92%] mx-auto">
                           Төгсөгчдөд зориулсан дурсамжийн цуглуулга
                         </p>
                       </motion.div>
@@ -274,13 +276,14 @@ export function AlbumFlow({
             exit={{ opacity: 0, x: 20, scale: 0.95, transition: springSmooth }}
             className="w-full flex-1 flex flex-col min-h-0"
           >
-            <motion.div className={cn(PAGE_CONTENT_CLASS, "pt-4 flex-1 flex flex-col min-h-0")}>
+            <motion.div className={cn(PAGE_CONTENT_CLASS, "pt-0 flex-1 flex flex-col min-h-0")}>
               <AlbumPanel
                 variant="cover"
-                className="relative p-5 sm:p-8 border-l-[8px] sm:border-l-[12px] border-l-amber-900/60 bg-[#f4f1ea] shadow-[10px_20px_40px_-15px_rgba(0,0,0,0.3)] flex-1 min-h-0 flex flex-col overflow-hidden"
+                className="relative p-5 sm:p-8 border-l-[8px] sm:border-l-[12px] border-l-[#1f2d5a] bg-[#f4f1ea] shadow-none flex-1 min-h-0 flex flex-col overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-foreground/5 pointer-events-none" />
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-black/5" />
+                {/* Зүүн талын нимгэн хар зураас (сүүдэр) */}
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-black/10" />
 
                 {/* Bottom Right Decoration: Gold Ribbon Seal - smaller */}
                 <motion.div
